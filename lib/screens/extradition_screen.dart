@@ -3,23 +3,29 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:workday/screens/extradition_screen.dart';
+import 'package:horizontal_data_table/horizontal_data_table.dart';
 
 import '../data/User.dart';
+import 'analytics_screen.dart';
 import 'information_users_screen.dart';
 
-class AnalyticScreen extends StatefulWidget {
-  const AnalyticScreen({Key? key}) : super(key: key);
+class ExtraditionScreen extends StatefulWidget {
+  var sum;
+
+  ExtraditionScreen({Key? key, @required this.sum}) : super(key: key);
 
   @override
-  State<AnalyticScreen> createState() => _AnalyticScreenState();
+  State<ExtraditionScreen> createState() => _ExtraditionScreenScreenState(sum);
 }
 
-class _AnalyticScreenState extends State<AnalyticScreen> {
+class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
   List<UserModel> listUser = [];
   List<UserModel> listUserWork = [];
   List<UserModel> listUserMoney = [];
   String _sum = '0.0';
+  String _percent = '0';
+
+  _ExtraditionScreenScreenState(this._sum);
 
   final formKey = GlobalKey<FormState>();
   bool isPosition = true;
@@ -78,6 +84,24 @@ class _AnalyticScreenState extends State<AnalyticScreen> {
     });
 
     if (isEmpty) {
+
+      showDialog(
+        context: context,
+        builder: (context) => new AlertDialog(
+          title: new Text(''),
+          content: Image.asset('images/ic_check.png'),
+          actions: <Widget>[
+            new FlatButton(
+              onPressed: () {
+                Navigator.of(context, rootNavigator: true)
+                    .pop(); // dismisses only the dialog and returns nothing
+              },
+              child: new Text(''),
+            ),
+          ],
+        ),
+      );
+
       Future.delayed(const Duration(milliseconds: 1000), () async {
         await FirebaseFirestore.instance
             .collection('Money')
@@ -129,9 +153,28 @@ class _AnalyticScreenState extends State<AnalyticScreen> {
         }
       });
     } else {
+      showDialog(
+        context: context,
+        builder: (context) => new AlertDialog(
+          title: new Text(''),
+          content: Image.asset('images/ic_check.png'),
+          actions: <Widget>[
+            new FlatButton(
+              onPressed: () {
+                Navigator.of(context, rootNavigator: true)
+                    .pop(); // dismisses only the dialog and returns nothing
+              },
+              child: new Text(''),
+            ),
+          ],
+        ),
+      );
       Future.delayed(const Duration(milliseconds: 1000), () {
+        print('fdsfdsf');
+
         if (listUserMoney.length != 0) {
           listUserMoney.forEach((element) {
+            print(element.money);
             final docMoney =
                 FirebaseFirestore.instance.collection('Money').doc();
             final json = {
@@ -148,10 +191,10 @@ class _AnalyticScreenState extends State<AnalyticScreen> {
         }
       });
     }
+    // Navigator.pop(context);
   }
 
   void readFirebase() async {
-    List<UserModel> listTake = [];
     await FirebaseFirestore.instance
         .collection('Work')
         .get()
@@ -252,6 +295,39 @@ class _AnalyticScreenState extends State<AnalyticScreen> {
     readFirebase();
   }
 
+  List<UserModel> getTotalTime(List<UserModel> users, double sum) {
+    int totalTime = 0;
+
+    users.forEach((user) {
+      totalTime += user.workTime;
+    });
+
+    users.forEach((user) {
+      user.money = user.workTime / totalTime * sum;
+    });
+
+    return users;
+  }
+
+  double getTotalMoney(List<UserModel> users) {
+    double number = 0.0;
+    users.forEach((user) {
+      number += user.money;
+    });
+
+    return number;
+  }
+
+  int getTotalTimeJoin(List<UserModel> users) {
+    int number = 0;
+
+    users.forEach((user) {
+      number += user.workTime;
+    });
+
+    return number;
+  }
+
   @override
   Widget build(BuildContext context) {
     // print(getValue());
@@ -259,134 +335,127 @@ class _AnalyticScreenState extends State<AnalyticScreen> {
     // double money = double.parse(_sum) * percent;
     double money = double.parse(_sum) * 0.07;
 
+    Widget _getTitleItemWidget(String label, double width) {
+      return Container(
+        child: Text(label, style: TextStyle(fontWeight: FontWeight.bold)),
+        width: width,
+        height: 56,
+        padding: EdgeInsets.only(left: 10),
+        alignment: Alignment.centerLeft,
+      );
+    }
+
+    List<Widget> _getTitleWidget() {
+      return [
+        _getTitleItemWidget('Имя', 100),
+        _getTitleItemWidget('Время', 100),
+        _getTitleItemWidget('Сумма', 200),
+      ];
+    }
+
+    Widget _generateFirstColumnRow(BuildContext context, int index) {
+      return Container(
+        child: Text(listUser[index].name),
+        width: 100,
+        height: 52,
+        padding: EdgeInsets.only(left: 10),
+        alignment: Alignment.centerLeft,
+      );
+    }
+
+    Widget _generateRightHandSideColumnRow(BuildContext context, int index) {
+      return Row(
+        children: <Widget>[
+          Container(
+            padding: EdgeInsets.only(left: 14),
+            child: listUser[index].workTime <= 60
+                ? Text(
+                    '${listUser[index].workTime} минут ',
+                    style: TextStyle(fontSize: 15),
+                  )
+                : Text(
+                    '${(listUser[index].workTime / 60).toStringAsFixed(1)} часов ',
+                    style: TextStyle(
+                      fontSize: 15,
+                    ),
+                  ),
+          ),
+          Container(
+            padding: EdgeInsets.only(left: 34),
+            child: Text(
+                "${getTotalTime(listUser, money)[index].money.toStringAsFixed(1)} сом"),
+            width: 200,
+            height: 52,
+            // padding: EdgeInsets.only(left: 10),
+            alignment: Alignment.centerLeft,
+          ),
+        ],
+      );
+    }
+
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text('Расчет'),
       ),
-      body: SingleChildScrollView(
-        child: RefreshIndicator(
-          onRefresh: () async {
-            setState(() {
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (BuildContext context) => AnalyticScreen()));
-            });
-          },
-          child: Form(
-            key: formKey,
-            child: Container(
-              alignment: Alignment.topCenter,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (isPosition)
-                    Container(
-                        alignment: Alignment.centerLeft,
-                        padding: EdgeInsets.only(top: 20, bottom: 20, left: 14),
-                        child: Text(
-                          "Сегодня работали ${listUser.length.toString()}",
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
-                        )),
-                  Container(
-                    height: MediaQuery.of(context).size.height / 1.8,
-                    child: ListView.separated(
-                        itemCount: listUser.length,
-                        separatorBuilder: (BuildContext context, int index) =>
-                            Container(
-                              // padding: EdgeInsets.only(top: 10, bottom: 10),
-                              child: Divider(
-                                height: 1.0,
-                                color: Colors.black54,
-                              ),
-                            ),
-                        itemBuilder: (BuildContext context, int index) {
-                          return InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          InformationUsersScreen(
-                                            id_user: listUser[index].id_user,
-                                          )));
-                            },
-                            child: listUser[index].workTime <= 60
-                                ? Container(
-                                    padding: EdgeInsets.all(14),
-                                    child: Text(
-                                        "${listUser[index].name} ${listUser[index].workTime} минут ",
-                                        style: TextStyle(fontSize: 17)))
-                                : Container(
-                                    padding: EdgeInsets.all(14),
-                                    child: Text(
-                                        "${listUser[index].name} ${(listUser[index].workTime / 60).toStringAsFixed(1)} часов ",
-                                        style: TextStyle(fontSize: 17))),
-                          );
-                        }),
-                  ),
-                  Container(
-                    width: MediaQuery.of(context).size.width / 1,
-                    padding: EdgeInsets.only(left: 20, right: 20, top: 10),
-                    child: TextFormField(
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(RegExp(r"[0-9.]")),
-                        TextInputFormatter.withFunction((oldValue, newValue) {
-                          try {
-                            final text = newValue.text;
-                            if (text.isNotEmpty) double.parse(text);
-                            return newValue;
-                          } catch (e) {}
-                          return oldValue;
-                        }),
-                      ],
-                      keyboardType:
-                          TextInputType.numberWithOptions(decimal: true),
-                      decoration: InputDecoration(
-                        hintText: 'Введите выручку',
-                      ),
-                      style: TextStyle(
-                        fontSize: 17,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Постое поле';
-                        }
-                        return null;
-                      },
-                      onChanged: (value) {
-                        setState(() {
-                          if (value.length >= 1) {
-                            _sum = value;
-                          }
-                        });
-                      },
-                    ),
-                  ),
-                  Container(
-                    padding: EdgeInsets.only(left: 20, right: 20, top: 10),
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        if (formKey.currentState!.validate()) {
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                      ExtraditionScreen(
-                                        sum: _sum,
-                                      )));
-                        }
-                      },
-                      child: Text('Сделать подчет'),
-                    ),
-                  ),
-                ],
+      body: Form(
+        key: formKey,
+        child: Container(
+          alignment: Alignment.topCenter,
+          height: MediaQuery.of(context).size.height,
+          padding: EdgeInsets.only(top: 20),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("Общаая выручка: ${_sum}", style: TextStyle(fontSize: 22)),
+              Container(
+                padding: EdgeInsets.only(top: 6, bottom: 6),
               ),
-            ),
+              Text("Сотрудникам: ${(money).toStringAsFixed(1)}",
+                  style: TextStyle(fontSize: 22)),
+              Padding(padding: EdgeInsets.only(top: 30)),
+
+              Container(
+                height: MediaQuery.of(context).size.height / 2,
+                child: HorizontalDataTable(
+                  leftHandSideColumnWidth: 80,
+                  rightHandSideColumnWidth: 600,
+                  isFixedHeader: true,
+                  headerWidgets: _getTitleWidget(),
+                  leftSideItemBuilder: _generateFirstColumnRow,
+                  rightSideItemBuilder: _generateRightHandSideColumnRow,
+                  itemCount: listUser.length,
+                  rowSeparatorWidget: const Divider(
+                    color: Colors.black54,
+                    height: 1.0,
+                    thickness: 0.0,
+                  ),
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.only(left: 20, right: 20, top: 20),
+                child: Column(
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      child: ElevatedButton(
+                          onPressed: () async {
+                            calculation(getTotalTime(listUserWork, money));
+                          },
+                          child: Text('Выдать дньги')),
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text('Вернуться')),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),

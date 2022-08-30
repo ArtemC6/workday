@@ -14,6 +14,7 @@ import 'package:workday/screens/signin_screen.dart';
 import '../data/User.dart';
 import '../data/firedase_api.dart';
 import 'administrator_screen.dart';
+import 'information_users_screen.dart';
 
 class WaiterScreen extends StatefulWidget {
   const WaiterScreen({Key? key}) : super(key: key);
@@ -37,8 +38,6 @@ class _WaiterScreenState extends State<WaiterScreen> {
   bool isVisible = false;
   bool isVisibleTime = false;
   List<UserModel> listUser = [];
-
-
 
   Future<bool> _onStop() async {
     final isRunning = timer == null ? false : timer!.isActive;
@@ -163,6 +162,7 @@ class _WaiterScreenState extends State<WaiterScreen> {
         imageQuality: 10,
         source: ImageSource.camera,
         preferredCameraDevice: CameraDevice.front);
+
     if (photo != null) {
       setState(() {
         endFilePhoto = File(photo.path);
@@ -363,7 +363,6 @@ class _WaiterScreenState extends State<WaiterScreen> {
         secs = int.parse('00');
         countdownDuration =
             Duration(hours: hours, minutes: mints, seconds: secs);
-        startTimer();
         reset();
       }
     }
@@ -430,7 +429,7 @@ class _WaiterScreenState extends State<WaiterScreen> {
                           DateTime now = DateTime.now();
                           int formattedDate =
                               int.parse(DateFormat('kk').format(now));
-                          if (formattedDate >= 07 && formattedDate <= 23) {
+                          // if (formattedDate >= 07 && formattedDate <= 23) {
                             isVisibleTime = false;
                             await makeStartPhoto();
                             showAlertDialog(context);
@@ -449,11 +448,11 @@ class _WaiterScreenState extends State<WaiterScreen> {
                                       builder: (context) =>
                                           new WaiterScreen()));
                             });
-                          } else {
-                            setState(() {
-                              isVisibleTime = true;
-                            });
-                          }
+                            // } else {
+                            //   setState(() {
+                            //     isVisibleTime = true;
+                            //   });
+                            // }
                         },
                         child: Text('Начать работу'),
                       ),
@@ -493,6 +492,22 @@ class _WaiterScreenState extends State<WaiterScreen> {
                           },
                           child: Text('Закончить работу'),
                         )),
+                  if (listUser.length != 0)
+                    Container(
+                      padding: EdgeInsets.only(),
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => InformationUsersScreen(
+                                        id_user: listUser[0].id_user,
+                                      )));
+                        },
+                        child: Text('Информация'),
+                      ),
+                    ),
                   Container(
                     padding: EdgeInsets.only(),
                     width: double.infinity,
@@ -513,7 +528,7 @@ class _WaiterScreenState extends State<WaiterScreen> {
                         style: TextStyle(
                             fontSize: 19, fontWeight: FontWeight.bold),
                       ),
-                  ),
+                    ),
                 ],
               ),
             ),
@@ -522,6 +537,4 @@ class _WaiterScreenState extends State<WaiterScreen> {
       ),
     );
   }
-
-
 }

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
+import 'package:horizontal_data_table/horizontal_data_table.dart';
 
 import '../data/User.dart';
 
@@ -24,7 +25,6 @@ class InformationUsersScreen extends StatefulWidget {
 
 class _InformationUsersScreen extends State<InformationUsersScreen> {
   var idUser;
-
   var time;
 
   _InformationUsersScreen(this.idUser, this.time);
@@ -36,6 +36,12 @@ class _InformationUsersScreen extends State<InformationUsersScreen> {
     final DateTime dateTimeStart = startDate.toDate();
     final DateTime dateTimeEnd = endDate.toDate();
     return dateTimeEnd.difference(dateTimeStart).inMinutes;
+  }
+
+  String getData(Timestamp startDate) {
+    final DateTime dateTimeStart = startDate.toDate();
+    String formattedDate = DateFormat('yyyy-MM-dd').format(dateTimeStart);
+    return formattedDate;
   }
 
   List<String> getUerWorkTimeDifference(
@@ -166,350 +172,620 @@ class _InformationUsersScreen extends State<InformationUsersScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Widget _getTitleItemWidget(String label, double width) {
+      return Container(
+        child: Text(label, style: TextStyle(fontWeight: FontWeight.bold)),
+        width: width,
+        height: 56,
+        padding: EdgeInsets.only(left: 10),
+        alignment: Alignment.centerLeft,
+      );
+    }
+
+    List<Widget> _getTitleWidget() {
+      return [
+        _getTitleItemWidget('Имя', 100),
+        _getTitleItemWidget('С', 100),
+        _getTitleItemWidget('До', 100),
+        _getTitleItemWidget('Время', 100),
+        _getTitleItemWidget('Фото', 100),
+        // _getTitleItemWidget('Начало', 100),
+        // _getTitleItemWidget('Конец', 100),
+      ];
+    }
+
+    List<Widget> _getTitleWidgetAnalytics() {
+      return [
+        _getTitleItemWidget('Имя', 100),
+        _getTitleItemWidget('С', 100),
+        _getTitleItemWidget('До', 100),
+        _getTitleItemWidget('Время', 100),
+        _getTitleItemWidget('Сумма', 120),
+        _getTitleItemWidget('Фото', 100),
+        // _getTitleItemWidget('Начало', 100),
+        // _getTitleItemWidget('Конец', 100),
+      ];
+    }
+
+    Widget _generateFirstColumnRow(BuildContext context, int index) {
+      return Container(
+        child: Text(listUser[index].name, style: TextStyle(fontSize: 16)),
+        width: 100,
+        height: 52,
+        padding: EdgeInsets.only(left: 10),
+        alignment: Alignment.centerLeft,
+      );
+    }
+
+    Widget _generateRightHandSideColumnRow(BuildContext context, int index) {
+      return Row(
+        children: <Widget>[
+          Container(
+            child: Text(
+              '${getUerWorkTimeDifference(listUser[index].startDate, listUser[index].endDate)[0]} ',
+              style: TextStyle(
+                fontSize: 16,
+              ),
+            ),
+            width: 100,
+            height: 52,
+            padding: EdgeInsets.only(left: 10),
+            alignment: Alignment.centerLeft,
+          ),
+          Container(
+            child: Text(
+              '${getUerWorkTimeDifference(listUser[index].startDate, listUser[index].endDate)[1]} ',
+              style: TextStyle(
+                fontSize: 16,
+              ),
+            ),
+            width: 100,
+            height: 52,
+            padding: EdgeInsets.only(left: 10),
+            alignment: Alignment.centerLeft,
+          ),
+          Container(
+            padding: EdgeInsets.only(left: 14),
+            child: listUser[index].workTime <= 60
+                ? Text(
+                    '${listUser[index].workTime} минут ',
+                    style: TextStyle(fontSize: 16),
+                  )
+                : Text(
+                    '${(listUser[index].workTime / 60).toStringAsFixed(1)} часов ',
+                    style: TextStyle(
+                      fontSize: 16,
+                    ),
+                  ),
+          ),
+
+          Container(
+            child: ElevatedButton(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => new AlertDialog(
+                    title: new Text(''),
+                    content: Column(
+                      children: [
+                        Container(
+                          child: Image(
+                            image: NetworkImage(listUser[index].startUri),
+                            fit: BoxFit.fill,
+                          ),
+                          height: MediaQuery.of(context).size.height / 2.8,
+                          width: MediaQuery.of(context).size.width / 1,
+                          padding: EdgeInsets.all(10),
+                        ),
+                        Container(
+                          child: Image(
+                            image: NetworkImage(listUser[index].endUri),
+                            fit: BoxFit.fill,
+                          ),
+                          height: MediaQuery.of(context).size.height / 2.8,
+                          width: MediaQuery.of(context).size.width / 1,
+                          padding: EdgeInsets.all(10),
+                        ),
+                      ],
+                    ),
+                    actions: <Widget>[
+                      new FlatButton(
+                        onPressed: () {
+                          Navigator.of(context, rootNavigator: true)
+                              .pop(); // dismisses only the dialog and returns nothing
+                        },
+                        child: TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text('Закрыть'),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+              child: Text('Фото'),
+            ),
+            width: 120,
+            height: 30,
+            padding: EdgeInsets.only(left: 40),
+          ),
+        ],
+      );
+    }
+
+    Widget _generateRightHandSideColumnRowAnalytics(
+        BuildContext context, int index) {
+      return Row(
+        children: <Widget>[
+          Container(
+            child: Text(
+              '${getUerWorkTimeDifference(listUser[index].startDate, listUser[index].endDate)[0]} ',
+              style: TextStyle(
+                fontSize: 16,
+              ),
+            ),
+            width: 100,
+            height: 52,
+            padding: EdgeInsets.only(left: 10),
+            alignment: Alignment.centerLeft,
+          ),
+          Container(
+            child: Text(
+              '${getUerWorkTimeDifference(listUser[index].startDate, listUser[index].endDate)[1]} ',
+              style: TextStyle(
+                fontSize: 16,
+              ),
+            ),
+            width: 100,
+            height: 52,
+            padding: EdgeInsets.only(left: 10),
+            alignment: Alignment.centerLeft,
+          ),
+          Container(
+            padding: EdgeInsets.only(left: 14, right: 26),
+            child: listUser[index].workTime <= 60
+                ? Text(
+                    '${listUser[index].workTime} минут ',
+                    style: TextStyle(fontSize: 16),
+                  )
+                : Text(
+                    '${(listUser[index].workTime / 60).toStringAsFixed(1)} часов ',
+                    style: TextStyle(
+                      fontSize: 16,
+                    ),
+                  ),
+          ),
+
+          Container(
+            child: Text(
+              '${listUser[index].money} сом',
+              style: TextStyle(
+                fontSize: 16,
+              ),
+            ),
+            width: 100,
+            height: 52,
+            padding: EdgeInsets.only(left: 20),
+            alignment: Alignment.centerLeft,
+          ),
+
+          Container(
+            child: ElevatedButton(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => new AlertDialog(
+                    title: new Text(''),
+                    content: Column(
+                      children: [
+                        Container(
+                          child: Image(
+                            image: NetworkImage(listUser[index].startUri),
+                            fit: BoxFit.fill,
+                          ),
+                          height: MediaQuery.of(context).size.height / 2.8,
+                          width: MediaQuery.of(context).size.width / 1,
+                          padding: EdgeInsets.all(10),
+                        ),
+                        Container(
+                          child: Image(
+                            image: NetworkImage(listUser[index].endUri),
+                            fit: BoxFit.fill,
+                          ),
+                          height: MediaQuery.of(context).size.height / 2.8,
+                          width: MediaQuery.of(context).size.width / 1,
+                          padding: EdgeInsets.all(10),
+                        ),
+                      ],
+                    ),
+                    actions: <Widget>[
+                      new FlatButton(
+                        onPressed: () {
+                          Navigator.of(context, rootNavigator: true)
+                              .pop(); // dismisses only the dialog and returns nothing
+                        },
+                        child: TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text('Закрыть'),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+              child: Text('Фото'),
+            ),
+            width: 120,
+            height: 30,
+            padding: EdgeInsets.only(left: 40),
+          ),
+        ],
+      );
+    }
+
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text('Информация о сотрудники'),
       ),
-      body: RefreshIndicator(
-        edgeOffset: 20,
-        color: Colors.black,
-        onRefresh: () async {
-          setState(() {
-            Navigator.pushReplacement(
-                context,
-                new MaterialPageRoute(
-                    builder: (context) => new InformationUsersScreen(
-                          id_user: idUser,
-                          time: time,
-                        )));
-          });
-        },
-        child: SingleChildScrollView(
-          child: Form(
-            child: Container(
-              alignment: Alignment.topCenter,
-              height: MediaQuery.of(context).size.height,
-              padding: EdgeInsets.only(left: 20, right: 10, bottom: 100),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (!isVisible)
-                    if (listUser.length != 0)
-                      Container(
-                        alignment: Alignment.centerLeft,
-                        child: getTotalTime(listUser) <= 60
-                            ? Text(
-                                '${listUser[0].name}: отработал ${getTotalTime(listUser)} минут',
-                                style: TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.bold),
-                              )
-                            : Text(
-                                '${listUser[0].name}: ${(getTotalTime(listUser) / 60).toStringAsFixed(1)} часов',
-                                style: TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.bold),
-                              ),
-                      ),
-                  if (isVisible)
-                    if (listUser.length != 0)
-                      Container(
-                        alignment: Alignment.centerLeft,
-                        child: Column(
-                          children: [
-                            getTotalTime(listUser) <= 60
-                                ? Text(
-                                    '${listUser[0].name}: отработал ${getTotalTime(listUser)} минут',
-                                    style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold),
-                                  )
-                                : Text(
-                                    '${listUser[0].name}: ${(getTotalTime(listUser) / 60).toStringAsFixed(1)} часов',
-                                    style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                            Padding(padding: EdgeInsets.only(top: 8)),
-                            Text(
-                              'Получил: ${getTotalMoney(listUser).toString()} сом',
+      body: SingleChildScrollView(
+        child: Form(
+          child: Container(
+            padding: EdgeInsets.only(top: 20),
+            alignment: Alignment.topCenter,
+            height: MediaQuery.of(context).size.height,
+            child: Column(
+              // mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (!isVisible)
+                  if (listUser.length != 0)
+                    Container(
+                      padding: EdgeInsets.only(left: 14),
+                      alignment: Alignment.centerLeft,
+                      child: getTotalTime(listUser) <= 60
+                          ? Text(
+                              '${listUser[0].name}: отработал ${getTotalTime(listUser)} минут: за ${getData(listUser[0].startDate)}',
                               style: TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.bold),
+                                  fontSize: 17, fontWeight: FontWeight.bold),
+                            )
+                          : Text(
+                              '${listUser[0].name}: ${(getTotalTime(listUser) / 60).toStringAsFixed(1)} часов: за ${getData(listUser[0].startDate)}',
+                              style: TextStyle(
+                                  fontSize: 17, fontWeight: FontWeight.bold),
                             ),
-                          ],
-                        ),
-                      ),
-                  if (!isVisible)
-                    if (listUser.length != 0)
-                      Container(
-                        padding: EdgeInsets.only(top: 20),
-                        height: MediaQuery.of(context).size.height / 1.6,
-                        width: MediaQuery.of(context).size.width,
-                        child: ListView.builder(
-                          itemCount: listUser.length,
-                          itemBuilder: (context, index) => Container(
-                            padding: EdgeInsets.only(top: 10),
-                            child: Row(
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Container(
-                                        width:
-                                            MediaQuery.of(context).size.width /
-                                                3.0,
-                                        child: listUser[index].workTime <= 60
-                                            ? Column(
-                                                children: [
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      Text(
-                                                        '${getUerWorkTimeDifference(listUser[index].startDate, listUser[index].endDate)[0]} ',
-                                                        style: TextStyle(
-                                                            fontSize: 20,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                      ),
-                                                      Text(
-                                                        '${getUerWorkTimeDifference(listUser[index].startDate, listUser[index].endDate)[1]}',
-                                                        style: TextStyle(
-                                                            fontSize: 20,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  Text(
-                                                    '${listUser[index].workTime} м',
-                                                    style: TextStyle(
-                                                        fontSize: 20,
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                                  )
-                                                ],
-                                              )
-                                            : Column(
-                                                children: [
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      Text(
-                                                        '${getUerWorkTimeDifference(listUser[index].startDate, listUser[index].endDate)[0]} ',
-                                                        style: TextStyle(
-                                                            fontSize: 20,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                      ),
-                                                      Text(
-                                                        '${getUerWorkTimeDifference(listUser[index].startDate, listUser[index].endDate)[1]}',
-                                                        style: TextStyle(
-                                                            fontSize: 20,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  Text(
-                                                    '${(listUser[index].workTime / 60).toStringAsFixed(1)} ч',
-                                                    style: TextStyle(
-                                                        fontSize: 20,
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                                  ),
-                                                ],
-                                              )),
-                                    Image(
-                                      image: NetworkImage(
-                                          listUser[index].startUri),
-                                      height: 80,
-                                      width: 100,
-                                      fit: BoxFit.fill,
-                                    ),
-                                    Padding(padding: EdgeInsets.only(left: 10)),
-                                    Image(
-                                      image:
-                                          NetworkImage(listUser[index].endUri),
-                                      height: 80,
-                                      width: 100,
-                                      fit: BoxFit.fill,
-                                    ),
-                                  ],
+                    ),
+                if (isVisible)
+                  if (listUser.length != 0)
+                    Container(
+                      padding: EdgeInsets.only(left: 14),
+                      alignment: Alignment.centerLeft,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          getTotalTime(listUser) <= 60
+                              ? Text(
+                                  '${listUser[0].name}: отработал ${getTotalTime(listUser)} минут',
+                                  style: TextStyle(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.bold),
                                 )
-                              ],
-                            ),
+                              : Text(
+                                  '${listUser[0].name}: ${(getTotalTime(listUser) / 60).toStringAsFixed(1)} часов',
+                                  style: TextStyle(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                          Padding(padding: EdgeInsets.only(top: 8)),
+                          Text(
+                            'Получил: ${getTotalMoney(listUser).toString()} сом: за ${getData(listUser[0].startDate)}',
+                            style: TextStyle(
+                                fontSize: 17, fontWeight: FontWeight.bold),
                           ),
+                        ],
+                      ),
+                    ),
+                if (!isVisible)
+                  if (listUser.length != 0)
+                    Container(
+                      padding: EdgeInsets.only(top: 20),
+                      height: MediaQuery.of(context).size.height / 1.6,
+                      child: HorizontalDataTable(
+                        leftHandSideColumnWidth: 100,
+                        rightHandSideColumnWidth: 600,
+                        isFixedHeader: true,
+                        headerWidgets: _getTitleWidget(),
+                        leftSideItemBuilder: _generateFirstColumnRow,
+                        rightSideItemBuilder: _generateRightHandSideColumnRow,
+                        itemCount: listUser.length,
+                        rowSeparatorWidget: const Divider(
+                          color: Colors.black54,
+                          height: 1.0,
+                          thickness: 0.0,
                         ),
                       ),
-                  if (isVisible)
-                    if (listUser.length != 0)
-                      Container(
-                        padding: EdgeInsets.only(top: 20),
-                        height: MediaQuery.of(context).size.height / 1.6,
-                        width: MediaQuery.of(context).size.width,
-                        child: ListView.builder(
-                          itemCount: listUser.length,
-                          itemBuilder: (context, index) => Container(
-                            padding: EdgeInsets.only(top: 10),
-                            child: Row(
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Container(
-                                        width:
-                                            MediaQuery.of(context).size.width /
-                                                3.0,
-                                        child: listUser[index].workTime <= 60
-                                            ? Column(
-                                                children: [
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      Text(
-                                                        '${getUerWorkTimeDifference(listUser[index].startDate, listUser[index].endDate)[0]} ',
-                                                        style: TextStyle(
-                                                            fontSize: 20,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                      ),
-                                                      Text(
-                                                        '${getUerWorkTimeDifference(listUser[index].startDate, listUser[index].endDate)[1]}',
-                                                        style: TextStyle(
-                                                            fontSize: 20,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  Column(
-                                                    children: [
-                                                      Text(
-                                                        '${listUser[index].workTime} м',
-                                                        style: TextStyle(
-                                                            fontSize: 20,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                      ),
-                                                      Text(
-                                                        '${listUser[index].money} сом',
-                                                        style: TextStyle(
-                                                            fontSize: 20,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              )
-                                            : Column(
-                                                children: [
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      Text(
-                                                        '${getUerWorkTimeDifference(listUser[index].startDate, listUser[index].endDate)[0]} ',
-                                                        style: TextStyle(
-                                                            fontSize: 20,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                      ),
-                                                      Text(
-                                                        '${getUerWorkTimeDifference(listUser[index].startDate, listUser[index].endDate)[1]}',
-                                                        style: TextStyle(
-                                                            fontSize: 20,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  Column(
-                                                    children: [
-                                                      Text(
-                                                        '${(listUser[index].workTime / 60).toStringAsFixed(1)} ч',
-                                                        style: TextStyle(
-                                                            fontSize: 20,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                      ),
-                                                      Text(
-                                                        '${listUser[index].money} сом',
-                                                        style: TextStyle(
-                                                            fontSize: 20,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              )),
-                                    Image(
-                                      image: NetworkImage(
-                                          listUser[index].startUri),
-                                      height: 80,
-                                      width: 100,
-                                      fit: BoxFit.fill,
-                                    ),
-                                    Padding(padding: EdgeInsets.only(left: 10)),
-                                    Image(
-                                      image:
-                                          NetworkImage(listUser[index].endUri),
-                                      height: 80,
-                                      width: 100,
-                                      fit: BoxFit.fill,
-                                    ),
-                                  ],
-                                )
-                              ],
-                            ),
-                          ),
+                    ),
+                // Container(
+                //   padding: EdgeInsets.only(top: 20),
+                //   height: MediaQuery.of(context).size.height / 1.6,
+                //   width: MediaQuery.of(context).size.width,
+                //   child: ListView.builder(
+                //     itemCount: listUser.length,
+                //     itemBuilder: (context, index) => Container(
+                //       padding: EdgeInsets.only(top: 10),
+                //       child: Row(
+                //         children: [
+                //           Row(
+                //             mainAxisAlignment: MainAxisAlignment.center,
+                //             crossAxisAlignment: CrossAxisAlignment.center,
+                //             children: [
+                //               Container(
+                //                   width:
+                //                       MediaQuery.of(context).size.width /
+                //                           3.0,
+                //                   child: listUser[index].workTime <= 60
+                //                       ? Column(
+                //                           children: [
+                //                             Row(
+                //                               mainAxisAlignment:
+                //                                   MainAxisAlignment
+                //                                       .center,
+                //                               crossAxisAlignment:
+                //                                   CrossAxisAlignment
+                //                                       .center,
+                //                               children: [
+                //                                 Text(
+                //                                   '${getUerWorkTimeDifference(listUser[index].startDate, listUser[index].endDate)[0]} ',
+                //                                   style: TextStyle(
+                //                                       fontSize: 20,
+                //                                       fontWeight:
+                //                                           FontWeight
+                //                                               .bold),
+                //                                 ),
+                //                                 Text(
+                //                                   '${getUerWorkTimeDifference(listUser[index].startDate, listUser[index].endDate)[1]}',
+                //                                   style: TextStyle(
+                //                                       fontSize: 20,
+                //                                       fontWeight:
+                //                                           FontWeight
+                //                                               .bold),
+                //                                 ),
+                //                               ],
+                //                             ),
+                //                             Text(
+                //                               '${listUser[index].workTime} м',
+                //                               style: TextStyle(
+                //                                   fontSize: 20,
+                //                                   fontWeight:
+                //                                       FontWeight.bold),
+                //                             )
+                //                           ],
+                //                         )
+                //                       : Column(
+                //                           children: [
+                //                             Row(
+                //                               mainAxisAlignment:
+                //                                   MainAxisAlignment
+                //                                       .center,
+                //                               crossAxisAlignment:
+                //                                   CrossAxisAlignment
+                //                                       .center,
+                //                               children: [
+                //                                 Text(
+                //                                   '${getUerWorkTimeDifference(listUser[index].startDate, listUser[index].endDate)[0]} ',
+                //                                   style: TextStyle(
+                //                                       fontSize: 20,
+                //                                       fontWeight:
+                //                                           FontWeight
+                //                                               .bold),
+                //                                 ),
+                //                                 Text(
+                //                                   '${getUerWorkTimeDifference(listUser[index].startDate, listUser[index].endDate)[1]}',
+                //                                   style: TextStyle(
+                //                                       fontSize: 20,
+                //                                       fontWeight:
+                //                                           FontWeight
+                //                                               .bold),
+                //                                 ),
+                //                               ],
+                //                             ),
+                //                             Text(
+                //                               '${(listUser[index].workTime / 60).toStringAsFixed(1)} ч',
+                //                               style: TextStyle(
+                //                                   fontSize: 20,
+                //                                   fontWeight:
+                //                                       FontWeight.bold),
+                //                             ),
+                //                           ],
+                //                         )),
+                //               Image(
+                //                 image: NetworkImage(
+                //                     listUser[index].startUri),
+                //                 height: 80,
+                //                 width: 100,
+                //                 fit: BoxFit.fill,
+                //               ),
+                //               Padding(padding: EdgeInsets.only(left: 10)),
+                //               Image(
+                //                 image:
+                //                     NetworkImage(listUser[index].endUri),
+                //                 height: 80,
+                //                 width: 100,
+                //                 fit: BoxFit.fill,
+                //               ),
+                //             ],
+                //           )
+                //         ],
+                //       ),
+                //     ),
+                //   ),
+                // ),
+
+                if (isVisible)
+                  if (listUser.length != 0)
+                    Container(
+                      padding: EdgeInsets.only(top: 20),
+                      height: MediaQuery.of(context).size.height / 1.6,
+                      child: HorizontalDataTable(
+                        leftHandSideColumnWidth: 100,
+                        rightHandSideColumnWidth: 600,
+                        isFixedHeader: true,
+                        headerWidgets: _getTitleWidgetAnalytics(),
+                        leftSideItemBuilder: _generateFirstColumnRow,
+                        rightSideItemBuilder:
+                            _generateRightHandSideColumnRowAnalytics,
+                        itemCount: listUser.length,
+                        rowSeparatorWidget: const Divider(
+                          color: Colors.black54,
+                          height: 1.0,
+                          thickness: 0.0,
                         ),
                       ),
-                  Container(
-                    width: MediaQuery.of(context).size.width,
-                    child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: Text('Вернуться')),
-                  ),
-                ],
-              ),
+                    ),
+                // Container(
+                //   padding: EdgeInsets.only(top: 20),
+                //   height: MediaQuery.of(context).size.height / 1.6,
+                //   width: MediaQuery.of(context).size.width,
+                //   child: ListView.builder(
+                //     itemCount: listUser.length,
+                //     itemBuilder: (context, index) => Container(
+                //       padding: EdgeInsets.only(top: 10),
+                //       child: Row(
+                //         children: [
+                //           Row(
+                //             mainAxisAlignment: MainAxisAlignment.center,
+                //             crossAxisAlignment: CrossAxisAlignment.center,
+                //             children: [
+                //               Container(
+                //                   width: MediaQuery.of(context).size.width /
+                //                       3.0,
+                //                   child: listUser[index].workTime <= 60
+                //                       ? Column(
+                //                           children: [
+                //                             Row(
+                //                               mainAxisAlignment:
+                //                                   MainAxisAlignment.center,
+                //                               crossAxisAlignment:
+                //                                   CrossAxisAlignment.center,
+                //                               children: [
+                //                                 Text(
+                //                                   '${getUerWorkTimeDifference(listUser[index].startDate, listUser[index].endDate)[0]} ',
+                //                                   style: TextStyle(
+                //                                       fontSize: 20,
+                //                                       fontWeight:
+                //                                           FontWeight.bold),
+                //                                 ),
+                //                                 Text(
+                //                                   '${getUerWorkTimeDifference(listUser[index].startDate, listUser[index].endDate)[1]}',
+                //                                   style: TextStyle(
+                //                                       fontSize: 20,
+                //                                       fontWeight:
+                //                                           FontWeight.bold),
+                //                                 ),
+                //                               ],
+                //                             ),
+                //                             Column(
+                //                               children: [
+                //                                 Text(
+                //                                   '${listUser[index].workTime} м',
+                //                                   style: TextStyle(
+                //                                       fontSize: 20,
+                //                                       fontWeight:
+                //                                           FontWeight.bold),
+                //                                 ),
+                //                                 Text(
+                //                                   '${listUser[index].money} сом',
+                //                                   style: TextStyle(
+                //                                       fontSize: 20,
+                //                                       fontWeight:
+                //                                           FontWeight.bold),
+                //                                 ),
+                //                               ],
+                //                             ),
+                //                           ],
+                //                         )
+                //                       : Column(
+                //                           children: [
+                //                             Row(
+                //                               mainAxisAlignment:
+                //                                   MainAxisAlignment.center,
+                //                               crossAxisAlignment:
+                //                                   CrossAxisAlignment.center,
+                //                               children: [
+                //                                 Text(
+                //                                   '${getUerWorkTimeDifference(listUser[index].startDate, listUser[index].endDate)[0]} ',
+                //                                   style: TextStyle(
+                //                                       fontSize: 20,
+                //                                       fontWeight:
+                //                                           FontWeight.bold),
+                //                                 ),
+                //                                 Text(
+                //                                   '${getUerWorkTimeDifference(listUser[index].startDate, listUser[index].endDate)[1]}',
+                //                                   style: TextStyle(
+                //                                       fontSize: 20,
+                //                                       fontWeight:
+                //                                           FontWeight.bold),
+                //                                 ),
+                //                               ],
+                //                             ),
+                //                             Column(
+                //                               children: [
+                //                                 Text(
+                //                                   '${(listUser[index].workTime / 60).toStringAsFixed(1)} ч',
+                //                                   style: TextStyle(
+                //                                       fontSize: 20,
+                //                                       fontWeight:
+                //                                           FontWeight.bold),
+                //                                 ),
+                //                                 Text(
+                //                                   '${listUser[index].money} сом',
+                //                                   style: TextStyle(
+                //                                       fontSize: 20,
+                //                                       fontWeight:
+                //                                           FontWeight.bold),
+                //                                 ),
+                //                               ],
+                //                             ),
+                //                           ],
+                //                         )),
+                //               Image(
+                //                 image:
+                //                     NetworkImage(listUser[index].startUri),
+                //                 height: 80,
+                //                 width: 100,
+                //                 fit: BoxFit.fill,
+                //               ),
+                //               Padding(padding: EdgeInsets.only(left: 10)),
+                //               Image(
+                //                 image: NetworkImage(listUser[index].endUri),
+                //                 height: 80,
+                //                 width: 100,
+                //                 fit: BoxFit.fill,
+                //               ),
+                //             ],
+                //           )
+                //         ],
+                //       ),
+                //     ),
+                //   ),
+                // ),
+                Container(
+                  padding: EdgeInsets.only(left: 20, right: 20),
+                  width: MediaQuery.of(context).size.width,
+                  child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text('Вернуться')),
+                ),
+              ],
             ),
           ),
         ),
+        // ),
       ),
     );
   }
