@@ -58,18 +58,17 @@ class _DetailedStatics extends State<DetailedStatics> {
 
         DateTime start = _datePeriod!.start;
         DateTime end = _datePeriod!.end;
-        start = start.subtract(Duration(seconds: 1))
+
+        start = start.subtract(Duration(seconds: 1));
         end = end.add(Duration(days: 1));
         end = end.subtract(Duration(seconds: 1));
 
-        // print(start);
-        // print(end);
+        // print("start ${start}");
+        // print("end ${end}");
         // print(timeStart);
         // print("====");
-        // print(timeStart.isAfter(start));
-        // print(timeStart.isBefore(end));
-        if ( timeStart.isAfter(start) && timeStart.isBefore(end)) {
 
+        if (timeStart.isAfter(start) && timeStart.isBefore(end)) {
           listUserMoney.add(MoneyModel(
               name: data["name"],
               extraditionMoney: data["extraditionMoney"],
@@ -79,30 +78,27 @@ class _DetailedStatics extends State<DetailedStatics> {
               workTime: data['workTime']));
           setState(() {});
 
-          // var isExistMoney = listUserMoneyFull
-          //     .indexWhere((element) => element.id_user == (data['id_user']));
-          //
-          // if (isExistMoney < 0) {
-          //   listUserMoneyFull.add(MoneyModel(
-          //       name: data["name"],
-          //       extraditionMoney: data["extraditionMoney"],
-          //       id_user: data["id_user"],
-          //       id_post: data["id_post"],
-          //       money: data['money'],
-          //       workTime: data['workTime']));
-          //   setState(() {});
-          // } else {
-          //   // listUserMoneyFull[isExistMoney].money += data['money'];
-          //   // listUserMoneyFull[isExistMoney].workTime +=
-          //   //     int.parse(data['workTime']);
-          // }
+          var isExistMoney = listUserMoneyFull
+              .indexWhere((element) => element.id_user == (data['id_user']));
+
+          if (isExistMoney < 0) {
+            listUserMoneyFull.add(MoneyModel(
+                name: data["name"],
+                extraditionMoney: data["extraditionMoney"],
+                id_user: data["id_user"],
+                id_post: data["id_post"],
+                money: data['money'],
+                workTime: data['workTime']));
+            setState(() {});
+          } else {
+            int valuer = data['workTime'];
+            listUserMoneyFull[isExistMoney].money += data['money'];
+            listUserMoneyFull[isExistMoney].workTime += valuer;
+          }
         }
       });
     });
 
-    // print(_datePeriod);
-    // print(_datePeriod!.start);
-    // print(_datePeriod!.end);
   }
 
   @override
@@ -140,8 +136,14 @@ class _DetailedStatics extends State<DetailedStatics> {
         _getTitleItemWidget('Сумма', 100),
         _getTitleItemWidget('Дата', 100),
         _getTitleItemWidget('Подробней', 100),
-        // _getTitleItemWidget('Начало', 100),
-        // _getTitleItemWidget('Конец', 100),
+      ];
+    }
+    List<Widget> _getTitleWidgetFull() {
+      return [
+        _getTitleItemWidget('Имя', 100),
+        _getTitleItemWidget('Время', 100),
+        _getTitleItemWidget('Сумма', 100),
+        _getTitleItemWidget('Дата', 100),
       ];
     }
 
@@ -172,7 +174,6 @@ class _DetailedStatics extends State<DetailedStatics> {
                     ),
                   ),
           ),
-
           Container(
             child: Text(
               '${double.parse((listUserMoney[index].money).toStringAsFixed(1).toString())} сом ',
@@ -185,7 +186,6 @@ class _DetailedStatics extends State<DetailedStatics> {
             padding: EdgeInsets.only(left: 20),
             alignment: Alignment.centerLeft,
           ),
-
           Container(
             child: Text(
               '${getData(listUserMoney[index].extraditionMoney)}',
@@ -198,7 +198,6 @@ class _DetailedStatics extends State<DetailedStatics> {
             padding: EdgeInsets.only(left: 20),
             alignment: Alignment.centerLeft,
           ),
-
           Container(
             child: ElevatedButton(
               onPressed: () {
@@ -216,29 +215,6 @@ class _DetailedStatics extends State<DetailedStatics> {
             height: 30,
             padding: EdgeInsets.only(left: 30),
           ),
-
-          // Container(
-          //   child: Image(
-          //     image: NetworkImage(listUser[index].startUri),
-          //     height: 80,
-          //     width: 80,
-          //     fit: BoxFit.fill,
-          //   ),
-          //   width: 100,
-          //   height: 52,
-          //   padding: EdgeInsets.only(left: 40),
-          // ),
-          // Container(
-          //   child: Image(
-          //     image: NetworkImage(listUser[index].endUri),
-          //     height: 80,
-          //     width: 80,
-          //     fit: BoxFit.fill,
-          //   ),
-          //   width: 100,
-          //   height: 52,
-          //   padding: EdgeInsets.only(left: 40),
-          // ),
         ],
       );
     }
@@ -285,23 +261,23 @@ class _DetailedStatics extends State<DetailedStatics> {
             padding: EdgeInsets.only(left: 20),
             alignment: Alignment.centerLeft,
           ),
-          Container(
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => InformationUsersScreen(
-                              id_user: listUserMoneyFull[index].id_user,
-                              time: listUserMoneyFull[index].extraditionMoney,
-                            )));
-              },
-              child: Text('Подробней'),
-            ),
-            width: 140,
-            height: 30,
-            padding: EdgeInsets.only(left: 30),
-          ),
+          // Container(
+          //   child: ElevatedButton(
+          //     onPressed: () {
+          //       Navigator.push(
+          //           context,
+          //           MaterialPageRoute(
+          //               builder: (context) => InformationUsersScreen(
+          //                     id_user: listUserMoneyFull[index].id_user,
+          //                     time: listUserMoneyFull[index].extraditionMoney,
+          //                   )));
+          //     },
+          //     child: Text('Подробней'),
+          //   ),
+          //   width: 140,
+          //   height: 30,
+          //   padding: EdgeInsets.only(left: 30),
+          // ),
         ],
       );
     }
@@ -347,7 +323,7 @@ class _DetailedStatics extends State<DetailedStatics> {
                     leftHandSideColumnWidth: 100,
                     rightHandSideColumnWidth: 600,
                     isFixedHeader: true,
-                    headerWidgets: _getTitleWidget(),
+                    headerWidgets: _getTitleWidgetFull(),
                     leftSideItemBuilder: _generateFirstColumnRow,
                     rightSideItemBuilder: _generateRightHandSideColumnRowFull,
                     itemCount: listUserMoneyFull.length,
@@ -383,7 +359,7 @@ class _DetailedStatics extends State<DetailedStatics> {
                           child: Text('Выбрать дату')),
                     ),
                     Container(
-                      padding: EdgeInsets.only(),
+                      padding: EdgeInsets.only(bottom: 20),
                       width: MediaQuery.of(context).size.width,
                       child: ElevatedButton(
                           onPressed: () {
