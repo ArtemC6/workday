@@ -258,7 +258,6 @@ class _InformationUsersScreen extends State<InformationUsersScreen> {
                     ),
                   ),
           ),
-
           Container(
             child: ElevatedButton(
               onPressed: () {
@@ -357,7 +356,6 @@ class _InformationUsersScreen extends State<InformationUsersScreen> {
                     ),
                   ),
           ),
-
           Container(
             child: Text(
               '${listUser[index].money} сом',
@@ -370,7 +368,6 @@ class _InformationUsersScreen extends State<InformationUsersScreen> {
             padding: EdgeInsets.only(left: 20),
             alignment: Alignment.centerLeft,
           ),
-
           Container(
             child: ElevatedButton(
               onPressed: () {
@@ -448,12 +445,14 @@ class _InformationUsersScreen extends State<InformationUsersScreen> {
                       alignment: Alignment.centerLeft,
                       child: getTotalTime(listUser) <= 60
                           ? Text(
-                              '${listUser[0].name}: отработал ${getTotalTime(listUser)} минут: за ${getData(listUser[0].startDate)}',
+                              textAlign: TextAlign.center,
+                              '${listUser[0].name}: отработал ${getTotalTime(listUser)} минут:  ${getData(listUser[0].startDate)}',
                               style: TextStyle(
                                   fontSize: 17, fontWeight: FontWeight.bold),
                             )
                           : Text(
-                              '${listUser[0].name}: ${(getTotalTime(listUser) / 60).toStringAsFixed(1)} часов: за ${getData(listUser[0].startDate)}',
+                              textAlign: TextAlign.center,
+                              '${listUser[0].name}: ${(getTotalTime(listUser) / 60).toStringAsFixed(1)} часов: ${getData(listUser[0].startDate)}',
                               style: TextStyle(
                                   fontSize: 17, fontWeight: FontWeight.bold),
                             ),
@@ -468,12 +467,14 @@ class _InformationUsersScreen extends State<InformationUsersScreen> {
                         children: [
                           getTotalTime(listUser) <= 60
                               ? Text(
+                                  textAlign: TextAlign.center,
                                   '${listUser[0].name}: отработал ${getTotalTime(listUser)} минут',
                                   style: TextStyle(
                                       fontSize: 17,
                                       fontWeight: FontWeight.bold),
                                 )
                               : Text(
+                                  textAlign: TextAlign.center,
                                   '${listUser[0].name}: ${(getTotalTime(listUser) / 60).toStringAsFixed(1)} часов',
                                   style: TextStyle(
                                       fontSize: 17,
@@ -481,6 +482,7 @@ class _InformationUsersScreen extends State<InformationUsersScreen> {
                                 ),
                           Padding(padding: EdgeInsets.only(top: 8)),
                           Text(
+                            textAlign: TextAlign.center,
                             'Получил: ${getTotalMoney(listUser).toString()} сом: за ${getData(listUser[0].startDate)}',
                             style: TextStyle(
                                 fontSize: 17, fontWeight: FontWeight.bold),

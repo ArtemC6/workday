@@ -28,7 +28,6 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
   _ExtraditionScreenScreenState(this._sum);
 
   final formKey = GlobalKey<FormState>();
-  bool isPosition = true;
   bool isEmpty = false;
 
   int getUserWorkTime(Timestamp startDate, Timestamp endDate) {
@@ -46,6 +45,64 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
         'extraditionMoney': DateTime.now(),
       };
       dockUsers.doc(element.id_post).update(json);
+    });
+
+    listUserMoney.clear();
+
+    await FirebaseFirestore.instance
+        .collection('Work')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((document) async {
+        Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+
+        final Timestamp timestampStart = data['startDate'] as Timestamp;
+        final DateTime dateTimeStart = timestampStart.toDate();
+
+        var timeStart = new DateTime(
+          dateTimeStart.year,
+          dateTimeStart.month,
+          dateTimeStart.day,
+        );
+
+        DateTime currentDate = DateTime.now();
+        var currentTime = new DateTime(
+          currentDate.year,
+          currentDate.month,
+          currentDate.day,
+        );
+
+        if (timeStart == currentTime) {
+          if (data['endDate'] != '') {
+            if (data['money'] != '0.0') {
+              var isExistMoney = listUserMoney.indexWhere(
+                  (element) => element.id_user == (data['id_user']));
+
+              if (isExistMoney < 0) {
+                listUserMoney.add(UserModel(
+                    name: data["name"],
+                    email: data["email"],
+                    status: data["status"],
+                    startUri: data["startUri"],
+                    endUri: data["endUri"],
+                    startDate: data["startDate"],
+                    endDate: data["endDate"],
+                    id_user: data["id_user"],
+                    id_post: data["id_post"],
+                    money: data['money'],
+                    workTime:
+                        getUserWorkTime(data["startDate"], data["endDate"])));
+                setState(() {});
+              } else {
+                listUserMoney[isExistMoney].money += data['money'];
+
+                listUserMoney[isExistMoney].workTime +=
+                    getUserWorkTime(data['startDate'], data['endDate']);
+              }
+            }
+          }
+        }
+      });
     });
 
     await FirebaseFirestore.instance
@@ -72,18 +129,35 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
         );
 
         if (timeStart == currentTime) {
-          setState(() {
-            isEmpty = true;
-          });
+          print('object_1');
+          final dockUsers =
+              await FirebaseFirestore.instance.collection('Money');
+          dockUsers.doc(document.id).delete();
         } else {
+          print('object_2');
           setState(() {
-            isEmpty = true;
+            isEmpty = false;
           });
         }
       });
     });
 
-    if (isEmpty) {
+    if (!isEmpty) {
+      Future.delayed(const Duration(milliseconds: 200), () async {
+        listUserMoney.forEach((element) {
+          final dockMoney =
+              FirebaseFirestore.instance.collection('Money').doc();
+          final json = {
+            'money': double.parse(element.money.toStringAsFixed(1)),
+            'name': element.name,
+            'id_user': element.id_user,
+            'id_post': dockMoney.id,
+            'workTime': element.workTime,
+            'extraditionMoney': DateTime.now(),
+          };
+          dockMoney.set(json);
+        });
+      });
 
       showDialog(
         context: context,
@@ -103,95 +177,9 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
       );
 
       Future.delayed(const Duration(milliseconds: 1000), () async {
-        await FirebaseFirestore.instance
-            .collection('Money')
-            .get()
-            .then((QuerySnapshot querySnapshot) {
-          querySnapshot.docs.forEach((document) async {
-            Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-
-            final Timestamp timestampStart =
-                data['extraditionMoney'] as Timestamp;
-            final DateTime dateTimeStart = timestampStart.toDate();
-
-            var timeStart = new DateTime(
-              dateTimeStart.year,
-              dateTimeStart.month,
-              dateTimeStart.day,
-            );
-
-            DateTime currentDate = DateTime.now();
-            var currentTime = new DateTime(
-              currentDate.year,
-              currentDate.month,
-              currentDate.day,
-            );
-
-            if (timeStart == currentTime) {
-              final dockUsers =
-                  await FirebaseFirestore.instance.collection('Money');
-              dockUsers.doc(document.id).delete();
-            }
-          });
-        });
-
-        if (listUserMoney.length != 0) {
-          listUserMoney.forEach((element) {
-            final docMoney =
-                FirebaseFirestore.instance.collection('Money').doc();
-            final json = {
-              'money': element.money.toStringAsFixed(1),
-              'name': element.name,
-              'id_user': element.id_user,
-              'id_post': docMoney.id,
-              'workTime': element.workTime,
-              'extraditionMoney': DateTime.now(),
-            };
-            docMoney.set(json);
-          });
-          Navigator.pop(context);
-        }
-      });
-    } else {
-      showDialog(
-        context: context,
-        builder: (context) => new AlertDialog(
-          title: new Text(''),
-          content: Image.asset('images/ic_check.png'),
-          actions: <Widget>[
-            new FlatButton(
-              onPressed: () {
-                Navigator.of(context, rootNavigator: true)
-                    .pop(); // dismisses only the dialog and returns nothing
-              },
-              child: new Text(''),
-            ),
-          ],
-        ),
-      );
-      Future.delayed(const Duration(milliseconds: 1000), () {
-        print('fdsfdsf');
-
-        if (listUserMoney.length != 0) {
-          listUserMoney.forEach((element) {
-            print(element.money);
-            final docMoney =
-                FirebaseFirestore.instance.collection('Money').doc();
-            final json = {
-              'money': element.money.toStringAsFixed(1),
-              'name': element.name,
-              'id_user': element.id_user,
-              'id_post': docMoney.id,
-              'workTime': element.workTime,
-              'extraditionMoney': DateTime.now(),
-            };
-            docMoney.set(json);
-          });
-          Navigator.pop(context);
-        }
+        Navigator.pop(context);
       });
     }
-    // Navigator.pop(context);
   }
 
   void readFirebase() async {
@@ -414,7 +402,6 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
               Text("Сотрудникам: ${(money).toStringAsFixed(1)}",
                   style: TextStyle(fontSize: 22)),
               Padding(padding: EdgeInsets.only(top: 30)),
-
               Container(
                 height: MediaQuery.of(context).size.height / 2,
                 child: HorizontalDataTable(
