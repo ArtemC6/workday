@@ -5,12 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:horizontal_data_table/horizontal_data_table.dart';
+import 'package:workday/screens/auth/signin_screen.dart';
+import 'package:intl/intl.dart';
 
-import 'package:workday/screens/signin_screen.dart';
-
-import '../data/User.dart';
+import '../data/user_model.dart';
 import 'analytics_screen.dart';
-import 'detailed_statistics_screen.dart';
+import 'statistics/detailed_statistics_screen.dart';
 
 class AdministratorScreen extends StatefulWidget {
   const AdministratorScreen({Key? key}) : super(key: key);
@@ -20,8 +20,7 @@ class AdministratorScreen extends StatefulWidget {
 }
 
 class _AdministratorScreenState extends State<AdministratorScreen> {
-  List<UserModel> listUser = [];
-  List<UserModel> listUserWork = [];
+  List<UserModel> listUser = [], listUserWork = [];
   final formKey = GlobalKey<FormState>();
   double number = 0;
   RefreshController _refreshController =
@@ -33,11 +32,10 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
     return dateTimeEnd.difference(dateTimeStart).inMinutes;
   }
 
-  void readData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      number = prefs.getDouble('key_price')!;
-    });
+  String getData(Timestamp startDate) {
+    final DateTime dateTimeStart = startDate.toDate();
+    String formattedDate = DateFormat('kk:mm').format(dateTimeStart);
+    return formattedDate;
   }
 
   void readFirebase() {
@@ -66,56 +64,57 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
 
         if (timeStart == currentTime) {
           if (data['endDate'] == '') {
-            print('object');
-            var isExist = listUserWork
-                .indexWhere((element) => element.id_user == (data['id_user']));
+            setState(() {
+              var isExist = listUserWork.indexWhere(
+                  (element) => element.id_user == (data['id_user']));
 
-            if (isExist < 0) {
-              listUserWork.add(UserModel(
-                  name: data["name"],
-                  email: data["email"],
-                  status: data["status"],
-                  startUri: data["startUri"],
-                  endUri: '',
-                  startDate: data["startDate"],
-                  endDate: Timestamp.now(),
-                  id_user: data["id_user"],
-                  id_post: data["id_post"],
-                  money: 0.0,
-                  workTime:
-                      getUserWorkTime(data["startDate"], Timestamp.now())));
-              setState(() {});
-            } else {
-              listUserWork[isExist].workTime +=
-                  getUserWorkTime(Timestamp.now(), Timestamp.now());
-            }
+              if (isExist < 0) {
+                listUserWork.add(UserModel(
+                    name: data["name"],
+                    email: data["email"],
+                    status: data["status"],
+                    startUri: data["startUri"],
+                    endUri: '',
+                    startDate: data["startDate"],
+                    endDate: Timestamp.now(),
+                    id_user: data["id_user"],
+                    id_post: data["id_post"],
+                    money: 0.0,
+                    workTime:
+                        getUserWorkTime(data["startDate"], Timestamp.now())));
+              } else {
+                listUserWork[isExist].workTime +=
+                    getUserWorkTime(Timestamp.now(), Timestamp.now());
+              }
+            });
           }
         }
 
         if (timeStart == currentTime) {
           if (data['endDate'] != '') {
-            var isExist = listUser
-                .indexWhere((element) => element.id_user == (data['id_user']));
+            setState(() {
+              var isExist = listUser.indexWhere(
+                  (element) => element.id_user == (data['id_user']));
 
-            if (isExist < 0) {
-              listUser.add(UserModel(
-                  name: data["name"],
-                  email: data["email"],
-                  status: data["status"],
-                  startUri: data["startUri"],
-                  endUri: data["endUri"],
-                  startDate: data["startDate"],
-                  endDate: data["endDate"],
-                  id_user: data["id_user"],
-                  id_post: data["id_post"],
-                  money: 0.0,
-                  workTime:
-                      getUserWorkTime(data["startDate"], data["endDate"])));
-              setState(() {});
-            } else {
-              listUser[isExist].workTime += getUserWorkTime(
-                  listUser[isExist].startDate, listUser[isExist].endDate);
-            }
+              if (isExist < 0) {
+                listUser.add(UserModel(
+                    name: data["name"],
+                    email: data["email"],
+                    status: data["status"],
+                    startUri: data["startUri"],
+                    endUri: data["endUri"],
+                    startDate: data["startDate"],
+                    endDate: data["endDate"],
+                    id_user: data["id_user"],
+                    id_post: data["id_post"],
+                    money: 0.0,
+                    workTime:
+                        getUserWorkTime(data["startDate"], data["endDate"])));
+              } else {
+                listUser[isExist].workTime += getUserWorkTime(
+                    listUser[isExist].startDate, listUser[isExist].endDate);
+              }
+            });
           }
         }
       });
@@ -156,7 +155,9 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
 
   Widget _generateFirstColumnRowWorkedUsers(BuildContext context, int index) {
     return Container(
-      child: Text(listUser[index].name,style: TextStyle(fontSize: 17)),
+      child: Text(
+          "${listUser[index].name} закончил(ла) ${getData(listUser[index].endDate)}",
+          style: TextStyle(fontSize: 17)),
       width: 100,
       height: 52,
       padding: EdgeInsets.only(left: 10),
@@ -166,8 +167,9 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
 
   Widget _generateFirstColumnRowWork(BuildContext context, int index) {
     return Container(
-      child:
-          Text(listUserWork[index].name, style: TextStyle(color: Colors.green, fontSize: 17)),
+      child: Text(
+          "${listUserWork[index].name} начал(ла) ${getData(listUserWork[index].startDate)}",
+          style: TextStyle(color: Colors.green, fontSize: 17)),
       width: 100,
       height: 52,
       padding: EdgeInsets.only(left: 10),

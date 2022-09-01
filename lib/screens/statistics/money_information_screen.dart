@@ -6,18 +6,18 @@ import 'package:intl/intl.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:horizontal_data_table/horizontal_data_table.dart';
 
-import '../data/Money.dart';
-import '../data/User.dart';
+import '../../data/money_model.dart';
+import '../../data/user_model.dart';
 import 'information_users_screen.dart';
 
-class DetailedStatics extends StatefulWidget {
-  const DetailedStatics({Key? key}) : super(key: key);
+class MoneyInformationScreen extends StatefulWidget {
+  const MoneyInformationScreen({Key? key}) : super(key: key);
 
   @override
-  State<DetailedStatics> createState() => _DetailedStatics();
+  State<MoneyInformationScreen> createState() => _MoneyInformationScreen();
 }
 
-class _DetailedStatics extends State<DetailedStatics> {
+class _MoneyInformationScreen extends State<MoneyInformationScreen> {
   List<MoneyModel> listUserMoney = [];
   List<MoneyModel> listUserMoneyFull = [];
 
@@ -34,6 +34,11 @@ class _DetailedStatics extends State<DetailedStatics> {
   String getData(Timestamp startDate) {
     final DateTime dateTimeStart = startDate.toDate();
     String formattedDate = DateFormat('yyyy-MM-dd').format(dateTimeStart);
+    return formattedDate;
+  }
+
+  String getDataPeriod(DateTime startDate) {
+    String formattedDate = DateFormat('yyyy-MM-dd').format(startDate);
     return formattedDate;
   }
 
@@ -62,11 +67,6 @@ class _DetailedStatics extends State<DetailedStatics> {
         start = start.subtract(Duration(seconds: 1));
         end = end.add(Duration(days: 1));
         end = end.subtract(Duration(seconds: 1));
-
-        // print("start ${start}");
-        // print("end ${end}");
-        // print(timeStart);
-        // print("====");
 
         if (timeStart.isAfter(start) && timeStart.isBefore(end)) {
           listUserMoney.add(MoneyModel(
@@ -98,7 +98,6 @@ class _DetailedStatics extends State<DetailedStatics> {
         }
       });
     });
-
   }
 
   @override
@@ -115,6 +114,7 @@ class _DetailedStatics extends State<DetailedStatics> {
       if (result != null) {
         setState(() {
           _datePeriod = result;
+          readUserFirebase();
         });
       }
     }
@@ -138,6 +138,7 @@ class _DetailedStatics extends State<DetailedStatics> {
         _getTitleItemWidget('Подробней', 100),
       ];
     }
+
     List<Widget> _getTitleWidgetFull() {
       return [
         _getTitleItemWidget('Имя', 100),
@@ -285,7 +286,7 @@ class _DetailedStatics extends State<DetailedStatics> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('Подробная информация'),
+        title: Text('Информация'),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -293,6 +294,11 @@ class _DetailedStatics extends State<DetailedStatics> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              if (listUserMoney.length != 0)
+                Text(
+                  ' С ${getDataPeriod(_datePeriod!.start)} до ${getDataPeriod(_datePeriod!.end)}',
+                  style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
+                ),
               if (listUserMoney.length == 0)
                 Text(
                   'Информации не найденно',
@@ -338,25 +344,27 @@ class _DetailedStatics extends State<DetailedStatics> {
                 padding: EdgeInsets.only(left: 20, right: 20),
                 child: Column(
                   children: [
+                    // Container(
+                    //   padding: EdgeInsets.only(bottom: 6),
+                    //   width: MediaQuery.of(context).size.width,
+                    //   child: ElevatedButton(
+                    //       onPressed: () {
+                    //         setState(() {
+                    //           readUserFirebase();
+                    //         });
+                    //       },
+                    //       child: Text('Получить информацию')),
+                    // ),
                     Container(
                       padding: EdgeInsets.only(bottom: 6),
                       width: MediaQuery.of(context).size.width,
                       child: ElevatedButton(
                           onPressed: () {
-                            setState(() {
-                              readUserFirebase();
+                            setState(() async {
+                              _showDataTimeRange();
                             });
                           },
-                          child: Text('Получить информацию')),
-                    ),
-                    Container(
-                      padding: EdgeInsets.only(bottom: 6),
-                      width: MediaQuery.of(context).size.width,
-                      child: ElevatedButton(
-                          onPressed: () {
-                            _showDataTimeRange();
-                          },
-                          child: Text('Выбрать дату')),
+                          child: Text('Указать период')),
                     ),
                     Container(
                       padding: EdgeInsets.only(bottom: 20),
@@ -370,40 +378,6 @@ class _DetailedStatics extends State<DetailedStatics> {
                   ],
                 ),
               ),
-
-              // ElevatedButton(
-              //     onPressed: () {
-              //       var ATime = DateTime.utc(2020, 12, 22, 23, 22);
-              //
-              //       // subtract() => BTime
-              //       var BTime = ATime.subtract(Duration(days: 2));
-              //
-              //       // add() => CTime
-              //       var CTime = BTime.add(Duration(days: 2));
-              //
-              //       // Print
-              //       print(ATime);
-              //       print(BTime);
-              //       print(CTime);
-              //       print("ATime is before BTime: ${ATime.isBefore(BTime)}");
-              //       print("ATime is after BTime: ${ATime.isAfter(BTime)}");
-              //       print(
-              //           "ATime is equal to CTime: ${ATime.isAtSameMomentAs(CTime)}");
-              //
-              //       // var currentTime = DateTime.now();
-              //       //
-              //       // var dt1 = currentTime.add(Duration(days: -1));
-              //       //
-              //       // print("Начало ${_datePeriod?.start}");
-              //       // print("Конец ${_datePeriod?.end} ");
-              //       //
-              //       // print(
-              //       //     "До ${_datePeriod?.start.isBefore(_datePeriod!.end)}");
-              //       //
-              //       // print(
-              //       //     "После ${_datePeriod?.start.isAfter(_datePeriod!.end)}");
-              //     },
-              //     child: Text('dsfdsfdsfdsfdsf')),
             ],
           ),
         ),

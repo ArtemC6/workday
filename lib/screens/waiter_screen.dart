@@ -9,12 +9,12 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:workday/screens/signin_screen.dart';
+import 'package:workday/screens/auth/signin_screen.dart';
 
-import '../data/User.dart';
+import '../data/user_model.dart';
 import '../data/firedase_api.dart';
 import 'administrator_screen.dart';
-import 'information_users_screen.dart';
+import 'statistics/information_users_screen.dart';
 
 class WaiterScreen extends StatefulWidget {
   const WaiterScreen({Key? key}) : super(key: key);
@@ -28,15 +28,11 @@ class _WaiterScreenState extends State<WaiterScreen> {
   static var countdownDuration = Duration(minutes: 10);
   Duration duration = Duration();
   Timer? timer;
-  bool countDown = true;
+  bool countDown = true, isVisible = false, isVisibleTime = false;
   String _name = '';
   int _tame = 0;
-
   UploadTask? task;
-  File? startFilePhoto;
-  File? endFilePhoto;
-  bool isVisible = false;
-  bool isVisibleTime = false;
+  File? startFilePhoto, endFilePhoto;
   List<UserModel> listUser = [];
 
   Future<bool> _onStop() async {
@@ -146,7 +142,7 @@ class _WaiterScreenState extends State<WaiterScreen> {
 
   Future makeStartPhoto() async {
     final XFile? photo = await _picker.pickImage(
-        imageQuality: 10,
+        imageQuality: 9,
         source: ImageSource.camera,
         preferredCameraDevice: CameraDevice.rear);
 
@@ -159,7 +155,7 @@ class _WaiterScreenState extends State<WaiterScreen> {
 
   Future makeEndPhoto() async {
     final XFile? photo = await _picker.pickImage(
-        imageQuality: 10,
+        imageQuality: 9,
         source: ImageSource.camera,
         preferredCameraDevice: CameraDevice.front);
 
@@ -261,6 +257,19 @@ class _WaiterScreenState extends State<WaiterScreen> {
   }
 
   void readUserFirebase() async {
+    listUser.clear();
+    FirebaseFirestore.instance
+        .collection('User')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get()
+        .then((DocumentSnapshot documentSnapshot) {
+      if (documentSnapshot.exists) {
+        setState(() {
+          _name = documentSnapshot['name'];
+        });
+      }
+    });
+
     await FirebaseFirestore.instance
         .collection('Work')
         .get()
@@ -285,33 +294,31 @@ class _WaiterScreenState extends State<WaiterScreen> {
         );
 
         if (data['id_user'] == FirebaseAuth.instance.currentUser?.uid) {
-          setState(() {
-            _name = data['name'];
-          });
           if (timeStart == currentTime) {
             if (data['endDate'] != '') {
-              var isExist = listUser.indexWhere(
-                  (element) => element.id_user == (data['id_user']));
+              setState(() {
+                var isExist = listUser.indexWhere(
+                    (element) => element.id_user == (data['id_user']));
 
-              if (isExist < 0) {
-                listUser.add(UserModel(
-                    name: data["name"],
-                    email: data["email"],
-                    status: data["status"],
-                    startUri: data["startUri"],
-                    endUri: data["endUri"],
-                    startDate: data["startDate"],
-                    endDate: data["endDate"],
-                    id_user: data["id_user"],
-                    id_post: data["id_post"],
-                    money: 0.0,
-                    workTime:
-                        getUserWorkTime(data["startDate"], data["endDate"])));
-                setState(() {});
-              } else {
-                listUser[isExist].workTime +=
-                    getUserWorkTime(data['startDate'], data['endDate']);
-              }
+                if (isExist < 0) {
+                  listUser.add(UserModel(
+                      name: data["name"],
+                      email: data["email"],
+                      status: data["status"],
+                      startUri: data["startUri"],
+                      endUri: data["endUri"],
+                      startDate: data["startDate"],
+                      endDate: data["endDate"],
+                      id_user: data["id_user"],
+                      id_post: data["id_post"],
+                      money: 0.0,
+                      workTime:
+                          getUserWorkTime(data["startDate"], data["endDate"])));
+                } else {
+                  listUser[isExist].workTime +=
+                      getUserWorkTime(data['startDate'], data['endDate']);
+                }
+              });
             }
 
             if (data['endDate'] == '') {
@@ -320,9 +327,7 @@ class _WaiterScreenState extends State<WaiterScreen> {
                 isVisible = true;
               });
 
-              var hours;
-              var mints;
-              var secs;
+              var hours, mints, secs;
               hours = int.parse(
                   DateTime.now().difference(dateTimeStart).inHours.toString());
               mints = int.parse(DateTime.now()
@@ -345,9 +350,7 @@ class _WaiterScreenState extends State<WaiterScreen> {
 
     if (listUser.length != 0) {
       if (!isVisible) {
-        var hours;
-        var mints;
-        var secs;
+        var hours, mints, secs;
         hours = int.parse('00');
         mints = listUser[0].workTime;
         secs = int.parse('00');
@@ -355,9 +358,7 @@ class _WaiterScreenState extends State<WaiterScreen> {
             Duration(hours: hours, minutes: mints, seconds: secs);
         reset();
       } else {
-        var hours;
-        var mints;
-        var secs;
+        var hours, mints, secs;
         hours = int.parse('00');
         mints = listUser[0].workTime + _tame;
         secs = int.parse('00');
@@ -406,21 +407,21 @@ class _WaiterScreenState extends State<WaiterScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
-                    padding: EdgeInsets.only(bottom: 80),
+                    padding: EdgeInsets.only(bottom: 100),
                     child: buildTime(),
                   ),
-                  Container(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => AdministratorScreen()));
-                      },
-                      child: Text('Администратор'),
-                    ),
-                  ),
+                  // Container(
+                  //   width: double.infinity,
+                  //   child: ElevatedButton(
+                  //     onPressed: () async {
+                  //       Navigator.push(
+                  //           context,
+                  //           MaterialPageRoute(
+                  //               builder: (context) => AdministratorScreen()));
+                  //     },
+                  //     child: Text('Администратор'),
+                  //   ),
+                  // ),
                   if (!isVisible)
                     Container(
                       width: double.infinity,
@@ -429,7 +430,7 @@ class _WaiterScreenState extends State<WaiterScreen> {
                           DateTime now = DateTime.now();
                           int formattedDate =
                               int.parse(DateFormat('kk').format(now));
-                          // if (formattedDate >= 07 && formattedDate <= 23) {
+                          if (formattedDate >= 07 && formattedDate <= 23) {
                             isVisibleTime = false;
                             await makeStartPhoto();
                             showAlertDialog(context);
@@ -448,11 +449,11 @@ class _WaiterScreenState extends State<WaiterScreen> {
                                       builder: (context) =>
                                           new WaiterScreen()));
                             });
-                            // } else {
-                            //   setState(() {
-                            //     isVisibleTime = true;
-                            //   });
-                            // }
+                          } else {
+                            setState(() {
+                              isVisibleTime = true;
+                            });
+                          }
                         },
                         child: Text('Начать работу'),
                       ),
@@ -465,30 +466,30 @@ class _WaiterScreenState extends State<WaiterScreen> {
                             DateTime now = DateTime.now();
                             int formattedDate =
                                 int.parse(DateFormat('kk').format(now));
-                            // if (formattedDate >= 07 && formattedDate <= 23) {
-                            await makeEndPhoto();
-                            showAlertDialog(context);
+                            if (formattedDate >= 07 && formattedDate <= 23) {
+                              await makeEndPhoto();
+                              showAlertDialog(context);
 
-                            setState(() {
-                              isVisible = !isVisible;
-                              isVisibleTime = false;
-                            });
+                              setState(() {
+                                isVisible = !isVisible;
+                                isVisibleTime = false;
+                              });
 
-                            _onStop();
-                            await endWorking();
+                              _onStop();
+                              await endWorking();
 
-                            setState(() {
-                              Navigator.pushReplacement(
-                                  context,
-                                  new MaterialPageRoute(
-                                      builder: (context) =>
-                                          new WaiterScreen()));
-                            });
-                            // } else {
-                            //   setState(() {
-                            //     isVisibleTime = true;
-                            //   });
-                            // }
+                              setState(() {
+                                Navigator.pushReplacement(
+                                    context,
+                                    new MaterialPageRoute(
+                                        builder: (context) =>
+                                            new WaiterScreen()));
+                              });
+                            } else {
+                              setState(() {
+                                isVisibleTime = true;
+                              });
+                            }
                           },
                           child: Text('Закончить работу'),
                         )),

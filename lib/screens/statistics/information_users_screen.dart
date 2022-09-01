@@ -8,11 +8,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import 'package:horizontal_data_table/horizontal_data_table.dart';
 
-import '../data/User.dart';
+import '../../data/user_model.dart';
 
 class InformationUsersScreen extends StatefulWidget {
-  var id_user;
-  var time;
+  var id_user, time;
 
   InformationUsersScreen(
       {Key? key, @required this.id_user, @required this.time})
@@ -24,8 +23,7 @@ class InformationUsersScreen extends StatefulWidget {
 }
 
 class _InformationUsersScreen extends State<InformationUsersScreen> {
-  var idUser;
-  var time;
+  var idUser, time;
 
   _InformationUsersScreen(this.idUser, this.time);
 
@@ -189,8 +187,6 @@ class _InformationUsersScreen extends State<InformationUsersScreen> {
         _getTitleItemWidget('До', 100),
         _getTitleItemWidget('Время', 100),
         _getTitleItemWidget('Фото', 100),
-        // _getTitleItemWidget('Начало', 100),
-        // _getTitleItemWidget('Конец', 100),
       ];
     }
 
@@ -202,8 +198,6 @@ class _InformationUsersScreen extends State<InformationUsersScreen> {
         _getTitleItemWidget('Время', 100),
         _getTitleItemWidget('Сумма', 120),
         _getTitleItemWidget('Фото', 100),
-        // _getTitleItemWidget('Начало', 100),
-        // _getTitleItemWidget('Конец', 100),
       ];
     }
 
@@ -436,7 +430,6 @@ class _InformationUsersScreen extends State<InformationUsersScreen> {
             alignment: Alignment.topCenter,
             height: MediaQuery.of(context).size.height,
             child: Column(
-              // mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 if (!isVisible)
                   if (listUser.length != 0)
@@ -510,122 +503,6 @@ class _InformationUsersScreen extends State<InformationUsersScreen> {
                         ),
                       ),
                     ),
-                // Container(
-                //   padding: EdgeInsets.only(top: 20),
-                //   height: MediaQuery.of(context).size.height / 1.6,
-                //   width: MediaQuery.of(context).size.width,
-                //   child: ListView.builder(
-                //     itemCount: listUser.length,
-                //     itemBuilder: (context, index) => Container(
-                //       padding: EdgeInsets.only(top: 10),
-                //       child: Row(
-                //         children: [
-                //           Row(
-                //             mainAxisAlignment: MainAxisAlignment.center,
-                //             crossAxisAlignment: CrossAxisAlignment.center,
-                //             children: [
-                //               Container(
-                //                   width:
-                //                       MediaQuery.of(context).size.width /
-                //                           3.0,
-                //                   child: listUser[index].workTime <= 60
-                //                       ? Column(
-                //                           children: [
-                //                             Row(
-                //                               mainAxisAlignment:
-                //                                   MainAxisAlignment
-                //                                       .center,
-                //                               crossAxisAlignment:
-                //                                   CrossAxisAlignment
-                //                                       .center,
-                //                               children: [
-                //                                 Text(
-                //                                   '${getUerWorkTimeDifference(listUser[index].startDate, listUser[index].endDate)[0]} ',
-                //                                   style: TextStyle(
-                //                                       fontSize: 20,
-                //                                       fontWeight:
-                //                                           FontWeight
-                //                                               .bold),
-                //                                 ),
-                //                                 Text(
-                //                                   '${getUerWorkTimeDifference(listUser[index].startDate, listUser[index].endDate)[1]}',
-                //                                   style: TextStyle(
-                //                                       fontSize: 20,
-                //                                       fontWeight:
-                //                                           FontWeight
-                //                                               .bold),
-                //                                 ),
-                //                               ],
-                //                             ),
-                //                             Text(
-                //                               '${listUser[index].workTime} м',
-                //                               style: TextStyle(
-                //                                   fontSize: 20,
-                //                                   fontWeight:
-                //                                       FontWeight.bold),
-                //                             )
-                //                           ],
-                //                         )
-                //                       : Column(
-                //                           children: [
-                //                             Row(
-                //                               mainAxisAlignment:
-                //                                   MainAxisAlignment
-                //                                       .center,
-                //                               crossAxisAlignment:
-                //                                   CrossAxisAlignment
-                //                                       .center,
-                //                               children: [
-                //                                 Text(
-                //                                   '${getUerWorkTimeDifference(listUser[index].startDate, listUser[index].endDate)[0]} ',
-                //                                   style: TextStyle(
-                //                                       fontSize: 20,
-                //                                       fontWeight:
-                //                                           FontWeight
-                //                                               .bold),
-                //                                 ),
-                //                                 Text(
-                //                                   '${getUerWorkTimeDifference(listUser[index].startDate, listUser[index].endDate)[1]}',
-                //                                   style: TextStyle(
-                //                                       fontSize: 20,
-                //                                       fontWeight:
-                //                                           FontWeight
-                //                                               .bold),
-                //                                 ),
-                //                               ],
-                //                             ),
-                //                             Text(
-                //                               '${(listUser[index].workTime / 60).toStringAsFixed(1)} ч',
-                //                               style: TextStyle(
-                //                                   fontSize: 20,
-                //                                   fontWeight:
-                //                                       FontWeight.bold),
-                //                             ),
-                //                           ],
-                //                         )),
-                //               Image(
-                //                 image: NetworkImage(
-                //                     listUser[index].startUri),
-                //                 height: 80,
-                //                 width: 100,
-                //                 fit: BoxFit.fill,
-                //               ),
-                //               Padding(padding: EdgeInsets.only(left: 10)),
-                //               Image(
-                //                 image:
-                //                     NetworkImage(listUser[index].endUri),
-                //                 height: 80,
-                //                 width: 100,
-                //                 fit: BoxFit.fill,
-                //               ),
-                //             ],
-                //           )
-                //         ],
-                //       ),
-                //     ),
-                //   ),
-                // ),
-
                 if (isVisible)
                   if (listUser.length != 0)
                     Container(
@@ -647,133 +524,6 @@ class _InformationUsersScreen extends State<InformationUsersScreen> {
                         ),
                       ),
                     ),
-                // Container(
-                //   padding: EdgeInsets.only(top: 20),
-                //   height: MediaQuery.of(context).size.height / 1.6,
-                //   width: MediaQuery.of(context).size.width,
-                //   child: ListView.builder(
-                //     itemCount: listUser.length,
-                //     itemBuilder: (context, index) => Container(
-                //       padding: EdgeInsets.only(top: 10),
-                //       child: Row(
-                //         children: [
-                //           Row(
-                //             mainAxisAlignment: MainAxisAlignment.center,
-                //             crossAxisAlignment: CrossAxisAlignment.center,
-                //             children: [
-                //               Container(
-                //                   width: MediaQuery.of(context).size.width /
-                //                       3.0,
-                //                   child: listUser[index].workTime <= 60
-                //                       ? Column(
-                //                           children: [
-                //                             Row(
-                //                               mainAxisAlignment:
-                //                                   MainAxisAlignment.center,
-                //                               crossAxisAlignment:
-                //                                   CrossAxisAlignment.center,
-                //                               children: [
-                //                                 Text(
-                //                                   '${getUerWorkTimeDifference(listUser[index].startDate, listUser[index].endDate)[0]} ',
-                //                                   style: TextStyle(
-                //                                       fontSize: 20,
-                //                                       fontWeight:
-                //                                           FontWeight.bold),
-                //                                 ),
-                //                                 Text(
-                //                                   '${getUerWorkTimeDifference(listUser[index].startDate, listUser[index].endDate)[1]}',
-                //                                   style: TextStyle(
-                //                                       fontSize: 20,
-                //                                       fontWeight:
-                //                                           FontWeight.bold),
-                //                                 ),
-                //                               ],
-                //                             ),
-                //                             Column(
-                //                               children: [
-                //                                 Text(
-                //                                   '${listUser[index].workTime} м',
-                //                                   style: TextStyle(
-                //                                       fontSize: 20,
-                //                                       fontWeight:
-                //                                           FontWeight.bold),
-                //                                 ),
-                //                                 Text(
-                //                                   '${listUser[index].money} сом',
-                //                                   style: TextStyle(
-                //                                       fontSize: 20,
-                //                                       fontWeight:
-                //                                           FontWeight.bold),
-                //                                 ),
-                //                               ],
-                //                             ),
-                //                           ],
-                //                         )
-                //                       : Column(
-                //                           children: [
-                //                             Row(
-                //                               mainAxisAlignment:
-                //                                   MainAxisAlignment.center,
-                //                               crossAxisAlignment:
-                //                                   CrossAxisAlignment.center,
-                //                               children: [
-                //                                 Text(
-                //                                   '${getUerWorkTimeDifference(listUser[index].startDate, listUser[index].endDate)[0]} ',
-                //                                   style: TextStyle(
-                //                                       fontSize: 20,
-                //                                       fontWeight:
-                //                                           FontWeight.bold),
-                //                                 ),
-                //                                 Text(
-                //                                   '${getUerWorkTimeDifference(listUser[index].startDate, listUser[index].endDate)[1]}',
-                //                                   style: TextStyle(
-                //                                       fontSize: 20,
-                //                                       fontWeight:
-                //                                           FontWeight.bold),
-                //                                 ),
-                //                               ],
-                //                             ),
-                //                             Column(
-                //                               children: [
-                //                                 Text(
-                //                                   '${(listUser[index].workTime / 60).toStringAsFixed(1)} ч',
-                //                                   style: TextStyle(
-                //                                       fontSize: 20,
-                //                                       fontWeight:
-                //                                           FontWeight.bold),
-                //                                 ),
-                //                                 Text(
-                //                                   '${listUser[index].money} сом',
-                //                                   style: TextStyle(
-                //                                       fontSize: 20,
-                //                                       fontWeight:
-                //                                           FontWeight.bold),
-                //                                 ),
-                //                               ],
-                //                             ),
-                //                           ],
-                //                         )),
-                //               Image(
-                //                 image:
-                //                     NetworkImage(listUser[index].startUri),
-                //                 height: 80,
-                //                 width: 100,
-                //                 fit: BoxFit.fill,
-                //               ),
-                //               Padding(padding: EdgeInsets.only(left: 10)),
-                //               Image(
-                //                 image: NetworkImage(listUser[index].endUri),
-                //                 height: 80,
-                //                 width: 100,
-                //                 fit: BoxFit.fill,
-                //               ),
-                //             ],
-                //           )
-                //         ],
-                //       ),
-                //     ),
-                //   ),
-                // ),
                 Container(
                   padding: EdgeInsets.only(left: 20, right: 20),
                   width: MediaQuery.of(context).size.width,

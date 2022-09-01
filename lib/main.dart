@@ -4,10 +4,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:workday/screens/administrator_screen.dart';
 import 'package:workday/screens/analytics_screen.dart';
-import 'package:workday/screens/detailed_statistics_screen.dart';
-import 'package:workday/screens/signin_screen.dart';
-import 'package:workday/screens/signup_screen.dart';
-import 'package:workday/screens/table.dart';
+import 'package:workday/screens/statistics/detailed_statistics_screen.dart';
+import 'package:workday/screens/auth/signin_screen.dart';
+import 'package:workday/screens/auth/signup_screen.dart';
 import 'package:workday/screens/waiter_screen.dart';
 
 void main() async {
@@ -22,6 +21,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -50,13 +50,12 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   bool isVisible = true;
 
-  void sigNinFirebase() async{
+  void sigNinFirebase() async {
     await FirebaseFirestore.instance
         .collection('User')
         .get()
         .then((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((document) {
-
         setState(() {
           isVisible = false;
         });
@@ -65,25 +64,25 @@ class _HomeScreenState extends State<HomeScreen> {
 
         if (data['uid'] == FirebaseAuth.instance.currentUser?.uid) {
           if (data['status'] == 'waiter') {
-            Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => WaiterScreen()));
+            Navigator.of(context)
+                .push(MaterialPageRoute(builder: (context) => WaiterScreen()));
           } else {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => AdministratorScreen()));
+            Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => AdministratorScreen()));
           }
         } else {
-          Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => SignInScreen()));
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (context) => SignInScreen()));
         }
-
       });
     });
 
-    if(isVisible) {
-      Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => SignInScreen()));
+    if (isVisible) {
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => SignInScreen()));
     }
   }
+
   @override
   void initState() {
     super.initState();

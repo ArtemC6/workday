@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:horizontal_data_table/horizontal_data_table.dart';
 
-import '../data/User.dart';
+import '../data/user_model.dart';
 import 'analytics_screen.dart';
-import 'information_users_screen.dart';
+import 'statistics/information_users_screen.dart';
 
 class ExtraditionScreen extends StatefulWidget {
   var sum;
@@ -19,12 +19,8 @@ class ExtraditionScreen extends StatefulWidget {
 }
 
 class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
-  List<UserModel> listUser = [];
-  List<UserModel> listUserWork = [];
-  List<UserModel> listUserMoney = [];
-  String _sum = '0.0';
-  String _percent = '0';
-
+  List<UserModel> listUser = [],listUserWork = [],listUserMoney = [];
+  String _sum = '0.0', _percent = '0';
   _ExtraditionScreenScreenState(this._sum);
 
   final formKey = GlobalKey<FormState>();
@@ -95,7 +91,6 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
                 setState(() {});
               } else {
                 listUserMoney[isExistMoney].money += data['money'];
-
                 listUserMoney[isExistMoney].workTime +=
                     getUserWorkTime(data['startDate'], data['endDate']);
               }
@@ -384,7 +379,7 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('Расчет'),
+        title: Text('Выдача'),
       ),
       body: Form(
         key: formKey,

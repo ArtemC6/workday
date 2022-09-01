@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:workday/screens/extradition_screen.dart';
 
-import '../data/User.dart';
-import 'information_users_screen.dart';
+import '../data/user_model.dart';
+import 'statistics/information_users_screen.dart';
 
 class AnalyticScreen extends StatefulWidget {
   const AnalyticScreen({Key? key}) : super(key: key);
@@ -16,14 +16,10 @@ class AnalyticScreen extends StatefulWidget {
 }
 
 class _AnalyticScreenState extends State<AnalyticScreen> {
-  List<UserModel> listUser = [];
-  List<UserModel> listUserWork = [];
-  List<UserModel> listUserMoney = [];
+  List<UserModel> listUser = [], listUserWork = [], listUserMoney = [];
   String _sum = '0.0';
-
   final formKey = GlobalKey<FormState>();
-  bool isPosition = true;
-  bool isEmpty = false;
+  bool isPosition = true, isEmpty = false;
 
   int getUserWorkTime(Timestamp startDate, Timestamp endDate) {
     final DateTime dateTimeStart = startDate.toDate();
@@ -151,7 +147,6 @@ class _AnalyticScreenState extends State<AnalyticScreen> {
   }
 
   void readFirebase() async {
-    List<UserModel> listTake = [];
     await FirebaseFirestore.instance
         .collection('Work')
         .get()
