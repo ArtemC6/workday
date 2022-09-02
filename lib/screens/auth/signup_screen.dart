@@ -142,7 +142,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                               docUser.set(json);
 
-                              Navigator.of(context).push(MaterialPageRoute(
+                              Navigator.of(context).pushReplacement(MaterialPageRoute(
                                   builder: (context) => HomeScreen()));
                             }).onError((error, stackTrace) {
                               print("${error}");

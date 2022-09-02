@@ -23,7 +23,6 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
   String _sum = '0.0', _percent = '0';
   _ExtraditionScreenScreenState(this._sum);
 
-  final formKey = GlobalKey<FormState>();
   bool isEmpty = false;
 
   int getUserWorkTime(Timestamp startDate, Timestamp endDate) {
@@ -381,64 +380,61 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
       appBar: AppBar(
         title: Text('Выдача'),
       ),
-      body: Form(
-        key: formKey,
-        child: Container(
-          alignment: Alignment.topCenter,
-          height: MediaQuery.of(context).size.height,
-          padding: EdgeInsets.only(top: 20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text("Общаая выручка: ${_sum}", style: TextStyle(fontSize: 22)),
-              Container(
-                padding: EdgeInsets.only(top: 6, bottom: 6),
+      body: Container(
+        alignment: Alignment.topCenter,
+        height: MediaQuery.of(context).size.height,
+        padding: EdgeInsets.only(top: 20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text("Общаая выручка: ${_sum}", style: TextStyle(fontSize: 22)),
+            Container(
+              padding: EdgeInsets.only(top: 6, bottom: 6),
+            ),
+            Text("Сотрудникам: ${(money).toStringAsFixed(1)}",
+                style: TextStyle(fontSize: 22)),
+            Padding(padding: EdgeInsets.only(top: 30)),
+            Container(
+              height: MediaQuery.of(context).size.height / 2,
+              child: HorizontalDataTable(
+                leftHandSideColumnWidth: 80,
+                rightHandSideColumnWidth: 600,
+                isFixedHeader: true,
+                headerWidgets: _getTitleWidget(),
+                leftSideItemBuilder: _generateFirstColumnRow,
+                rightSideItemBuilder: _generateRightHandSideColumnRow,
+                itemCount: listUser.length,
+                rowSeparatorWidget: const Divider(
+                  color: Colors.black54,
+                  height: 1.0,
+                  thickness: 0.0,
+                ),
               ),
-              Text("Сотрудникам: ${(money).toStringAsFixed(1)}",
-                  style: TextStyle(fontSize: 22)),
-              Padding(padding: EdgeInsets.only(top: 30)),
-              Container(
-                height: MediaQuery.of(context).size.height / 2,
-                child: HorizontalDataTable(
-                  leftHandSideColumnWidth: 80,
-                  rightHandSideColumnWidth: 600,
-                  isFixedHeader: true,
-                  headerWidgets: _getTitleWidget(),
-                  leftSideItemBuilder: _generateFirstColumnRow,
-                  rightSideItemBuilder: _generateRightHandSideColumnRow,
-                  itemCount: listUser.length,
-                  rowSeparatorWidget: const Divider(
-                    color: Colors.black54,
-                    height: 1.0,
-                    thickness: 0.0,
+            ),
+            Container(
+              padding: EdgeInsets.only(left: 20, right: 20, top: 20),
+              child: Column(
+                children: [
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    child: ElevatedButton(
+                        onPressed: () async {
+                          calculation(getTotalTime(listUserWork, money));
+                        },
+                        child: Text('Выдать дньги')),
                   ),
-                ),
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text('Вернуться')),
+                  ),
+                ],
               ),
-              Container(
-                padding: EdgeInsets.only(left: 20, right: 20, top: 20),
-                child: Column(
-                  children: [
-                    Container(
-                      width: MediaQuery.of(context).size.width,
-                      child: ElevatedButton(
-                          onPressed: () async {
-                            calculation(getTotalTime(listUserWork, money));
-                          },
-                          child: Text('Выдать дньги')),
-                    ),
-                    Container(
-                      width: MediaQuery.of(context).size.width,
-                      child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: Text('Вернуться')),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

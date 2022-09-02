@@ -7,7 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:workday/screens/auth/signup_screen.dart';
-import 'package:workday/screens/waiter_screen.dart';
+import 'package:workday/screens/employee_screen.dart';
 
 import '../../main.dart';
 import '../administrator_screen.dart';
@@ -39,10 +39,10 @@ class _SignInScreenState extends State<SignInScreen> {
               documentSnapshot.data() as Map<String, dynamic>;
 
           if (data['status'] == 'waiter') {
-            Navigator.of(context)
-                .push(MaterialPageRoute(builder: (context) => WaiterScreen()));
+            Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => EmployeeScreen()));
           } else {
-            Navigator.of(context).push(
+            Navigator.of(context).pushReplacement(
                 MaterialPageRoute(builder: (context) => AdministratorScreen()));
           }
         }
@@ -133,15 +133,12 @@ class _SignInScreenState extends State<SignInScreen> {
                       width: double.infinity,
                       child: ElevatedButton(
                           onPressed: () async {
-
-
-
                             if (formKey.currentState!.validate()) {
                               FirebaseAuth.instance
                                   .signInWithEmailAndPassword(
                                       email: _email, password: _password)
                                   .then((value) => {
-                                        Navigator.of(context).push(
+                                        Navigator.of(context).pushReplacement(
                                             MaterialPageRoute(
                                                 builder: (context) =>
                                                     HomeScreen()))

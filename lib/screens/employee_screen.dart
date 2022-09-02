@@ -10,20 +10,22 @@ import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:workday/screens/auth/signin_screen.dart';
+import 'package:workday/screens/employee_settings_screen.dart';
+import 'package:workday/screens/statistics/user_information_period_screen.dart';
 
 import '../data/user_model.dart';
 import '../data/firedase_api.dart';
 import 'administrator_screen.dart';
 import 'statistics/information_users_screen.dart';
 
-class WaiterScreen extends StatefulWidget {
-  const WaiterScreen({Key? key}) : super(key: key);
+class EmployeeScreen extends StatefulWidget {
+  const EmployeeScreen({Key? key}) : super(key: key);
 
   @override
-  State<WaiterScreen> createState() => _WaiterScreenState();
+  State<EmployeeScreen> createState() => _EmployeeScreenState();
 }
 
-class _WaiterScreenState extends State<WaiterScreen> {
+class _EmployeeScreenState extends State<EmployeeScreen> {
   final ImagePicker _picker = ImagePicker();
   static var countdownDuration = Duration(minutes: 10);
   Duration duration = Duration();
@@ -384,6 +386,20 @@ class _WaiterScreenState extends State<WaiterScreen> {
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
+          actions: [
+            Container(
+              padding: EdgeInsets.only(right: 20),
+              child: IconButton(
+                icon: Icon(Icons.settings),
+                onPressed: () {
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => EmployeeSettingsScreen()));
+                },
+              ),
+            ),
+          ],
           title: Text('Сотрудник: ${_name}'),
         ),
         body: RefreshIndicator(
@@ -394,7 +410,7 @@ class _WaiterScreenState extends State<WaiterScreen> {
               Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                      builder: (BuildContext context) => WaiterScreen()));
+                      builder: (BuildContext context) => EmployeeScreen()));
             });
           },
           child: SingleChildScrollView(
@@ -410,18 +426,18 @@ class _WaiterScreenState extends State<WaiterScreen> {
                     padding: EdgeInsets.only(bottom: 100),
                     child: buildTime(),
                   ),
-                  // Container(
-                  //   width: double.infinity,
-                  //   child: ElevatedButton(
-                  //     onPressed: () async {
-                  //       Navigator.push(
-                  //           context,
-                  //           MaterialPageRoute(
-                  //               builder: (context) => AdministratorScreen()));
-                  //     },
-                  //     child: Text('Администратор'),
-                  //   ),
-                  // ),
+                  Container(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => AdministratorScreen()));
+                      },
+                      child: Text('Администратор'),
+                    ),
+                  ),
                   if (!isVisible)
                     Container(
                       width: double.infinity,
@@ -447,7 +463,7 @@ class _WaiterScreenState extends State<WaiterScreen> {
                                   context,
                                   new MaterialPageRoute(
                                       builder: (context) =>
-                                          new WaiterScreen()));
+                                          new EmployeeScreen()));
                             });
                           } else {
                             setState(() {
@@ -483,7 +499,7 @@ class _WaiterScreenState extends State<WaiterScreen> {
                                     context,
                                     new MaterialPageRoute(
                                         builder: (context) =>
-                                            new WaiterScreen()));
+                                            new EmployeeScreen()));
                               });
                             } else {
                               setState(() {
@@ -493,7 +509,6 @@ class _WaiterScreenState extends State<WaiterScreen> {
                           },
                           child: Text('Закончить работу'),
                         )),
-                  if (listUser.length != 0)
                     Container(
                       padding: EdgeInsets.only(),
                       width: double.infinity,
@@ -502,8 +517,8 @@ class _WaiterScreenState extends State<WaiterScreen> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => InformationUsersScreen(
-                                        id_user: listUser[0].id_user,
+                                  builder: (context) => UserInformationPeriodScreen(
+                                        uid : FirebaseAuth.instance.currentUser!.uid,
                                       )));
                         },
                         child: Text('Информация'),

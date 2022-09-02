@@ -7,7 +7,9 @@ import 'package:workday/screens/analytics_screen.dart';
 import 'package:workday/screens/statistics/detailed_statistics_screen.dart';
 import 'package:workday/screens/auth/signin_screen.dart';
 import 'package:workday/screens/auth/signup_screen.dart';
-import 'package:workday/screens/waiter_screen.dart';
+import 'package:workday/screens/employee_screen.dart';
+import 'package:intl/intl.dart';
+import 'data/fine_model.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,7 +35,7 @@ class MyApp extends StatelessWidget {
         '/detailed': (context) => const DetailedStatics(),
         '/signIn': (context) => const SignInScreen(),
         '/signup': (context) => const SignUpScreen(),
-        '/waiter': (context) => const WaiterScreen(),
+        '/waiter': (context) => const EmployeeScreen(),
       },
       // home: const HomeScreen(),
     );
@@ -48,9 +50,109 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  bool isVisible = true;
+  List<FineModel> listFine = [], listFineFull = [];
+  bool isPosition = true,
+      isPositionVisible = false,
+      isEmpty = false,
+      isVisible = true;
+
+  void calculationFine() async {
+    await FirebaseFirestore.instance
+        .collection('Fine')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((document) async {
+        Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+
+        final Timestamp timestampStart = data['time'] as Timestamp;
+
+        final DateTime dateTimeStart = timestampStart.toDate();
+
+        var timeStart = new DateTime(
+          dateTimeStart.year,
+          dateTimeStart.month,
+          dateTimeStart.day,
+        );
+
+        DateTime currentDate = DateTime.now();
+        var currentTime = new DateTime(
+          currentDate.year,
+          currentDate.month,
+          currentDate.day,
+        );
+
+        if (timeStart == currentTime) {
+          setState(() {
+            isEmpty = true;
+          });
+        }
+      });
+    });
+
+    if (!isEmpty) {
+      Future.delayed(const Duration(milliseconds: 200), () async {
+        listFine.forEach((element) {
+          final dockMoney = FirebaseFirestore.instance.collection('Fine').doc();
+          final json = {
+            'name': element.name,
+            'id_user': element.id_user,
+            'id_post': dockMoney.id,
+            'lateness': element.lateness,
+            'time': element.time,
+            'money_fine': element.money_fine,
+          };
+          dockMoney.set(json);
+        });
+      });
+    }
+  }
 
   void sigNinFirebase() async {
+    FirebaseFirestore.instance
+        .collection('Work')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((document) async {
+        Map<String, dynamic> data =
+        document.data() as Map<String, dynamic>;
+
+        final Timestamp timestampStart =
+        data['startDate'] as Timestamp;
+        final DateTime dateTimeStart =
+        timestampStart.toDate();
+
+        var timeStart = new DateTime(
+            dateTimeStart.year,
+            dateTimeStart.month,
+            dateTimeStart.day,
+            dateTimeStart.hour);
+
+        DateTime dateOver = DateTime.parse(
+            "${DateFormat('yyyy-MM-dd').format(timeStart)} 23");
+
+        var timeOver = new DateTime(dateOver.year,
+            dateOver.month, dateOver.day, dateOver.hour);
+
+        if (data['endDate'] == '') {
+          if (timeOver.hour > timeStart.hour) {
+            final dockUsers = await FirebaseFirestore.instance
+                .collection('Work');
+
+            final json = {
+              'endUri':
+              'https://img2.freepng.ru/20180421/qgq/kisspng-computer-icons-emoticon'
+                  '-smiley-sadness-clip-art-pain-5adbd26692d7b0.2429607315243556866015.jpg',
+              'endDate': DateTime.parse(
+                  "${DateFormat('yyyy-MM-dd').format(timeStart)} 23"),
+            };
+            dockUsers.doc(document.id).update(json);
+          }
+        }
+      });
+    });
+
+    // calculationFine();
+
     await FirebaseFirestore.instance
         .collection('User')
         .get()
@@ -64,22 +166,22 @@ class _HomeScreenState extends State<HomeScreen> {
 
         if (data['uid'] == FirebaseAuth.instance.currentUser?.uid) {
           if (data['status'] == 'waiter') {
-            Navigator.of(context)
-                .push(MaterialPageRoute(builder: (context) => WaiterScreen()));
+            Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => EmployeeScreen()));
           } else {
-            Navigator.of(context).push(
+            Navigator.of(context).pushReplacement(
                 MaterialPageRoute(builder: (context) => AdministratorScreen()));
           }
         } else {
-          Navigator.of(context)
-              .push(MaterialPageRoute(builder: (context) => SignInScreen()));
+          Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => SignInScreen()));
         }
       });
     });
 
     if (isVisible) {
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => SignInScreen()));
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => SignInScreen()));
     }
   }
 

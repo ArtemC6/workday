@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:horizontal_data_table/horizontal_data_table.dart';
 import 'package:workday/screens/statistics/fine_screen.dart';
 import 'package:workday/screens/statistics/money_information_screen.dart';
+import 'package:workday/screens/statistics/user_information_period_screen.dart';
 
 import '../../data/money_model.dart';
 import '../../data/user_model.dart';
@@ -49,6 +50,19 @@ class _DetailedStatics extends State<DetailedStatics> {
                                         MoneyInformationScreen()));
                           },
                           child: Text('Получить информацию о выдочи денег')),
+                    ),
+                    Container(
+                      padding: EdgeInsets.only(bottom: 6),
+                      width: MediaQuery.of(context).size.width,
+                      child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        UserInformationPeriodScreen()));
+                          },
+                          child: Text('Получить информацию о сотрудниках')),
                     ),
                     Container(
                       padding: EdgeInsets.only(bottom: 6),

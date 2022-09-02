@@ -41,7 +41,7 @@ class _FineScreens extends State<FineScreens> {
     return formattedDate;
   }
 
-  void calculation() async {
+  void calculationFine() async {
     await FirebaseFirestore.instance
         .collection('Fine')
         .get()
@@ -77,6 +77,23 @@ class _FineScreens extends State<FineScreens> {
     if (!isEmpty) {
       Future.delayed(const Duration(milliseconds: 200), () async {
         listFine.forEach((element) {
+
+          final DateTime dateTimeStart = element.time.toDate();
+
+          var timeStart = new DateTime(
+            dateTimeStart.year,
+            dateTimeStart.month,
+            dateTimeStart.day,
+          );
+
+          print(timeStart);
+
+          // var timeStart = new DateTime(
+          //   dateTimeStart.year,
+          //   dateTimeStart.month,
+          //   dateTimeStart.day,
+          // );
+
           final dockMoney = FirebaseFirestore.instance.collection('Fine').doc();
           final json = {
             'name': element.name,
@@ -122,11 +139,18 @@ class _FineScreens extends State<FineScreens> {
         final Timestamp timestampStart = data['startDate'] as Timestamp;
         final DateTime dateTimeStart = timestampStart.toDate();
 
+        // int formattedDate = int.parse(DateFormat('mm').format(dateTimeStart));
+        // String formattedDateHour = DateFormat('kk').format(dateTimeStart);
         int formattedDate = int.parse(DateFormat('mm').format(dateTimeStart));
-        String formattedDateHour = DateFormat('kk').format(dateTimeStart);
+        String formattedDateHour = DateFormat('yyyy-MM-dd kk').format(dateTimeStart);
+        String formattedDateHourDifference = DateFormat('yyyy-MM-dd').format(dateTimeStart);
+
+
+        // print(formattedDateHour);
+        // print('${formattedDateHourDifference} 07');
 
         setState(() {
-          if (formattedDateHour == '07') {
+          if (formattedDateHour == '${formattedDateHourDifference} 07') {
             if (formattedDate <= 5) {
               listFine.add(FineModel(
                   name: data['name'],
@@ -434,7 +458,7 @@ class _FineScreens extends State<FineScreens> {
                     //   width: MediaQuery.of(context).size.width,
                     //   child: ElevatedButton(
                     //       onPressed: () {
-                    //         calculation();
+                    //         calculationFine();
                     //       },
                     //       child: Text('Вернутdfdsfsfdsfься')),
                     // ),
