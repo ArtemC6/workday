@@ -264,7 +264,7 @@ class _InformationUsersScreen extends State<InformationUsersScreen> {
                         Container(
                           child: Image(
                             image: NetworkImage(listUser[index].startUri),
-                            fit: BoxFit.fill,
+                            fit: BoxFit.fitWidth,
                           ),
                           height: MediaQuery.of(context).size.height / 2.8,
                           width: MediaQuery.of(context).size.width / 1,
@@ -273,7 +273,7 @@ class _InformationUsersScreen extends State<InformationUsersScreen> {
                         Container(
                           child: Image(
                             image: NetworkImage(listUser[index].endUri),
-                            fit: BoxFit.fill,
+                            fit: BoxFit.fitWidth,
                           ),
                           height: MediaQuery.of(context).size.height / 2.8,
                           width: MediaQuery.of(context).size.width / 1,
@@ -374,7 +374,7 @@ class _InformationUsersScreen extends State<InformationUsersScreen> {
                         Container(
                           child: Image(
                             image: NetworkImage(listUser[index].startUri),
-                            fit: BoxFit.fill,
+                            fit: BoxFit.fitWidth,
                           ),
                           height: MediaQuery.of(context).size.height / 2.8,
                           width: MediaQuery.of(context).size.width / 1,
@@ -383,7 +383,7 @@ class _InformationUsersScreen extends State<InformationUsersScreen> {
                         Container(
                           child: Image(
                             image: NetworkImage(listUser[index].endUri),
-                            fit: BoxFit.fill,
+                            fit: BoxFit.fitWidth,
                           ),
                           height: MediaQuery.of(context).size.height / 2.8,
                           width: MediaQuery.of(context).size.width / 1,
