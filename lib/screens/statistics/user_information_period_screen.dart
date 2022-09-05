@@ -364,10 +364,11 @@ class _UserInformationPeriodScreen extends State<UserInformationPeriodScreen> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: Text('Информация'),
-      ),
+      // appBar: AppBar(
+      //   title: Text('Информация'),
+      // ),
       body: SingleChildScrollView(
+        padding: EdgeInsets.only(top: 20),
         child: Container(
           height: MediaQuery.of(context).size.height,
           child: Column(
@@ -423,17 +424,6 @@ class _UserInformationPeriodScreen extends State<UserInformationPeriodScreen> {
                 padding: EdgeInsets.only(left: 20, right: 20),
                 child: Column(
                   children: [
-                    // Container(
-                    //   padding: EdgeInsets.only(bottom: 6),
-                    //   width: MediaQuery.of(context).size.width,
-                    //   child: ElevatedButton(
-                    //       onPressed: () {
-                    //         setState(() {
-                    //           readUserFirebase();
-                    //         });
-                    //       },
-                    //       child: Text('Получить информацию')),
-                    // ),
                     Container(
                       padding: EdgeInsets.only(bottom: 6),
                       width: MediaQuery.of(context).size.width,

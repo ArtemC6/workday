@@ -56,103 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
       isEmpty = false,
       isVisible = true;
 
-  void calculationFine() async {
-    await FirebaseFirestore.instance
-        .collection('Fine')
-        .get()
-        .then((QuerySnapshot querySnapshot) {
-      querySnapshot.docs.forEach((document) async {
-        Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-
-        final Timestamp timestampStart = data['time'] as Timestamp;
-
-        final DateTime dateTimeStart = timestampStart.toDate();
-
-        var timeStart = new DateTime(
-          dateTimeStart.year,
-          dateTimeStart.month,
-          dateTimeStart.day,
-        );
-
-        DateTime currentDate = DateTime.now();
-        var currentTime = new DateTime(
-          currentDate.year,
-          currentDate.month,
-          currentDate.day,
-        );
-
-        if (timeStart == currentTime) {
-          setState(() {
-            isEmpty = true;
-          });
-        }
-      });
-    });
-
-    if (!isEmpty) {
-      Future.delayed(const Duration(milliseconds: 200), () async {
-        listFine.forEach((element) {
-          final dockMoney = FirebaseFirestore.instance.collection('Fine').doc();
-          final json = {
-            'name': element.name,
-            'id_user': element.id_user,
-            'id_post': dockMoney.id,
-            'lateness': element.lateness,
-            'time': element.time,
-            'money_fine': element.money_fine,
-          };
-          dockMoney.set(json);
-        });
-      });
-    }
-  }
-
   void sigNinFirebase() async {
-    FirebaseFirestore.instance
-        .collection('Work')
-        .get()
-        .then((QuerySnapshot querySnapshot) {
-      querySnapshot.docs.forEach((document) async {
-        Map<String, dynamic> data =
-        document.data() as Map<String, dynamic>;
-
-        final Timestamp timestampStart =
-        data['startDate'] as Timestamp;
-        final DateTime dateTimeStart =
-        timestampStart.toDate();
-
-        var timeStart = new DateTime(
-            dateTimeStart.year,
-            dateTimeStart.month,
-            dateTimeStart.day,
-            dateTimeStart.hour);
-
-        DateTime dateOver = DateTime.parse(
-            "${DateFormat('yyyy-MM-dd').format(timeStart)} 23");
-
-        var timeOver = new DateTime(dateOver.year,
-            dateOver.month, dateOver.day, dateOver.hour);
-
-        if (data['endDate'] == '') {
-          if (timeOver.hour > timeStart.hour) {
-            final dockUsers = await FirebaseFirestore.instance
-                .collection('Work');
-
-            final json = {
-              'endUri':
-              'https://img2.freepng.ru/20180421/qgq/kisspng-computer-icons-emoticon'
-                  '-smiley-sadness-clip-art-pain-5adbd26692d7b0.2429607315243556866015.jpg',
-              'endDate': DateTime.parse(
-                  "${DateFormat('yyyy-MM-dd').format(timeStart)} 23"),
-            };
-            dockUsers.doc(document.id).update(json);
-          }
-        }
-      });
-    });
-
-    // calculationFine();
-
     await FirebaseFirestore.instance
         .collection('User')
         .get()
@@ -183,6 +87,43 @@ class _HomeScreenState extends State<HomeScreen> {
       Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => SignInScreen()));
     }
+
+    FirebaseFirestore.instance
+        .collection('Work')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((document) async {
+        Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+
+        final Timestamp timestampStart = data['startDate'] as Timestamp;
+        final DateTime dateTimeStart = timestampStart.toDate();
+
+        var timeStart = new DateTime(dateTimeStart.year, dateTimeStart.month,
+            dateTimeStart.day, dateTimeStart.hour);
+
+        DateTime dateOver =
+            DateTime.parse("${DateFormat('yyyy-MM-dd').format(timeStart)} 23");
+
+        var timeOver = new DateTime(
+            dateOver.year, dateOver.month, dateOver.day, dateOver.hour);
+
+        if (data['endDate'] == '') {
+          if (timeOver.hour > timeStart.hour) {
+            final dockUsers =
+                await FirebaseFirestore.instance.collection('Work');
+
+            final json = {
+              'endUri':
+                  'https://img2.freepng.ru/20180421/qgq/kisspng-computer-icons-emoticon'
+                      '-smiley-sadness-clip-art-pain-5adbd26692d7b0.2429607315243556866015.jpg',
+              'endDate': DateTime.parse(
+                  "${DateFormat('yyyy-MM-dd').format(timeStart)} 23"),
+            };
+            dockUsers.doc(document.id).update(json);
+          }
+        }
+      });
+    });
   }
 
   @override

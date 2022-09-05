@@ -6,8 +6,6 @@ import 'package:flutter/services.dart';
 import 'package:horizontal_data_table/horizontal_data_table.dart';
 
 import '../data/user_model.dart';
-import 'analytics_screen.dart';
-import 'statistics/information_users_screen.dart';
 
 class ExtraditionScreen extends StatefulWidget {
   var sum;
@@ -19,11 +17,11 @@ class ExtraditionScreen extends StatefulWidget {
 }
 
 class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
-  List<UserModel> listUser = [],listUserWork = [],listUserMoney = [];
+  List<UserModel> listUser = [], listUserWork = [], listUserMoney = [];
   String _sum = '0.0', _percent = '0';
-  _ExtraditionScreenScreenState(this._sum);
-
   bool isEmpty = false;
+
+  _ExtraditionScreenScreenState(this._sum);
 
   int getUserWorkTime(Timestamp startDate, Timestamp endDate) {
     final DateTime dateTimeStart = startDate.toDate();
@@ -137,12 +135,13 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
     });
 
     if (!isEmpty) {
-      Future.delayed(const Duration(milliseconds: 200), () async {
+      Future.delayed(const Duration(milliseconds: 300), () async {
         listUserMoney.forEach((element) {
           final dockMoney =
               FirebaseFirestore.instance.collection('Money').doc();
           final json = {
             'money': double.parse(element.money.toStringAsFixed(1)),
+            'money_full': double.parse(_sum),
             'name': element.name,
             'id_user': element.id_user,
             'id_post': dockMoney.id,
@@ -159,7 +158,7 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
           title: new Text(''),
           content: Image.asset('images/ic_check.png'),
           actions: <Widget>[
-            new FlatButton(
+            ElevatedButton(
               onPressed: () {
                 Navigator.of(context, rootNavigator: true)
                     .pop(); // dismisses only the dialog and returns nothing

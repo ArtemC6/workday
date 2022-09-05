@@ -16,7 +16,6 @@ import 'package:workday/screens/statistics/user_information_period_screen.dart';
 import '../data/user_model.dart';
 import '../data/firedase_api.dart';
 import 'administrator_screen.dart';
-import 'statistics/information_users_screen.dart';
 
 class EmployeeScreen extends StatefulWidget {
   const EmployeeScreen({Key? key}) : super(key: key);
@@ -509,21 +508,23 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                           },
                           child: Text('Закончить работу'),
                         )),
-                    Container(
-                      padding: EdgeInsets.only(),
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => UserInformationPeriodScreen(
-                                        uid : FirebaseAuth.instance.currentUser!.uid,
-                                      )));
-                        },
-                        child: Text('Информация'),
-                      ),
+                  Container(
+                    padding: EdgeInsets.only(),
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    UserInformationPeriodScreen(
+                                      uid: FirebaseAuth
+                                          .instance.currentUser!.uid,
+                                    )));
+                      },
+                      child: Text('Информация'),
                     ),
+                  ),
                   Container(
                     padding: EdgeInsets.only(),
                     width: double.infinity,

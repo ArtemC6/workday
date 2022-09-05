@@ -282,17 +282,11 @@ class _InformationUsersScreen extends State<InformationUsersScreen> {
                       ],
                     ),
                     actions: <Widget>[
-                      new FlatButton(
+                      ElevatedButton(
                         onPressed: () {
-                          Navigator.of(context, rootNavigator: true)
-                              .pop(); // dismisses only the dialog and returns nothing
+                          Navigator.pop(context);
                         },
-                        child: TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: Text('Закрыть'),
-                        ),
+                        child: Text('Свернуть'),
                       ),
                     ],
                   ),
@@ -392,17 +386,11 @@ class _InformationUsersScreen extends State<InformationUsersScreen> {
                       ],
                     ),
                     actions: <Widget>[
-                      new FlatButton(
-                        onPressed: () {
-                          Navigator.of(context, rootNavigator: true)
-                              .pop(); // dismisses only the dialog and returns nothing
-                        },
-                        child: TextButton(
+                         ElevatedButton(
                           onPressed: () {
                             Navigator.pop(context);
                           },
-                          child: Text('Закрыть'),
-                        ),
+                          child: Text('Свернуть'),
                       ),
                     ],
                   ),

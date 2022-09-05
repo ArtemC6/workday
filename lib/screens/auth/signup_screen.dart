@@ -16,9 +16,7 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   final formKey = GlobalKey<FormState>();
-  String _email = "";
-  String _password = "";
-  String _name = "";
+  String _email = "", _password = "", _name = "";
 
   @override
   Widget build(BuildContext context) {
@@ -124,7 +122,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     child: ElevatedButton(
                         onPressed: () {
                           if (formKey.currentState!.validate()) {
-
                             FirebaseAuth.instance
                                 .createUserWithEmailAndPassword(
                                     email: _email, password: _password)
@@ -142,8 +139,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                               docUser.set(json);
 
-                              Navigator.of(context).pushReplacement(MaterialPageRoute(
-                                  builder: (context) => HomeScreen()));
+                              Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                      builder: (context) => HomeScreen()));
                             }).onError((error, stackTrace) {
                               print("${error}");
                             });

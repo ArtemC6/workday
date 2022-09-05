@@ -25,9 +25,9 @@ class _DetailedStatics extends State<DetailedStatics> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: Text('Информация'),
-      ),
+      // appBar: AppBar(
+      //   title: Text('Информация'),
+      // ),
       body: SingleChildScrollView(
         child: Container(
           height: MediaQuery.of(context).size.height,

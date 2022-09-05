@@ -21,8 +21,7 @@ class SignInScreen extends StatefulWidget {
 
 class _SignInScreenState extends State<SignInScreen> {
   final formKey = GlobalKey<FormState>();
-  String _email = "";
-  String _password = "";
+  String _email = "", _password = "";
   CollectionReference users = FirebaseFirestore.instance.collection('User');
 
   @override

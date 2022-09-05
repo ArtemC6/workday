@@ -262,33 +262,14 @@ class _MoneyInformationScreen extends State<MoneyInformationScreen> {
             padding: EdgeInsets.only(left: 20),
             alignment: Alignment.centerLeft,
           ),
-          // Container(
-          //   child: ElevatedButton(
-          //     onPressed: () {
-          //       Navigator.push(
-          //           context,
-          //           MaterialPageRoute(
-          //               builder: (context) => InformationUsersScreen(
-          //                     id_user: listUserMoneyFull[index].id_user,
-          //                     time: listUserMoneyFull[index].extraditionMoney,
-          //                   )));
-          //     },
-          //     child: Text('Подробней'),
-          //   ),
-          //   width: 140,
-          //   height: 30,
-          //   padding: EdgeInsets.only(left: 30),
-          // ),
         ],
       );
     }
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: Text('Информация'),
-      ),
       body: SingleChildScrollView(
+        padding: EdgeInsets.only(top: 20),
         child: Container(
           height: MediaQuery.of(context).size.height,
           child: Column(

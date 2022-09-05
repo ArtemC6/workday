@@ -21,7 +21,7 @@ class FineScreens extends StatefulWidget {
 class _FineScreens extends State<FineScreens> {
   List<FineModel> listFine = [], listFineFull = [];
 
-  bool isPosition = true, isPositionVisible = false, isEmpty = false;
+  bool isPosition = true, isPositionVisible = false, isEmpty = true;
   DateTimeRange? _datePeriod;
 
   int getUserWorkTime(Timestamp startDate, Timestamp endDate) {
@@ -50,7 +50,6 @@ class _FineScreens extends State<FineScreens> {
         Map<String, dynamic> data = document.data() as Map<String, dynamic>;
 
         final Timestamp timestampStart = data['time'] as Timestamp;
-
         final DateTime dateTimeStart = timestampStart.toDate();
 
         var timeStart = new DateTime(
@@ -59,52 +58,78 @@ class _FineScreens extends State<FineScreens> {
           dateTimeStart.day,
         );
 
-        DateTime currentDate = DateTime.now();
-        var currentTime = new DateTime(
-          currentDate.year,
-          currentDate.month,
-          currentDate.day,
-        );
+        setState(() {
+          isEmpty = false;
+        });
 
-        if (timeStart == currentTime) {
-          setState(() {
-            isEmpty = true;
-          });
-        }
+        listFine.forEach((element) async {
+          final dockFine =
+              await FirebaseFirestore.instance.collection('Fine').doc();
+
+          final Timestamp timestampStartList = element.time as Timestamp;
+          final DateTime dateTimeList = timestampStartList.toDate();
+
+          var timeStartList = new DateTime(
+            dateTimeList.year,
+            dateTimeList.month,
+            dateTimeList.day,
+          );
+
+          if (timeStart != timeStartList) {
+            if (data['id_user'] == element.id_user) {
+              final json = {
+                'name': element.name,
+                'id_user': element.id_user,
+                'id_post': dockFine.id,
+                'change': element.change,
+                'lateness': element.lateness,
+                'time': element.time,
+                'money_fine': element.money_fine,
+              };
+              dockFine.set(json);
+            }
+          }
+
+          if (timeStart != timeStartList) {
+            if (data['id_user'] != element.id_user) {
+              if (listFine.length != querySnapshot.size) {
+                // print("${listFine.length} ${querySnapshot.size} A");
+                // print("${data['id_user']} ${data['name']} F");
+                //
+                // print("${element.id_user} ${element.name} L");
+
+                final json = {
+                  'name': element.name,
+                  'change': element.change,
+                  'id_user': element.id_user,
+                  'id_post': dockFine.id,
+                  'lateness': element.lateness,
+                  'time': element.time,
+                  'money_fine': element.money_fine,
+                };
+                dockFine.set(json);
+              }
+            }
+          }
+        });
       });
     });
 
-    if (!isEmpty) {
-      Future.delayed(const Duration(milliseconds: 200), () async {
-        listFine.forEach((element) {
+    if (isEmpty) {
+      listFine.forEach((element) async {
+        final dockFine =
+            await FirebaseFirestore.instance.collection('Fine').doc();
 
-          final DateTime dateTimeStart = element.time.toDate();
-
-          var timeStart = new DateTime(
-            dateTimeStart.year,
-            dateTimeStart.month,
-            dateTimeStart.day,
-          );
-
-          print(timeStart);
-
-          // var timeStart = new DateTime(
-          //   dateTimeStart.year,
-          //   dateTimeStart.month,
-          //   dateTimeStart.day,
-          // );
-
-          final dockMoney = FirebaseFirestore.instance.collection('Fine').doc();
-          final json = {
-            'name': element.name,
-            'id_user': element.id_user,
-            'id_post': dockMoney.id,
-            'lateness': element.lateness,
-            'time': element.time,
-            'money_fine': element.money_fine,
-          };
-          dockMoney.set(json);
-        });
+        final json = {
+          'name': element.name,
+          'id_user': element.id_user,
+          'id_post': dockFine.id,
+          'lateness': element.lateness,
+          'change': element.change,
+          'time': element.time,
+          'money_fine': element.money_fine,
+        };
+        dockFine.set(json);
       });
     }
   }
@@ -127,8 +152,7 @@ class _FineScreens extends State<FineScreens> {
   }
 
   void readFirebase() async {
-    // listFineFull.clear();
-    // listFine.clear();
+    listFine.clear();
     await FirebaseFirestore.instance
         .collection('Work')
         .get()
@@ -139,47 +163,90 @@ class _FineScreens extends State<FineScreens> {
         final Timestamp timestampStart = data['startDate'] as Timestamp;
         final DateTime dateTimeStart = timestampStart.toDate();
 
-        // int formattedDate = int.parse(DateFormat('mm').format(dateTimeStart));
-        // String formattedDateHour = DateFormat('kk').format(dateTimeStart);
-        int formattedDate = int.parse(DateFormat('mm').format(dateTimeStart));
-        String formattedDateHour = DateFormat('yyyy-MM-dd kk').format(dateTimeStart);
-        String formattedDateHourDifference = DateFormat('yyyy-MM-dd').format(dateTimeStart);
+        var timeStart = new DateTime(dateTimeStart.year, dateTimeStart.month,
+            dateTimeStart.day, dateTimeStart.hour, dateTimeStart.minute);
 
+        DateTime dateOver_7 =
+            DateTime.parse("${DateFormat('yyyy-MM-dd').format(timeStart)} 07");
 
-        // print(formattedDateHour);
-        // print('${formattedDateHourDifference} 07');
+        DateTime dateOver_15 =
+            DateTime.parse("${DateFormat('yyyy-MM-dd').format(timeStart)} 15");
 
+        // var timeOver = new DateTime(
+        //     dateOver.year, dateOver.month, dateOver.day, dateOver.hour);
+
+        // print(timeStart.hour);
+        // print('----');
+
+        // 7
         setState(() {
-          if (formattedDateHour == '${formattedDateHourDifference} 07') {
-            if (formattedDate <= 5) {
+          if (timeStart.hour == dateOver_7.hour) {
+            if (timeStart.minute <= 5) {
               listFine.add(FineModel(
                   name: data['name'],
-                  lateness: formattedDate,
+                  lateness: timeStart.minute,
                   time: data['startDate'],
                   money_fine: 100,
                   id_user: data['id_user'],
-                  id_post: ''));
-            } else if (formattedDate <= 15) {
+                  id_post: '',
+                  change: 1));
+            } else if (timeStart.minute <= 15) {
               listFine.add(FineModel(
                   name: data['name'],
-                  lateness: formattedDate,
+                  lateness: timeStart.minute,
                   time: data['startDate'],
                   money_fine: 200,
                   id_user: data['id_user'],
-                  id_post: ''));
+                  id_post: '',
+                  change: 1));
             } else {
               listFine.add(FineModel(
                   name: data['name'],
-                  lateness: formattedDate,
+                  lateness: timeStart.minute,
                   time: data['startDate'],
                   money_fine: 300,
                   id_user: data['id_user'],
-                  id_post: ''));
+                  id_post: '',
+                  change: 1));
+            }
+          }
+
+          // 15
+          if (timeStart.hour == dateOver_15.hour) {
+            if (timeStart.minute <= 5) {
+              listFine.add(FineModel(
+                  name: data['name'],
+                  lateness: timeStart.minute,
+                  time: data['startDate'],
+                  money_fine: 100,
+                  id_user: data['id_user'],
+                  id_post: '',
+                  change: 2));
+            } else if (timeStart.minute <= 15) {
+              listFine.add(FineModel(
+                  name: data['name'],
+                  lateness: timeStart.minute,
+                  time: data['startDate'],
+                  money_fine: 200,
+                  id_user: data['id_user'],
+                  id_post: '',
+                  change: 2));
+            } else {
+              listFine.add(FineModel(
+                  name: data['name'],
+                  lateness: timeStart.minute,
+                  time: data['startDate'],
+                  money_fine: 300,
+                  id_user: data['id_user'],
+                  id_post: '',
+                  change: 2));
             }
           }
         });
       });
     });
+
+    calculationFine();
 
     await FirebaseFirestore.instance
         .collection('Fine')
@@ -211,7 +278,8 @@ class _FineScreens extends State<FineScreens> {
               time: data['time'],
               money_fine: data['money_fine'],
               id_user: data['id_user'],
-              id_post: 'id_post'));
+              id_post: 'id_post',
+              change: data['change']));
         }
       });
     });
@@ -219,7 +287,6 @@ class _FineScreens extends State<FineScreens> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     readFirebase();
   }
@@ -242,6 +309,7 @@ class _FineScreens extends State<FineScreens> {
         _getTitleItemWidget('Время', 100),
         _getTitleItemWidget('Штраф', 100),
         _getTitleItemWidget('Дата', 100),
+        _getTitleItemWidget('Смена', 100),
         _getTitleItemWidget('Подробней', 100),
       ];
     }
@@ -252,6 +320,7 @@ class _FineScreens extends State<FineScreens> {
         _getTitleItemWidget('Время', 100),
         _getTitleItemWidget('Штраф', 100),
         _getTitleItemWidget('Дата', 100),
+        _getTitleItemWidget('Смена', 100),
         _getTitleItemWidget('Подробней', 100),
       ];
     }
@@ -306,6 +375,18 @@ class _FineScreens extends State<FineScreens> {
             alignment: Alignment.centerLeft,
           ),
           Container(
+            child: Text(
+              '${listFineFull[index].change.toString()}',
+              style: TextStyle(
+                fontSize: 16,
+              ),
+            ),
+            width: 100,
+            height: 52,
+            padding: EdgeInsets.only(left: 30),
+            alignment: Alignment.centerLeft,
+          ),
+          Container(
             child: ElevatedButton(
               onPressed: () {
                 Navigator.push(
@@ -320,7 +401,7 @@ class _FineScreens extends State<FineScreens> {
             ),
             width: 140,
             height: 30,
-            padding: EdgeInsets.only(left: 30),
+            padding: EdgeInsets.only(left: 10),
           ),
         ],
       );
@@ -374,9 +455,9 @@ class _FineScreens extends State<FineScreens> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: Text('Информация'),
-      ),
+      // appBar: AppBar(
+      //   title: Text('Информация'),
+      // ),
       body: SingleChildScrollView(
         child: Container(
           height: MediaQuery.of(context).size.height,
@@ -458,7 +539,7 @@ class _FineScreens extends State<FineScreens> {
                     //   width: MediaQuery.of(context).size.width,
                     //   child: ElevatedButton(
                     //       onPressed: () {
-                    //         calculationFine();
+                    //         readFirebase();
                     //       },
                     //       child: Text('Вернутdfdsfsfdsfься')),
                     // ),
