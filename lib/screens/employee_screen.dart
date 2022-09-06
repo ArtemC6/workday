@@ -425,18 +425,18 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                     padding: EdgeInsets.only(bottom: 100),
                     child: buildTime(),
                   ),
-                  Container(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => AdministratorScreen()));
-                      },
-                      child: Text('Администратор'),
-                    ),
-                  ),
+                  // Container(
+                  //   width: double.infinity,
+                  //   child: ElevatedButton(
+                  //     onPressed: () async {
+                  //       Navigator.push(
+                  //           context,
+                  //           MaterialPageRoute(
+                  //               builder: (context) => AdministratorScreen()));
+                  //     },
+                  //     child: Text('Администратор'),
+                  //   ),
+                  // ),
                   if (!isVisible)
                     Container(
                       width: double.infinity,
