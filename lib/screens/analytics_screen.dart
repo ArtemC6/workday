@@ -136,9 +136,6 @@ class _AnalyticScreenState extends State<AnalyticScreen> {
     double money = double.parse(_sum) * 0.07;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Расчет'),
-      ),
       body: SingleChildScrollView(
         child: RefreshIndicator(
           onRefresh: () async {
@@ -159,7 +156,7 @@ class _AnalyticScreenState extends State<AnalyticScreen> {
                   if (isPosition)
                     Container(
                         alignment: Alignment.centerLeft,
-                        padding: EdgeInsets.only(top: 20, bottom: 20, left: 14),
+                        padding: EdgeInsets.only(top: 40, bottom: 20, left: 14),
                         child: Text(
                           "Сегодня работали ${listUser.length.toString()}",
                           style: TextStyle(
@@ -249,7 +246,7 @@ class _AnalyticScreenState extends State<AnalyticScreen> {
                     child: ElevatedButton(
                       onPressed: () async {
                         if (formKey.currentState!.validate()) {
-                          Navigator.pushReplacement(
+                          Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (BuildContext context) =>

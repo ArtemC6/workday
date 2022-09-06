@@ -425,7 +425,7 @@ class _UserInformationPeriodScreen extends State<UserInformationPeriodScreen> {
                 child: Column(
                   children: [
                     Container(
-                      padding: EdgeInsets.only(bottom: 6),
+                      padding: EdgeInsets.only(bottom: 6, top: 20),
                       width: MediaQuery.of(context).size.width,
                       child: ElevatedButton(
                           onPressed: () {
@@ -435,15 +435,17 @@ class _UserInformationPeriodScreen extends State<UserInformationPeriodScreen> {
                           },
                           child: Text('Указать период')),
                     ),
-                    Container(
-                      padding: EdgeInsets.only(bottom: 20),
-                      width: MediaQuery.of(context).size.width,
-                      child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: Text('Вернуться')),
-                    ),
+
+                    if (uid == null)
+                      Container(
+                        padding: EdgeInsets.only(bottom: 20),
+                        width: MediaQuery.of(context).size.width,
+                        child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text('Вернуться')),
+                      ),
                   ],
                 ),
               ),

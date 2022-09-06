@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:horizontal_data_table/horizontal_data_table.dart';
+import 'package:workday/screens/administrator_screen.dart';
 
 import '../data/user_model.dart';
 
@@ -157,15 +158,7 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
         builder: (context) => new AlertDialog(
           title: new Text(''),
           content: Image.asset('images/ic_check.png'),
-          actions: <Widget>[
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context, rootNavigator: true)
-                    .pop(); // dismisses only the dialog and returns nothing
-              },
-              child: new Text(''),
-            ),
-          ],
+          actions: <Widget>[],
         ),
       );
 
@@ -376,9 +369,6 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: Text('Выдача'),
-      ),
       body: Container(
         alignment: Alignment.topCenter,
         height: MediaQuery.of(context).size.height,
@@ -392,9 +382,9 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
             ),
             Text("Сотрудникам: ${(money).toStringAsFixed(1)}",
                 style: TextStyle(fontSize: 22)),
-            Padding(padding: EdgeInsets.only(top: 30)),
+            Padding(padding: EdgeInsets.only(top: 10)),
             Container(
-              height: MediaQuery.of(context).size.height / 2,
+              height: MediaQuery.of(context).size.height / 1.5,
               child: HorizontalDataTable(
                 leftHandSideColumnWidth: 80,
                 rightHandSideColumnWidth: 600,
@@ -426,7 +416,11 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
                     width: MediaQuery.of(context).size.width,
                     child: ElevatedButton(
                         onPressed: () {
-                          Navigator.pop(context);
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      AdministratorScreen()));
                         },
                         child: Text('Вернуться')),
                   ),

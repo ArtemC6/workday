@@ -118,15 +118,6 @@ class _DetailedStatics extends State<DetailedStatics> {
                           onPressed: () {},
                           child: Text('Получить информацию о консьержах')),
                     ),
-                    Container(
-                      padding: EdgeInsets.only(bottom: 20),
-                      width: MediaQuery.of(context).size.width,
-                      child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: Text('Вернуться')),
-                    ),
                   ],
                 ),
               ),

@@ -10,8 +10,9 @@ import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:workday/screens/auth/signin_screen.dart';
-import 'package:workday/screens/employee_settings_screen.dart';
+import 'package:workday/screens/settings/settings_screen.dart';
 import 'package:workday/screens/statistics/user_information_period_screen.dart';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 
 import '../data/user_model.dart';
 import '../data/firedase_api.dart';
@@ -27,11 +28,16 @@ class EmployeeScreen extends StatefulWidget {
 class _EmployeeScreenState extends State<EmployeeScreen> {
   final ImagePicker _picker = ImagePicker();
   static var countdownDuration = Duration(minutes: 10);
+
+  // GlobalKey<CurvedNavigationBarState> _bottomNavigationKey = GlobalKey();
   Duration duration = Duration();
   Timer? timer;
-  bool countDown = true, isVisible = false, isVisibleTime = false;
+  bool countDown = true,
+      isVisible = false,
+      isVisibleTime = false,
+      isVisibleBar = true;
   String _name = '';
-  int _tame = 0;
+  int _tame = 0, _page = 0;
   UploadTask? task;
   File? startFilePhoto, endFilePhoto;
   List<UserModel> listUser = [];
@@ -378,67 +384,87 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        return await false;
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          actions: [
-            Container(
-              padding: EdgeInsets.only(right: 20),
-              child: IconButton(
-                icon: Icon(Icons.settings),
-                onPressed: () {
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => EmployeeSettingsScreen()));
-                },
-              ),
-            ),
-          ],
-          title: Text('Сотрудник: ${_name}'),
-        ),
-        body: RefreshIndicator(
-          edgeOffset: 20,
-          color: Colors.black,
-          onRefresh: () async {
-            setState(() {
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (BuildContext context) => EmployeeScreen()));
-            });
-          },
-          child: SingleChildScrollView(
-            child: Container(
-              alignment: Alignment.center,
-              height: MediaQuery.of(context).size.height,
-              padding: EdgeInsets.only(right: 30, left: 30),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
+    Widget employeeMain() {
+      return RefreshIndicator(
+        edgeOffset: 20,
+        color: Colors.black,
+        onRefresh: () async {
+          setState(() {
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (BuildContext context) => EmployeeScreen()));
+          });
+        },
+        child: SingleChildScrollView(
+          child: Container(
+            color: Colors.blueAccent,
+            alignment: Alignment.center,
+            height: MediaQuery.of(context).size.height,
+            padding: EdgeInsets.only(right: 30, left: 30),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  padding: EdgeInsets.only(bottom: 100),
+                  child: buildTime(),
+                ),
+                // Container(
+                //   width: double.infinity,
+                //   child: ElevatedButton(
+                //     onPressed: () async {
+                //       Navigator.push(
+                //           context,
+                //           MaterialPageRoute(
+                //               builder: (context) => AdministratorScreen()));
+                //     },
+                //     child: Text('Администратор'),
+                //   ),
+                // ),
+                if (!isVisible)
                   Container(
-                    padding: EdgeInsets.only(bottom: 100),
-                    child: buildTime(),
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white),
+                      onPressed: () async {
+                        DateTime now = DateTime.now();
+                        int formattedDate =
+                            int.parse(DateFormat('kk').format(now));
+                        if (formattedDate >= 07 && formattedDate <= 23) {
+                          isVisibleTime = false;
+                          await makeStartPhoto();
+                          showAlertDialog(context);
+
+                          setState(() {
+                            isVisible = !isVisible;
+                            isVisibleTime = false;
+                          });
+
+                          await startWorking();
+
+                          setState(() {
+                            Navigator.pushReplacement(
+                                context,
+                                new MaterialPageRoute(
+                                    builder: (context) =>
+                                        new EmployeeScreen()));
+                          });
+                        } else {
+                          setState(() {
+                            isVisibleTime = true;
+                          });
+                        }
+                      },
+                      child: Text(
+                        'Начать работу',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    ),
                   ),
-                  // Container(
-                  //   width: double.infinity,
-                  //   child: ElevatedButton(
-                  //     onPressed: () async {
-                  //       Navigator.push(
-                  //           context,
-                  //           MaterialPageRoute(
-                  //               builder: (context) => AdministratorScreen()));
-                  //     },
-                  //     child: Text('Администратор'),
-                  //   ),
-                  // ),
-                  if (!isVisible)
-                    Container(
+                if (isVisible)
+                  Container(
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () async {
@@ -446,8 +472,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                           int formattedDate =
                               int.parse(DateFormat('kk').format(now));
                           if (formattedDate >= 07 && formattedDate <= 23) {
-                            isVisibleTime = false;
-                            await makeStartPhoto();
+                            await makeEndPhoto();
                             showAlertDialog(context);
 
                             setState(() {
@@ -455,7 +480,8 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                               isVisibleTime = false;
                             });
 
-                            await startWorking();
+                            _onStop();
+                            await endWorking();
 
                             setState(() {
                               Navigator.pushReplacement(
@@ -470,87 +496,70 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                             });
                           }
                         },
-                        child: Text('Начать работу'),
-                      ),
-                    ),
-                  if (isVisible)
-                    Container(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            DateTime now = DateTime.now();
-                            int formattedDate =
-                                int.parse(DateFormat('kk').format(now));
-                            if (formattedDate >= 07 && formattedDate <= 23) {
-                              await makeEndPhoto();
-                              showAlertDialog(context);
-
-                              setState(() {
-                                isVisible = !isVisible;
-                                isVisibleTime = false;
-                              });
-
-                              _onStop();
-                              await endWorking();
-
-                              setState(() {
-                                Navigator.pushReplacement(
-                                    context,
-                                    new MaterialPageRoute(
-                                        builder: (context) =>
-                                            new EmployeeScreen()));
-                              });
-                            } else {
-                              setState(() {
-                                isVisibleTime = true;
-                              });
-                            }
-                          },
-                          child: Text('Закончить работу'),
-                        )),
+                        child: Text('Закончить работу'),
+                      )),
+                if (isVisibleTime)
                   Container(
-                    padding: EdgeInsets.only(),
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    UserInformationPeriodScreen(
-                                      uid: FirebaseAuth
-                                          .instance.currentUser!.uid,
-                                    )));
-                      },
-                      child: Text('Информация'),
+                    padding: EdgeInsets.only(top: 30, bottom: 20),
+                    child: Text(
+                      'Работу можно начать с 07: до 23:',
+                      style:
+                          TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
                     ),
                   ),
-                  Container(
-                    padding: EdgeInsets.only(),
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        FirebaseAuth.instance.signOut();
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => SignInScreen()));
-                      },
-                      child: Text('Выйти'),
-                    ),
-                  ),
-                  if (isVisibleTime)
-                    Container(
-                      padding: EdgeInsets.only(top: 30, bottom: 20),
-                      child: Text(
-                        'Работу можно начать с 07: до 23:',
-                        style: TextStyle(
-                            fontSize: 19, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                ],
-              ),
+              ],
             ),
           ),
         ),
+      );
+    }
+
+    Widget childEmployee() {
+      var child;
+      switch (_page) {
+        case 0:
+          child = employeeMain();
+          break;
+        case 1:
+          child = UserInformationPeriodScreen(
+              uid: FirebaseAuth.instance.currentUser!.uid);
+          break;
+        case 2:
+          child = SettingsScreen();
+          break;
+      }
+      return child;
+    }
+
+    return WillPopScope(
+      onWillPop: () async {
+        return await false;
+      },
+      child: Scaffold(
+        bottomNavigationBar: CurvedNavigationBar(
+          // key: _bottomNavigationKey,
+          index: 0,
+          height: 60.0,
+
+          items: <Widget>[
+            Icon(Icons.add, size: 30),
+            Icon(Icons.list, size: 30),
+            Icon(Icons.perm_identity, size: 30),
+          ],
+
+          color: Colors.white,
+          buttonBackgroundColor: Colors.white,
+          backgroundColor: Colors.blueAccent,
+          animationCurve: Curves.easeInOut,
+          animationDuration: Duration(milliseconds: 700),
+          onTap: (index) {
+            setState(() {
+              _page = index;
+            });
+          },
+          letIndexChange: (index) => true,
+        ),
+        body: SizedBox.expand(child: childEmployee()),
       ),
     );
   }

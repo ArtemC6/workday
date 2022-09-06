@@ -54,6 +54,7 @@ dev_dependencies:
   shared_preferences: ^2.0.15
   horizontal_data_table: ^4.1.1+1
   pull_to_refresh_flutter3: ^2.0.1
+  curved_navigation_bar: ^1.0.3
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

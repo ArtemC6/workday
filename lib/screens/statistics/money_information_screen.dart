@@ -281,9 +281,12 @@ class _MoneyInformationScreen extends State<MoneyInformationScreen> {
                   style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
                 ),
               if (listUserMoney.length == 0)
-                Text(
-                  'Информации не найденно',
-                  style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
+                Container(
+                  padding: EdgeInsets.only(bottom: 20),
+                  child: Text(
+                    'Информации не найденно',
+                    style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
+                  ),
                 ),
               if (listUserMoney.length != 0)
                 Container(

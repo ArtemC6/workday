@@ -5,14 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:workday/screens/employee_screen.dart';
 
-class EmployeeSettingsScreen extends StatefulWidget {
-  const EmployeeSettingsScreen({Key? key}) : super(key: key);
+import '../auth/signin_screen.dart';
+
+class SettingsScreen extends StatefulWidget {
+  const SettingsScreen({Key? key}) : super(key: key);
 
   @override
-  State<EmployeeSettingsScreen> createState() => _EmployeeSettingsScreen();
+  State<SettingsScreen> createState() => _SettingsScreen();
 }
 
-class _EmployeeSettingsScreen extends State<EmployeeSettingsScreen> {
+class _SettingsScreen extends State<SettingsScreen> {
   final formKey = GlobalKey<FormState>();
   String _name = '';
 
@@ -43,12 +45,10 @@ class _EmployeeSettingsScreen extends State<EmployeeSettingsScreen> {
         return await false;
       },
       child: Scaffold(
-          appBar: AppBar(
-            title: Text('Настройки'),
-          ),
           body: Form(
             key: formKey,
             child: Container(
+              color: Colors.blueAccent,
               padding: EdgeInsets.only(left: 20, right: 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -59,13 +59,20 @@ class _EmployeeSettingsScreen extends State<EmployeeSettingsScreen> {
                     padding: EdgeInsets.only(
                         left: 10, right: 10, top: 20, bottom: 20),
                     child: TextFormField(
+                      cursorColor: Colors.white,
                       controller: TextEditingController(text: _name),
                       decoration: InputDecoration(
+                        focusColor: Colors.white,
+                        iconColor: Colors.white,
                         hintText: 'Введите процент сотрудникам',
+                        // fillColor: Colors.white,
+                        // hoverColor: Colors.white,
+                        // prefixIconColor: Colors.white,
+                        // suffixIconColor: Colors.white,
                       ),
                       style: TextStyle(
                         fontSize: 17,
-                        color: Colors.black,
+                        color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
                       validator: (value) {
@@ -84,9 +91,11 @@ class _EmployeeSettingsScreen extends State<EmployeeSettingsScreen> {
                     ),
                   ),
                   Container(
-                    color: Colors.white,
                     width: double.infinity,
                     child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white),
+
                       onPressed: () async {
                         if (formKey.currentState!.validate()) {
                           final dockUsers = await FirebaseFirestore.instance
@@ -100,18 +109,23 @@ class _EmployeeSettingsScreen extends State<EmployeeSettingsScreen> {
                               .update(json);
                         }
                       },
-                      child: Text('Сохронить'),
+                      child: Text('Сохронить', style: TextStyle(color: Colors.black),),
                     ),
                   ),
+
                   Container(
-                    color: Colors.white,
+                    padding: EdgeInsets.only(),
+
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () async {
-                        Navigator.of(context).pushReplacement(MaterialPageRoute(
-                            builder: (context) => EmployeeScreen()));
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white),
+                      onPressed: () {
+                        FirebaseAuth.instance.signOut();
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => SignInScreen()));
                       },
-                      child: Text('Вернуться'),
+                      child: Text('Выйти с аккаунта', style: TextStyle(color: Colors.black),),
                     ),
                   ),
                 ],

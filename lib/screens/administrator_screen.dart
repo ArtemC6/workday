@@ -7,6 +7,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:horizontal_data_table/horizontal_data_table.dart';
 import 'package:workday/screens/auth/signin_screen.dart';
 import 'package:intl/intl.dart';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:workday/screens/settings/settings_screen.dart';
 
 import '../data/user_model.dart';
 import 'analytics_screen.dart';
@@ -23,6 +25,8 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
   List<UserModel> listUser = [], listUserWork = [];
   final formKey = GlobalKey<FormState>();
   double number = 0;
+  int _page = 0;
+
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
 
@@ -262,121 +266,109 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Widget administratorMain() {
+      return SmartRefresher(
+        onRefresh: () async {
+          setState(() {
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (BuildContext context) => AdministratorScreen()));
+          });
+        },
+        controller: _refreshController,
+        child: Container(
+          color: Colors.white,
+          height: MediaQuery.of(context).size.height,
+          // padding: EdgeInsets.only(left: 10, right: 10),
+          child: Column(
+            children: [
+              Container(
+                height: MediaQuery.of(context).size.height / 2,
+                child: HorizontalDataTable(
+                  leftHandSideColumnWidth: MediaQuery.of(context).size.width,
+                  rightHandSideColumnWidth: 600,
+                  isFixedHeader: true,
+                  headerWidgets: _getTitleWidgetWorkedUsers(),
+                  leftSideItemBuilder: _generateFirstColumnRowWorkedUsers,
+                  rightSideItemBuilder: _generateRightHandSideColumnRow,
+                  itemCount: listUser.length,
+                  rowSeparatorWidget: const Divider(
+                    color: Colors.black54,
+                    height: 1.0,
+                    thickness: 0.0,
+                  ),
+                ),
+              ),
+              Container(
+                height: MediaQuery.of(context).size.height / 2,
+                child: HorizontalDataTable(
+                  leftHandSideColumnWidth: MediaQuery.of(context).size.width,
+                  rightHandSideColumnWidth: 600,
+                  isFixedHeader: true,
+                  headerWidgets: _getTitleWidgetWork(),
+                  leftSideItemBuilder: _generateFirstColumnRowWork,
+                  rightSideItemBuilder: _generateRightHandSideColumnRow,
+                  itemCount: listUserWork.length,
+                  rowSeparatorWidget: const Divider(
+                    color: Colors.black54,
+                    height: 1.0,
+                    thickness: 0.0,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    Widget childAdministrator() {
+      var child;
+      switch (_page) {
+        case 0:
+          child = administratorMain();
+          break;
+        case 1:
+          child = AnalyticScreen();
+          break;
+        case 2:
+          child = DetailedStatics();
+          break;
+        case 3:
+          child = SettingsScreen();
+          break;
+      }
+      return child;
+    }
+
     return WillPopScope(
       onWillPop: () async {
         return await false;
       },
       child: Scaffold(
-        appBar: AppBar(
-          actions: [
-            Container(
-              padding: EdgeInsets.only(right: 30),
-              child: IconButton(
-                icon: Icon(Icons.settings),
-                onPressed: () {
-                  // _settingWindow();
-                },
-              ),
-            ),
+        bottomNavigationBar: CurvedNavigationBar(
+          index: 0,
+          height: 60.0,
+          items: <Widget>[
+            Icon(Icons.phone_android_rounded, size: 30),
+            Icon(Icons.stacked_bar_chart_sharp, size: 30),
+            Icon(Icons.list, size: 30),
+            Icon(Icons.perm_identity, size: 30),
           ],
-          automaticallyImplyLeading: false,
-          title: Text('Администратор'),
-        ),
-        body: SmartRefresher(
-          // enablePullDown: true,
-          // enablePullUp: true,
-          onRefresh: () async {
+          color: Colors.white,
+          buttonBackgroundColor: Colors.white,
+          backgroundColor: Colors.blueAccent,
+          animationCurve: Curves.easeInOut,
+          animationDuration: Duration(milliseconds: 700),
+          onTap: (index) {
             setState(() {
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (BuildContext context) =>
-                          AdministratorScreen()));
+              _page = index;
             });
           },
-          controller: _refreshController,
-          child: Container(
-            height: MediaQuery.of(context).size.height,
-            // padding: EdgeInsets.only(left: 10, right: 10),
-            child: Column(
-              children: [
-                Container(
-                  height: MediaQuery.of(context).size.height / 3,
-                  child: HorizontalDataTable(
-                    leftHandSideColumnWidth: MediaQuery.of(context).size.width,
-                    rightHandSideColumnWidth: 600,
-                    isFixedHeader: true,
-                    headerWidgets: _getTitleWidgetWorkedUsers(),
-                    leftSideItemBuilder: _generateFirstColumnRowWorkedUsers,
-                    rightSideItemBuilder: _generateRightHandSideColumnRow,
-                    itemCount: listUser.length,
-                    rowSeparatorWidget: const Divider(
-                      color: Colors.black54,
-                      height: 1.0,
-                      thickness: 0.0,
-                    ),
-                  ),
-                ),
-                Container(
-                  height: MediaQuery.of(context).size.height / 3,
-                  child: HorizontalDataTable(
-                    leftHandSideColumnWidth: MediaQuery.of(context).size.width,
-                    rightHandSideColumnWidth: 600,
-                    isFixedHeader: true,
-                    headerWidgets: _getTitleWidgetWork(),
-                    leftSideItemBuilder: _generateFirstColumnRowWork,
-                    rightSideItemBuilder: _generateRightHandSideColumnRow,
-                    itemCount: listUserWork.length,
-                    rowSeparatorWidget: const Divider(
-                      color: Colors.black54,
-                      height: 1.0,
-                      thickness: 0.0,
-                    ),
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.only(left: 20, right: 20),
-                  child: Column(
-                    children: [
-                      Container(
-                        width: MediaQuery.of(context).size.width,
-                        child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => DetailedStatics()));
-                            },
-                            child: Text('Подробная статистика')),
-                      ),
-                      Container(
-                        color: Colors.white,
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => AnalyticScreen()));
-                          },
-                          child: Text('Сделать расчёт'),
-                        ),
-                      ),
-                      Container(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            FirebaseAuth.instance.signOut();
-
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => SignInScreen()));
-                          },
-                          child: Text('Выйти'),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
+          letIndexChange: (index) => true,
         ),
+        body: childAdministrator(),
       ),
     );
   }

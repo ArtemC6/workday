@@ -204,6 +204,7 @@ class _FineScreens extends State<FineScreens> {
 
           // 15
           if (timeStart.hour == dateOver_15.hour) {
+            print(timeStart.minute);
             if (timeStart.minute <= 5) {
               listFine.add(FineModel(
                   name: data['name'],
@@ -509,9 +510,12 @@ class _FineScreens extends State<FineScreens> {
                   style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
                 ),
               if (listFineFull.length == 0)
-                Text(
-                  'Информации не найденно',
-                  style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
+                Container(
+                  padding: EdgeInsets.only(bottom: 20),
+                  child: Text(
+                    'Информации не найденно',
+                    style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
+                  ),
                 ),
               if (listFineFull.length != 0)
                 Container(

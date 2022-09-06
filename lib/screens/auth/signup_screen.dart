@@ -18,6 +18,31 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final formKey = GlobalKey<FormState>();
   String _email = "", _password = "", _name = "";
 
+  showAlertDialog(BuildContext context) {
+    AlertDialog alert = AlertDialog(
+        content: new Container(
+      decoration: new BoxDecoration(
+        shape: BoxShape.rectangle,
+        color: const Color(0xFFFFFF),
+        borderRadius: new BorderRadius.all(new Radius.circular(32.0)),
+      ),
+      child: Row(
+        children: [
+          CircularProgressIndicator(),
+          Container(
+              margin: EdgeInsets.only(left: 18), child: Text("Загрузка...")),
+        ],
+      ),
+    ));
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -122,6 +147,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     child: ElevatedButton(
                         onPressed: () {
                           if (formKey.currentState!.validate()) {
+                            showAlertDialog(context);
+
                             FirebaseAuth.instance
                                 .createUserWithEmailAndPassword(
                                     email: _email, password: _password)
@@ -143,7 +170,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   MaterialPageRoute(
                                       builder: (context) => HomeScreen()));
                             }).onError((error, stackTrace) {
-                              print("${error}");
+                              Navigator.pop(context);
                             });
                           }
                         },

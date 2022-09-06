@@ -24,6 +24,31 @@ class _SignInScreenState extends State<SignInScreen> {
   String _email = "", _password = "";
   CollectionReference users = FirebaseFirestore.instance.collection('User');
 
+  showAlertDialog(BuildContext context) {
+    AlertDialog alert = AlertDialog(
+        content: new Container(
+      decoration: new BoxDecoration(
+        shape: BoxShape.rectangle,
+        color: const Color(0xFFFFFF),
+        borderRadius: new BorderRadius.all(new Radius.circular(32.0)),
+      ),
+      child: Row(
+        children: [
+          CircularProgressIndicator(),
+          Container(
+              margin: EdgeInsets.only(left: 18), child: Text("Загрузка...")),
+        ],
+      ),
+    ));
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -133,6 +158,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       child: ElevatedButton(
                           onPressed: () async {
                             if (formKey.currentState!.validate()) {
+                              showAlertDialog(context);
                               FirebaseAuth.instance
                                   .signInWithEmailAndPassword(
                                       email: _email, password: _password)
@@ -142,7 +168,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                                 builder: (context) =>
                                                     HomeScreen()))
                                       })
-                                  .onError((error, stackTrace) => {});
+                                  .catchError((e) => Navigator.pop(context));
                             }
                           },
                           child: Text('Войти'))),
