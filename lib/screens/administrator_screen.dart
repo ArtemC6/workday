@@ -340,7 +340,7 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
                     children: [
                       Container(
                         width: MediaQuery.of(context).size.width,
-                        child: TextButton(
+                        child: ElevatedButton(
                             onPressed: () {
                               Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) => DetailedStatics()));

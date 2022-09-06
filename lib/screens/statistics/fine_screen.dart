@@ -19,7 +19,7 @@ class FineScreens extends StatefulWidget {
 }
 
 class _FineScreens extends State<FineScreens> {
-  List<FineModel> listFine = [], listFineFull = [];
+  List<FineModel> listFine = [], listFineFull = [], listFineComplete = [];
 
   bool isPosition = true, isPositionVisible = false, isEmpty = true;
   DateTimeRange? _datePeriod;
@@ -93,11 +93,6 @@ class _FineScreens extends State<FineScreens> {
           if (timeStart != timeStartList) {
             if (data['id_user'] != element.id_user) {
               if (listFine.length != querySnapshot.size) {
-                // print("${listFine.length} ${querySnapshot.size} A");
-                // print("${data['id_user']} ${data['name']} F");
-                //
-                // print("${element.id_user} ${element.name} L");
-
                 final json = {
                   'name': element.name,
                   'change': element.change,
@@ -153,6 +148,9 @@ class _FineScreens extends State<FineScreens> {
 
   void readFirebase() async {
     listFine.clear();
+    listFineComplete.clear();
+    listFineFull.clear();
+
     await FirebaseFirestore.instance
         .collection('Work')
         .get()
@@ -172,13 +170,6 @@ class _FineScreens extends State<FineScreens> {
         DateTime dateOver_15 =
             DateTime.parse("${DateFormat('yyyy-MM-dd').format(timeStart)} 15");
 
-        // var timeOver = new DateTime(
-        //     dateOver.year, dateOver.month, dateOver.day, dateOver.hour);
-
-        // print(timeStart.hour);
-        // print('----');
-
-        // 7
         setState(() {
           if (timeStart.hour == dateOver_7.hour) {
             if (timeStart.minute <= 5) {
@@ -272,14 +263,34 @@ class _FineScreens extends State<FineScreens> {
         end = end.subtract(Duration(seconds: 1));
 
         if (timeStart.isAfter(start) && timeStart.isBefore(end)) {
-          listFineFull.add(FineModel(
-              name: data['name'],
-              lateness: data['lateness'],
-              time: data['time'],
-              money_fine: data['money_fine'],
-              id_user: data['id_user'],
-              id_post: 'id_post',
-              change: data['change']));
+          setState(() {
+            listFineFull.add(FineModel(
+                name: data['name'],
+                lateness: data['lateness'],
+                time: data['time'],
+                money_fine: data['money_fine'],
+                id_user: data['id_user'],
+                id_post: 'id_post',
+                change: data['change']));
+
+            var isExistMoney = listFineComplete
+                .indexWhere((element) => element.id_user == (data['id_user']));
+
+            if (isExistMoney < 0) {
+              listFineComplete.add(FineModel(
+                  name: data['name'],
+                  lateness: data['lateness'],
+                  time: data['time'],
+                  money_fine: data['money_fine'],
+                  id_user: data['id_user'],
+                  id_post: 'id_post',
+                  change: data['change']));
+            } else {
+              int valuer = data['lateness'];
+              listFineComplete[isExistMoney].money_fine += data['money_fine'];
+              listFineComplete[isExistMoney].lateness += valuer;
+            }
+          });
         }
       });
     });
@@ -411,35 +422,9 @@ class _FineScreens extends State<FineScreens> {
         BuildContext context, int index) {
       return Row(
         children: <Widget>[
-          // Container(
-          //   padding: EdgeInsets.only(left: 14, right: 14),
-          //   child: listUser[index].workTime <= 60
-          //       ? Text(
-          //           '${listUser[index].workTime} минут ',
-          //           style: TextStyle(fontSize: 16),
-          //         )
-          //       : Text(
-          //           '${(listUser[index].workTime / 60).toStringAsFixed(1)} часов ',
-          //           style: TextStyle(
-          //             fontSize: 16,
-          //           ),
-          //         ),
-          // ),
-          // Container(
-          //   child: Text(
-          //     '${double.parse((listUser[index].money).toStringAsFixed(1).toString())} сом ',
-          //     style: TextStyle(
-          //       fontSize: 16,
-          //     ),
-          //   ),
-          //   width: 100,
-          //   height: 52,
-          //   padding: EdgeInsets.only(left: 20),
-          //   alignment: Alignment.centerLeft,
-          // ),
           Container(
             child: Text(
-              '${getData(listFineFull[index].time)}',
+              '${listFineComplete[index].lateness.toString()}',
               style: TextStyle(
                 fontSize: 16,
               ),
@@ -448,6 +433,59 @@ class _FineScreens extends State<FineScreens> {
             height: 52,
             padding: EdgeInsets.only(left: 20),
             alignment: Alignment.centerLeft,
+          ),
+          Container(
+            child: Text(
+              '${listFineComplete[index].money_fine.toString()}',
+              style: TextStyle(
+                fontSize: 16,
+              ),
+            ),
+            width: 100,
+            height: 52,
+            padding: EdgeInsets.only(left: 10),
+            alignment: Alignment.centerLeft,
+          ),
+          Container(
+            child: Text(
+              '${getData(listFineComplete[index].time)}',
+              style: TextStyle(
+                fontSize: 16,
+              ),
+            ),
+            width: 100,
+            height: 52,
+            padding: EdgeInsets.only(left: 10),
+            alignment: Alignment.centerLeft,
+          ),
+          Container(
+            child: Text(
+              '${listFineComplete[index].change.toString()}',
+              style: TextStyle(
+                fontSize: 16,
+              ),
+            ),
+            width: 100,
+            height: 52,
+            padding: EdgeInsets.only(left: 30),
+            alignment: Alignment.centerLeft,
+          ),
+          Container(
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => InformationUsersScreen(
+                              id_user: listFineComplete[index].id_user,
+                              time: listFineComplete[index].time,
+                            )));
+              },
+              child: Text('Подробней'),
+            ),
+            width: 140,
+            height: 30,
+            padding: EdgeInsets.only(left: 10),
           ),
         ],
       );
@@ -459,6 +497,7 @@ class _FineScreens extends State<FineScreens> {
       //   title: Text('Информация'),
       // ),
       body: SingleChildScrollView(
+        padding: EdgeInsets.only(top: 20),
         child: Container(
           height: MediaQuery.of(context).size.height,
           child: Column(
@@ -492,24 +531,24 @@ class _FineScreens extends State<FineScreens> {
                     ),
                   ),
                 ),
-              // if (listUser.length != 0)
-              //   Container(
-              //     height: MediaQuery.of(context).size.height / 2.6,
-              //     child: HorizontalDataTable(
-              //       leftHandSideColumnWidth: 100,
-              //       rightHandSideColumnWidth: 600,
-              //       isFixedHeader: true,
-              //       headerWidgets: _getTitleWidgetFull(),
-              //       leftSideItemBuilder: _generateFirstColumnRow,
-              //       rightSideItemBuilder: _generateRightHandSideColumnRowFull,
-              //       itemCount: listUser.length,
-              //       rowSeparatorWidget: const Divider(
-              //         color: Colors.black54,
-              //         height: 1.0,
-              //         thickness: 0.0,
-              //       ),
-              //     ),
-              //   ),
+              if (listFineComplete.length != 0)
+                Container(
+                  height: MediaQuery.of(context).size.height / 2.6,
+                  child: HorizontalDataTable(
+                    leftHandSideColumnWidth: 100,
+                    rightHandSideColumnWidth: 600,
+                    isFixedHeader: true,
+                    headerWidgets: _getTitleWidgetFull(),
+                    leftSideItemBuilder: _generateFirstColumnRow,
+                    rightSideItemBuilder: _generateRightHandSideColumnRowFull,
+                    itemCount: listFineComplete.length,
+                    rowSeparatorWidget: const Divider(
+                      color: Colors.black54,
+                      height: 1.0,
+                      thickness: 0.0,
+                    ),
+                  ),
+                ),
               Container(
                 padding: EdgeInsets.only(left: 20, right: 20),
                 child: Column(
@@ -534,15 +573,6 @@ class _FineScreens extends State<FineScreens> {
                           },
                           child: Text('Вернуться')),
                     ),
-                    // Container(
-                    //   padding: EdgeInsets.only(bottom: 20),
-                    //   width: MediaQuery.of(context).size.width,
-                    //   child: ElevatedButton(
-                    //       onPressed: () {
-                    //         readFirebase();
-                    //       },
-                    //       child: Text('Вернутdfdsfsfdsfься')),
-                    // ),
                   ],
                 ),
               ),

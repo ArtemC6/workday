@@ -49,7 +49,7 @@ class _DetailedStatics extends State<DetailedStatics> {
                                     builder: (context) =>
                                         MoneyInformationScreen()));
                           },
-                          child: Text('Получить информацию о выдочи денег')),
+                          child: Text('Получить информацию о выдаче денег')),
                     ),
                     Container(
                       padding: EdgeInsets.only(bottom: 6),
