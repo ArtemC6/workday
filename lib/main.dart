@@ -97,29 +97,72 @@ class _HomeScreenState extends State<HomeScreen> {
 
         final Timestamp timestampStart = data['startDate'] as Timestamp;
         final DateTime dateTimeStart = timestampStart.toDate();
+        DateTime currentDate = DateTime.now();
 
         var timeStart = new DateTime(dateTimeStart.year, dateTimeStart.month,
             dateTimeStart.day, dateTimeStart.hour);
 
-        DateTime dateOver =
+        var timeStartCurrent = new DateTime(currentDate.year, currentDate.month,
+            currentDate.day, currentDate.hour);
+
+        final dockUsers = await FirebaseFirestore.instance.collection('Work');
+
+        DateTime dateOver_7 =
+            DateTime.parse("${DateFormat('yyyy-MM-dd').format(timeStart)} 07");
+
+        DateTime dateOver_15 =
+            DateTime.parse("${DateFormat('yyyy-MM-dd').format(timeStart)} 15");
+
+        DateTime dateOver_23 =
             DateTime.parse("${DateFormat('yyyy-MM-dd').format(timeStart)} 23");
 
-        var timeOver = new DateTime(
-            dateOver.year, dateOver.month, dateOver.day, dateOver.hour);
-
         if (data['endDate'] == '') {
-          if (timeOver.hour > timeStart.hour) {
-            final dockUsers =
-                await FirebaseFirestore.instance.collection('Work');
+          if (timeStart.hour >= dateOver_7.hour) {
+            if (timeStartCurrent == timeStart) {
+              if (timeStart.hour > dateOver_15.hour) {
+                final json = {
+                  'endUri':
+                      'https://img2.freepng.ru/20180421/qgq/kisspng-computer-icons-emoticon'
+                          '-smiley-sadness-clip-art-pain-5adbd26692d7b0.2429607315243556866015.jpg',
+                  'endDate': DateTime.parse(
+                      "${DateFormat('yyyy-MM-dd').format(timeStart)} 15"),
+                };
+                dockUsers.doc(document.id).update(json);
+              }
+            } else {
+              final json = {
+                'endUri':
+                    'https://img2.freepng.ru/20180421/qgq/kisspng-computer-icons-emoticon'
+                        '-smiley-sadness-clip-art-pain-5adbd26692d7b0.2429607315243556866015.jpg',
+                'endDate': DateTime.parse(
+                    "${DateFormat('yyyy-MM-dd').format(timeStart)} 15"),
+              };
+              dockUsers.doc(document.id).update(json);
+            }
+          }
 
-            final json = {
-              'endUri':
-                  'https://img2.freepng.ru/20180421/qgq/kisspng-computer-icons-emoticon'
-                      '-smiley-sadness-clip-art-pain-5adbd26692d7b0.2429607315243556866015.jpg',
-              'endDate': DateTime.parse(
-                  "${DateFormat('yyyy-MM-dd').format(timeStart)} 23"),
-            };
-            dockUsers.doc(document.id).update(json);
+          if (timeStart.hour >= dateOver_15.hour) {
+            if (timeStartCurrent == timeStart) {
+              if (timeStart.hour > dateOver_23.hour) {
+                final json = {
+                  'endUri':
+                      'https://img2.freepng.ru/20180421/qgq/kisspng-computer-icons-emoticon'
+                          '-smiley-sadness-clip-art-pain-5adbd26692d7b0.2429607315243556866015.jpg',
+                  'endDate': DateTime.parse(
+                      "${DateFormat('yyyy-MM-dd').format(timeStart)} 23"),
+                };
+                dockUsers.doc(document.id).update(json);
+              }
+            } else {
+              final json = {
+                'endUri':
+                    'https://img2.freepng.ru/20180421/qgq/kisspng-computer-icons-emoticon'
+                        '-smiley-sadness-clip-art-pain-5adbd26692d7b0.2429607315243556866015.jpg',
+                'endDate': DateTime.parse(
+                    "${DateFormat('yyyy-MM-dd').format(timeStart)} 23"),
+              };
+              dockUsers.doc(document.id).update(json);
+            }
           }
         }
       });

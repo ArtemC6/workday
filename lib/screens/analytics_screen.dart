@@ -168,6 +168,7 @@ class _AnalyticScreenState extends State<AnalyticScreen> {
                   Container(
                     height: MediaQuery.of(context).size.height / 1.8,
                     child: ListView.separated(
+                      physics: BouncingScrollPhysics(),
                         itemCount: listUser.length,
                         separatorBuilder: (BuildContext context, int index) =>
                             Container(
