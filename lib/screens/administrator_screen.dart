@@ -11,6 +11,7 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:workday/screens/settings/settings_screen.dart';
 
 import '../data/user_model.dart';
+import '../data/variable.dart';
 import 'analytics_screen.dart';
 import 'statistics/detailed_statistics_screen.dart';
 
@@ -43,6 +44,12 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
   }
 
   void readFirebase() {
+    setState(() {
+      if (FirebaseAuth.instance.currentUser == null) {
+        Navigator.push(context, Scale_Transition(SignInScreen()));
+      }
+    });
+
     FirebaseFirestore.instance
         .collection('Work')
         .get()

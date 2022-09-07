@@ -163,9 +163,9 @@ class _AnalyticScreenState extends State<AnalyticScreen> {
                               fontSize: 18, fontWeight: FontWeight.bold),
                         )),
                   Container(
-                    height: MediaQuery.of(context).size.height / 1.8,
+                    height: MediaQuery.of(context).size.height / 2.0,
                     child: ListView.separated(
-                      physics: BouncingScrollPhysics(),
+                        physics: BouncingScrollPhysics(),
                         itemCount: listUser.length,
                         separatorBuilder: (BuildContext context, int index) =>
                             Container(
@@ -188,75 +188,107 @@ class _AnalyticScreenState extends State<AnalyticScreen> {
                             },
                             child: listUser[index].workTime <= 60
                                 ? Container(
-                                    padding: EdgeInsets.all(14),
-                                    child: Text(
+                                    child: ListTile(
+                                    trailing: Icon(Icons.arrow_forward_ios),
+                                    title: Text(
                                         "${listUser[index].name} ${listUser[index].workTime} минут ",
-                                        style: TextStyle(fontSize: 17)))
+                                        style: TextStyle(fontSize: 17)),
+                                  ))
                                 : Container(
-                                    padding: EdgeInsets.all(14),
-                                    child: Text(
+                                    child: ListTile(
+                                    trailing: Icon(Icons.arrow_forward_ios),
+                                    title: Text(
                                         "${listUser[index].name} ${(listUser[index].workTime / 60).toStringAsFixed(1)} часов ",
-                                        style: TextStyle(fontSize: 17))),
+                                        style: TextStyle(fontSize: 17)),
+                                  )),
                           );
                         }),
                   ),
-                  Container(
-                    width: MediaQuery.of(context).size.width / 1,
-                    padding: EdgeInsets.only(left: 20, right: 20, top: 10),
-                    child: TextFormField(
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(RegExp(r"[0-9.]")),
-                        TextInputFormatter.withFunction((oldValue, newValue) {
-                          try {
-                            final text = newValue.text;
-                            if (text.isNotEmpty) double.parse(text);
-                            return newValue;
-                          } catch (e) {}
-                          return oldValue;
-                        }),
-                      ],
-                      keyboardType:
-                          TextInputType.numberWithOptions(decimal: true),
-                      decoration: InputDecoration(
-                        hintText: 'Введите выручку',
+                  ExpansionTile(
+                    title: Text('Выдача денег'),
+                    leading: Icon(Icons.info_outline),
+                    children: [
+                      Container(
+                        padding: EdgeInsets.only(left: 20, right: 20, top: 10),
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        ExtraditionScreen(
+                                          status: 'Бармены',
+                                        )));
+                          },
+                          child: Text('Выдать барменам'),
+                        ),
                       ),
-                      style: TextStyle(
-                        fontSize: 17,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
+                      Container(
+                        padding: EdgeInsets.only(left: 20, right: 20, top: 10),
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        ExtraditionScreen(
+                                          status: 'Повора',
+                                        )));
+                          },
+                          child: Text('Выдать поворам'),
+                        ),
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Постое поле';
-                        }
-                        return null;
-                      },
-                      onChanged: (value) {
-                        setState(() {
-                          if (value.length >= 1) {
-                            _sum = value;
-                          }
-                        });
-                      },
-                    ),
-                  ),
-                  Container(
-                    padding: EdgeInsets.only(left: 20, right: 20, top: 10),
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        if (formKey.currentState!.validate()) {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                      ExtraditionScreen(
-                                        sum: _sum,
-                                      )));
-                        }
-                      },
-                      child: Text('Сделать подчет'),
-                    ),
+                      Container(
+                        padding: EdgeInsets.only(left: 20, right: 20, top: 10),
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        ExtraditionScreen(
+                                          status: 'Горничные',
+                                        )));
+                          },
+                          child: Text('Выдать горничным'),
+                        ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.only(left: 20, right: 20, top: 10),
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        ExtraditionScreen(
+                                          status: 'Консьерж',
+                                        )));
+                          },
+                          child: Text('Выдать консьержу'),
+                        ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.only(left: 20, right: 20, top: 10),
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        ExtraditionScreen(
+                                          status: 'Администатор',
+                                        )));
+                          },
+                          child: Text('Выдать администратору'),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

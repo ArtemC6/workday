@@ -33,8 +33,8 @@ class MyApp extends StatelessWidget {
         '/administrator': (context) => const AdministratorScreen(),
         '/analytic': (context) => const AnalyticScreen(),
         '/detailed': (context) => const DetailedStatics(),
-        '/signIn': (context) => const SignInScreen(),
-        '/signup': (context) => const SignUpScreen(),
+        '/signIn': (context) => SignInScreen(),
+        '/signup': (context) => SignUpScreen(),
         '/waiter': (context) => const EmployeeScreen(),
       },
       // home: const HomeScreen(),
@@ -59,34 +59,56 @@ class _HomeScreenState extends State<HomeScreen> {
   void sigNinFirebase() async {
     await FirebaseFirestore.instance
         .collection('User')
+        .doc(FirebaseAuth.instance.currentUser?.uid)
         .get()
-        .then((QuerySnapshot querySnapshot) {
-      querySnapshot.docs.forEach((document) {
+        .then((DocumentSnapshot documentSnapshot) {
+      if (documentSnapshot.exists) {
         setState(() {
           isVisible = false;
         });
-
-        Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-
-        if (data['uid'] == FirebaseAuth.instance.currentUser?.uid) {
-          if (data['status'] == 'waiter') {
-            Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => EmployeeScreen()));
-          } else {
-            Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => AdministratorScreen()));
-          }
+        if (documentSnapshot['status'] == 'waiter') {
+          Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => EmployeeScreen()));
         } else {
           Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => SignInScreen()));
+              MaterialPageRoute(builder: (context) => AdministratorScreen()));
         }
-      });
+      } else {
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => SignInScreen()));
+      }
     });
 
     if (isVisible) {
       Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => SignInScreen()));
     }
+
+    // await FirebaseFirestore.instance
+    //     .collection('User')
+    //     .get()
+    //     .then((QuerySnapshot querySnapshot) {
+    //   querySnapshot.docs.forEach((document) {
+    //     setState(() {
+    //       isVisible = false;
+    //     });
+    //
+    //     Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+    //
+    //     if (data['uid'] == FirebaseAuth.instance.currentUser?.uid) {
+    //       if (data['status'] == 'waiter') {
+    //         Navigator.of(context).pushReplacement(
+    //             MaterialPageRoute(builder: (context) => EmployeeScreen()));
+    //       } else {
+    //         Navigator.of(context).pushReplacement(
+    //             MaterialPageRoute(builder: (context) => AdministratorScreen()));
+    //       }
+    //     } else {
+    //       Navigator.of(context).pushReplacement(
+    //           MaterialPageRoute(builder: (context) => SignInScreen()));
+    //     }
+    //   });
+    // });
 
     FirebaseFirestore.instance
         .collection('Work')

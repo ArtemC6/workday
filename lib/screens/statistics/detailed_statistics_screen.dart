@@ -39,7 +39,6 @@ class _DetailedStatics extends State<DetailedStatics> {
                 child: Column(
                   children: [
                     Container(
-                      padding: EdgeInsets.only(bottom: 6),
                       width: MediaQuery.of(context).size.width,
                       child: ElevatedButton(
                           onPressed: () {
@@ -52,7 +51,6 @@ class _DetailedStatics extends State<DetailedStatics> {
                           child: Text('Получить информацию о выдаче денег')),
                     ),
                     Container(
-                      padding: EdgeInsets.only(bottom: 6),
                       width: MediaQuery.of(context).size.width,
                       child: ElevatedButton(
                           onPressed: () {
@@ -65,7 +63,6 @@ class _DetailedStatics extends State<DetailedStatics> {
                           child: Text('Получить информацию о сотрудниках')),
                     ),
                     Container(
-                      padding: EdgeInsets.only(bottom: 6),
                       width: MediaQuery.of(context).size.width,
                       child: ElevatedButton(
                           onPressed: () {
@@ -77,42 +74,36 @@ class _DetailedStatics extends State<DetailedStatics> {
                           child: Text('Получить информацию о штрафах')),
                     ),
                     Container(
-                      padding: EdgeInsets.only(bottom: 6),
                       width: MediaQuery.of(context).size.width,
                       child: ElevatedButton(
                           onPressed: () {},
                           child: Text('Получить информацию о поварах')),
                     ),
                     Container(
-                      padding: EdgeInsets.only(bottom: 6),
                       width: MediaQuery.of(context).size.width,
                       child: ElevatedButton(
                           onPressed: () {},
                           child: Text('Получить информацию о кух.рабоника')),
                     ),
                     Container(
-                      padding: EdgeInsets.only(bottom: 6),
                       width: MediaQuery.of(context).size.width,
                       child: ElevatedButton(
                           onPressed: () {},
                           child: Text('Получить информацию о кондитере')),
                     ),
                     Container(
-                      padding: EdgeInsets.only(bottom: 6),
                       width: MediaQuery.of(context).size.width,
                       child: ElevatedButton(
                           onPressed: () {},
                           child: Text('Получить информацию о администраторе')),
                     ),
                     Container(
-                      padding: EdgeInsets.only(bottom: 6),
                       width: MediaQuery.of(context).size.width,
                       child: ElevatedButton(
                           onPressed: () {},
                           child: Text('Получить информацию о горничнох')),
                     ),
                     Container(
-                      padding: EdgeInsets.only(bottom: 6),
                       width: MediaQuery.of(context).size.width,
                       child: ElevatedButton(
                           onPressed: () {},

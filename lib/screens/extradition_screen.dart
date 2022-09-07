@@ -5,24 +5,31 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:horizontal_data_table/horizontal_data_table.dart';
 import 'package:workday/screens/administrator_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:workday/screens/auth/signin_screen.dart';
 
 import '../data/user_model.dart';
+import '../data/variable.dart';
+import 'auth/signup_screen.dart';
 
 class ExtraditionScreen extends StatefulWidget {
-  var sum;
+  var status;
 
-  ExtraditionScreen({Key? key, @required this.sum}) : super(key: key);
+  ExtraditionScreen({Key? key, @required this.status}) : super(key: key);
 
   @override
-  State<ExtraditionScreen> createState() => _ExtraditionScreenScreenState(sum);
+  State<ExtraditionScreen> createState() =>
+      _ExtraditionScreenScreenState(status);
 }
 
 class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
   List<UserModel> listUser = [], listUserWork = [], listUserMoney = [];
-  String _sum = '0.0', _percent = '0';
+  String _sum = '0.0', _percent = '0', _work_price = '0';
   bool isEmpty = false;
+  String status = '';
+  double money = 0.0;
 
-  _ExtraditionScreenScreenState(this._sum);
+  _ExtraditionScreenScreenState(this.status);
 
   int getUserWorkTime(Timestamp startDate, Timestamp endDate) {
     final DateTime dateTimeStart = startDate.toDate();
@@ -169,6 +176,12 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
   }
 
   void readFirebase() async {
+    setState(() {
+      if (FirebaseAuth.instance.currentUser == null) {
+        Navigator.push(context, Scale_Transition(SignInScreen()));
+      }
+    });
+
     await FirebaseFirestore.instance
         .collection('Work')
         .get()
@@ -276,38 +289,27 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
       totalTime += user.workTime;
     });
 
-    users.forEach((user) {
-      user.money = user.workTime / totalTime * sum;
-    });
-
+    if(status == 'Бармены') {
+      users.forEach((user) {
+        user.money = user.workTime / totalTime * sum;
+      });
+    } else if(status == 'Повора') {
+      users.forEach((user) {
+        user.money = user.workTime / totalTime * sum / double.parse(_work_price);
+      });
+    }
     return users;
-  }
-
-  double getTotalMoney(List<UserModel> users) {
-    double number = 0.0;
-    users.forEach((user) {
-      number += user.money;
-    });
-
-    return number;
-  }
-
-  int getTotalTimeJoin(List<UserModel> users) {
-    int number = 0;
-
-    users.forEach((user) {
-      number += user.workTime;
-    });
-
-    return number;
   }
 
   @override
   Widget build(BuildContext context) {
-    // print(getValue());
-    // double percent = double.parse(_percent) / 100;
-    // double money = double.parse(_sum) * percent;
-    double money = double.parse(_sum) * 0.07;
+    if (status == 'Бармены') {
+      double percent = double.parse(_percent) / 100;
+      // double money = double.parse(_sum) * 0.07;
+      money = double.parse(_sum) * percent;
+    } else if (status == 'Повора') {
+      money = double.parse(_sum);
+    }
 
     Widget _getTitleItemWidget(String label, double width) {
       return Container(
@@ -369,65 +371,242 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Container(
-        alignment: Alignment.topCenter,
-        height: MediaQuery.of(context).size.height,
-        padding: EdgeInsets.only(top: 20),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text("Общаая выручка: ${_sum}", style: TextStyle(fontSize: 22)),
-            Container(
-              padding: EdgeInsets.only(top: 6, bottom: 6),
-            ),
-            Text("Сотрудникам: ${(money).toStringAsFixed(1)}",
-                style: TextStyle(fontSize: 22)),
-            Padding(padding: EdgeInsets.only(top: 10)),
-            Container(
-              height: MediaQuery.of(context).size.height / 1.5,
-              child: HorizontalDataTable(
-                leftHandSideColumnWidth: 80,
-                rightHandSideColumnWidth: 600,
-                isFixedHeader: true,
-                headerWidgets: _getTitleWidget(),
-                leftSideItemBuilder: _generateFirstColumnRow,
-                rightSideItemBuilder: _generateRightHandSideColumnRow,
-                itemCount: listUser.length,
-                rowSeparatorWidget: const Divider(
-                  color: Colors.black54,
-                  height: 1.0,
-                  thickness: 0.0,
+      body: SingleChildScrollView(
+        child: Container(
+          alignment: Alignment.topCenter,
+          height: MediaQuery.of(context).size.height,
+          padding: EdgeInsets.only(top: 40),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("${status}", style: TextStyle(fontSize: 22)),
+              Container(
+                padding: EdgeInsets.only(top: 6, bottom: 2),
+              ),
+              Text("Общаая выручка: ${_sum}", style: TextStyle(fontSize: 22)),
+              Container(
+                padding: EdgeInsets.only(top: 6, bottom: 6),
+              ),
+              Text("Сотрудникам: ${(money).toStringAsFixed(1)}",
+                  style: TextStyle(fontSize: 22)),
+              Padding(padding: EdgeInsets.only(top: 10)),
+              Container(
+                height: MediaQuery.of(context).size.height / 1.8,
+                child: HorizontalDataTable(
+                  leftHandSideColumnWidth: 80,
+                  rightHandSideColumnWidth: 600,
+                  isFixedHeader: true,
+                  headerWidgets: _getTitleWidget(),
+                  leftSideItemBuilder: _generateFirstColumnRow,
+                  rightSideItemBuilder: _generateRightHandSideColumnRow,
+                  itemCount: listUser.length,
+                  rowSeparatorWidget: const Divider(
+                    color: Colors.black54,
+                    height: 1.0,
+                    thickness: 0.0,
+                  ),
                 ),
               ),
-            ),
-            Container(
-              padding: EdgeInsets.only(left: 20, right: 20, top: 20),
-              child: Column(
-                children: [
-                  Container(
-                    width: MediaQuery.of(context).size.width,
-                    child: ElevatedButton(
-                        onPressed: () async {
-                          calculation(getTotalTime(listUserWork, money));
+              if (status == 'Бармены')
+                Row(
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width / 2,
+                      padding: EdgeInsets.only(left: 20, right: 20, top: 10),
+                      child: TextFormField(
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(RegExp(r"[0-9.]")),
+                          TextInputFormatter.withFunction((oldValue, newValue) {
+                            try {
+                              final text = newValue.text;
+                              if (text.isNotEmpty) double.parse(text);
+                              return newValue;
+                            } catch (e) {}
+                            return oldValue;
+                          }),
+                        ],
+                        keyboardType:
+                            TextInputType.numberWithOptions(decimal: true),
+                        decoration: InputDecoration(
+                          hintText: 'Введите выручку',
+                        ),
+                        style: TextStyle(
+                          fontSize: 17,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Постое поле';
+                          }
+                          return null;
                         },
-                        child: Text('Выдать дньги')),
-                  ),
-                  Container(
-                    width: MediaQuery.of(context).size.width,
-                    child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                      AdministratorScreen()));
+                        onChanged: (value) {
+                          setState(() {
+                            if (value.length >= 1) {
+                              _sum = value;
+                            }
+                          });
                         },
-                        child: Text('Вернуться')),
-                  ),
-                ],
+                      ),
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width / 2,
+                      padding: EdgeInsets.only(left: 20, right: 20, top: 10),
+                      child: TextFormField(
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(RegExp(r"[0-9.]")),
+                          TextInputFormatter.withFunction((oldValue, newValue) {
+                            try {
+                              final text = newValue.text;
+                              if (text.isNotEmpty) double.parse(text);
+                              return newValue;
+                            } catch (e) {}
+                            return oldValue;
+                          }),
+                        ],
+                        keyboardType:
+                            TextInputType.numberWithOptions(decimal: true),
+                        decoration: InputDecoration(
+                          hintText: 'Введите процент',
+                        ),
+                        style: TextStyle(
+                          fontSize: 17,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Постое поле';
+                          }
+                          return null;
+                        },
+                        onChanged: (value) {
+                          setState(() {
+                            if (value.length >= 1) {
+                              _percent = value;
+                            }
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              if (status == 'Повора')
+                Row(
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width / 2,
+                      padding: EdgeInsets.only(left: 20, right: 20, top: 10),
+                      child: TextFormField(
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(RegExp(r"[0-9.]")),
+                          TextInputFormatter.withFunction((oldValue, newValue) {
+                            try {
+                              final text = newValue.text;
+                              if (text.isNotEmpty) double.parse(text);
+                              return newValue;
+                            } catch (e) {}
+                            return oldValue;
+                          }),
+                        ],
+                        keyboardType:
+                            TextInputType.numberWithOptions(decimal: true),
+                        decoration: InputDecoration(
+                          hintText: 'Введите выручку',
+                        ),
+                        style: TextStyle(
+                          fontSize: 17,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Постое поле';
+                          }
+                          return null;
+                        },
+                        onChanged: (value) {
+                          setState(() {
+                            if (value.length >= 1) {
+                              _sum = value;
+                            }
+                          });
+                        },
+                      ),
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width / 2,
+                      padding: EdgeInsets.only(left: 20, right: 20, top: 10),
+                      child: TextFormField(
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(RegExp(r"[0-9.]")),
+                          TextInputFormatter.withFunction((oldValue, newValue) {
+                            try {
+                              final text = newValue.text;
+                              if (text.isNotEmpty) double.parse(text);
+                              return newValue;
+                            } catch (e) {}
+                            return oldValue;
+                          }),
+                        ],
+                        keyboardType:
+                            TextInputType.numberWithOptions(decimal: true),
+                        decoration: InputDecoration(
+                          hintText: 'Час работы',
+                        ),
+                        style: TextStyle(
+                          fontSize: 17,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Постое поле';
+                          }
+                          return null;
+                        },
+                        onChanged: (value) {
+                          setState(() {
+                            if (value.length >= 1) {
+                              _work_price = value;
+                            }
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              Container(
+                padding: EdgeInsets.only(left: 20, right: 20, top: 20),
+                child: Column(
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      child: ElevatedButton(
+                          onPressed: () async {
+                            calculation(getTotalTime(listUserWork, money));
+                          },
+                          child: Text('Выдать дньги')),
+                    ),
+                    Container(
+                      padding: EdgeInsets.only(bottom: 20),
+                      width: MediaQuery.of(context).size.width,
+                      child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        AdministratorScreen()));
+                          },
+                          child: Text('Вернуться')),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

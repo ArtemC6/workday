@@ -1,21 +1,21 @@
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:workday/screens/auth/signin_screen.dart';
+
+import '../../data/variable.dart';
+import '../../main.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:workday/screens/auth/signin_screen.dart';
-
-import '../../main.dart';
+import 'package:avatar_glow/avatar_glow.dart';
 
 class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({Key? key}) : super(key: key);
-
   @override
-  State<SignUpScreen> createState() => _SignUpScreenState();
+  _SignUpScreen createState() => _SignUpScreen();
 }
 
-class _SignUpScreenState extends State<SignUpScreen> {
-  final formKey = GlobalKey<FormState>();
+class _SignUpScreen extends State<SignUpScreen> {
   String _email = "", _password = "", _name = "";
 
   showAlertDialog(BuildContext context) {
@@ -44,141 +44,157 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    double _width = MediaQuery.of(context).size.width;
+    double _height = MediaQuery.of(context).size.height;
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Зарегистрироваться'),
-      ),
-      body: Align(
-        alignment: Alignment.center,
+      backgroundColor: Color(0xff292C31),
+      body: SingleChildScrollView(
         child: Container(
-          padding: EdgeInsets.only(left: 30, right: 30, top: 200),
-          alignment: Alignment.center,
-          child: Form(
-            key: formKey,
-            child: Column(
-              children: [
-                Container(
-                  padding: EdgeInsets.symmetric(vertical: 4),
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                      hintText: 'Введите email',
+          padding: EdgeInsets.only(left: _width / 10, right: _width / 10),
+          height: _height,
+          child: Column(
+            children: [
+              Expanded(child: SizedBox()),
+              Expanded(
+                flex: 4,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    SizedBox(),
+                    Text(
+                      'Зарегистироваться',
+                      style: TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.blueAccent,
+                      ),
                     ),
-                    style: TextStyle(
-                      fontSize: 17,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
+                    SizedBox(),
+                    componentTextField(Icons.account_circle_outlined, 'Name...',
+                        false, false, "name"),
+                    componentTextField(
+                        Icons.email_outlined, 'Email...', false, true, 'email'),
+                    componentTextField(Icons.lock_outline, 'Password...', true,
+                        false, "password"),
+                    InkWell(
+                      splashColor: Colors.transparent,
+                      highlightColor: Colors.transparent,
+                      onTap: () {
+                        Navigator.push(context, Scale_Transition(SignInScreen()));
+                      },
+                      child: Container(
+                        alignment: Alignment.centerRight,
+                        child: Text('Войти в аккаунт',
+                            style: TextStyle(
+                                color: Colors.blueAccent, fontSize: 17),
+                            textAlign: TextAlign.right),
+                      ),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Пустое поле';
-                      }
-                      return null;
-                    },
-                    onChanged: (value) {
-                      setState(() {
-                        _email = value;
-                      });
-                    },
+                  ],
+                ),
+              ),
+              InkWell(
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+                onTap: () {
+                  showAlertDialog(context);
+
+                  FirebaseAuth.instance
+                      .createUserWithEmailAndPassword(
+                          email: _email, password: _password)
+                      .then((value) async {
+                    final docUser = await FirebaseFirestore.instance
+                        .collection('User')
+                        .doc(FirebaseAuth.instance.currentUser!.uid);
+
+                    final json = {
+                      'uid': FirebaseAuth.instance.currentUser!.uid,
+                      'name': _name,
+                      'email': _email,
+                      'status': 'waiter',
+                    };
+
+                    docUser.set(json);
+
+                    Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(builder: (context) => HomeScreen()));
+                  }).onError((error, stackTrace) {
+                    Navigator.pop(context);
+                  });
+                },
+                child: AvatarGlow(
+                  glowColor: Colors.blueAccent,
+                  endRadius: 120,
+                  duration: Duration(milliseconds: 3000),
+                  repeat: true,
+                  showTwoGlows: true,
+                  curve: Curves.easeOutQuad,
+                  child: Container(
+                    height: 80,
+                    width: 80,
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(99)),
+                    child: Icon(
+                      Icons.navigate_next_rounded,
+                      color: Colors.blue,
+                      size: 40,
+                    ),
                   ),
                 ),
-                Container(
-                  padding: EdgeInsets.symmetric(vertical: 4),
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                      hintText: 'Введите name',
-                    ),
-                    style: TextStyle(
-                      fontSize: 17,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Пустое поле';
-                      }
-                      return null;
-                    },
-                    onChanged: (value) {
-                      setState(() {
-                        _name = value;
-                      });
-                    },
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.symmetric(vertical: 4),
-                  child: TextFormField(
-                    obscureText: true,
-                    decoration: InputDecoration(
-                      hintText: 'Введите password',
-                    ),
-                    style: TextStyle(
-                      fontSize: 17,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Пустое поле';
-                      }
-                      return null;
-                    },
-                    onChanged: (value) {
-                      setState(() {
-                        _password = value;
-                      });
-                    },
-                  ),
-                ),
-                Container(
-                    alignment: Alignment.centerRight,
-                    padding: EdgeInsets.only(),
-                    width: double.infinity,
-                    child: TextButton(
-                        onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => SignInScreen()));
-                        },
-                        child: Text('Войти'))),
-                Container(
-                    padding: EdgeInsets.only(),
-                    width: double.infinity,
-                    child: ElevatedButton(
-                        onPressed: () {
-                          if (formKey.currentState!.validate()) {
-                            showAlertDialog(context);
-
-                            FirebaseAuth.instance
-                                .createUserWithEmailAndPassword(
-                                    email: _email, password: _password)
-                                .then((value) async {
-                              final docUser = await FirebaseFirestore.instance
-                                  .collection('User')
-                                  .doc(FirebaseAuth.instance.currentUser!.uid);
-
-                              final json = {
-                                'uid': FirebaseAuth.instance.currentUser!.uid,
-                                'name': _name,
-                                'email': _email,
-                                'status': 'waiter',
-                              };
-
-                              docUser.set(json);
-
-                              Navigator.of(context).pushReplacement(
-                                  MaterialPageRoute(
-                                      builder: (context) => HomeScreen()));
-                            }).onError((error, stackTrace) {
-                              Navigator.pop(context);
-                            });
-                          }
-                        },
-                        child: Text('Зарегистрироваться'))),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget componentTextField(IconData icon, String hintText, bool isPassword,
+      bool isEmail, String changed) {
+    return Container(
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: Color(0xff212428),
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: TextField(
+        style: TextStyle(color: Colors.white.withOpacity(.7)),
+        obscureText: isPassword,
+        keyboardType: isEmail ? TextInputType.emailAddress : TextInputType.text,
+        decoration: InputDecoration(
+          prefixIcon: Icon(
+            icon,
+            color: Colors.white.withOpacity(.7),
+          ),
+          border: InputBorder.none,
+          hintMaxLines: 1,
+          hintText: hintText,
+          hintStyle: TextStyle(
+            fontSize: 14,
+            color: Colors.white.withOpacity(.5),
+          ),
+        ),
+        onChanged: (value) {
+          setState(() {
+            if (changed == 'name') {
+              _name = value;
+            }
+            if (changed == 'email') {
+              _email = value;
+            }
+            if (changed == 'password') {
+              _password = value;
+            }
+          });
+        },
       ),
     );
   }

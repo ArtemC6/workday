@@ -46,92 +46,94 @@ class _SettingsScreen extends State<SettingsScreen> {
       },
       child: Scaffold(
           body: Form(
-            key: formKey,
-            child: Container(
-              color: Colors.blueAccent,
-              padding: EdgeInsets.only(left: 20, right: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    width: MediaQuery.of(context).size.width,
-                    padding: EdgeInsets.only(
-                        left: 10, right: 10, top: 20, bottom: 20),
-                    child: TextFormField(
-                      cursorColor: Colors.white,
-                      controller: TextEditingController(text: _name),
-                      decoration: InputDecoration(
-                        focusColor: Colors.white,
-                        iconColor: Colors.white,
-                        hintText: 'Введите процент сотрудникам',
-                        // fillColor: Colors.white,
-                        // hoverColor: Colors.white,
-                        // prefixIconColor: Colors.white,
-                        // suffixIconColor: Colors.white,
-                      ),
-                      style: TextStyle(
-                        fontSize: 17,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Постое поле';
-                        }
-                        return null;
-                      },
-                      onChanged: (value) {
-                        setState(() async {
-                          if (value.length >= 3) {
-                            _name = value;
-                          }
-                        });
-                      },
-                    ),
+        key: formKey,
+        child: Container(
+          color: Colors.blueAccent,
+          padding: EdgeInsets.only(left: 20, right: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: MediaQuery.of(context).size.width,
+                padding:
+                    EdgeInsets.only(left: 10, right: 10, top: 20, bottom: 20),
+                child: TextFormField(
+                  cursorColor: Colors.white,
+                  controller: TextEditingController(text: _name),
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    focusColor: Colors.white,
+                    iconColor: Colors.white,
+                    hintText: 'Введите имя',
+                    hintStyle: TextStyle(color: Colors.white),
                   ),
-                  Container(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white),
-
-                      onPressed: () async {
-                        if (formKey.currentState!.validate()) {
-                          final dockUsers = await FirebaseFirestore.instance
-                              .collection('User');
-
-                          final json = {
-                            'name': _name,
-                          };
-                          dockUsers
-                              .doc(FirebaseAuth.instance.currentUser!.uid)
-                              .update(json);
-                        }
-                      },
-                      child: Text('Сохронить', style: TextStyle(color: Colors.black),),
-                    ),
+                  style: TextStyle(
+                    fontSize: 17,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
                   ),
-
-                  Container(
-                    padding: EdgeInsets.only(),
-
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white),
-                      onPressed: () {
-                        FirebaseAuth.instance.signOut();
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => SignInScreen()));
-                      },
-                      child: Text('Выйти с аккаунта', style: TextStyle(color: Colors.black),),
-                    ),
-                  ),
-                ],
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Постое поле';
+                    }
+                    return null;
+                  },
+                  onChanged: (value) {
+                    setState(() async {
+                      if (value.length >= 3) {
+                        _name = value;
+                      }
+                    });
+                  },
+                ),
               ),
-            ),
-          )),
+              Container(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style:
+                      ElevatedButton.styleFrom(backgroundColor: Colors.white),
+                  onPressed: () async {
+                    if (formKey.currentState!.validate()) {
+                      final dockUsers =
+                          await FirebaseFirestore.instance.collection('User');
+
+                      final json = {
+                        'name': _name,
+                      };
+                      dockUsers
+                          .doc(FirebaseAuth.instance.currentUser!.uid)
+                          .update(json);
+                    }
+                  },
+                  child: Text(
+                    'Сохронить',
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.only(),
+                width: double.infinity,
+                child: ElevatedButton(
+                  style:
+                      ElevatedButton.styleFrom(backgroundColor: Colors.white),
+                  onPressed: () async {
+                    await FirebaseAuth.instance.signOut();
+                    await Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                            builder: (context) => SignInScreen()));
+                  },
+                  child: Text(
+                    'Выйти с аккаунта',
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      )),
     );
   }
 }

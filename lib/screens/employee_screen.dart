@@ -410,18 +410,6 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                   padding: EdgeInsets.only(bottom: 100),
                   child: buildTime(),
                 ),
-                // Container(
-                //   width: double.infinity,
-                //   child: ElevatedButton(
-                //     onPressed: () async {
-                //       Navigator.push(
-                //           context,
-                //           MaterialPageRoute(
-                //               builder: (context) => AdministratorScreen()));
-                //     },
-                //     child: Text('Администратор'),
-                //   ),
-                // ),
                 if (!isVisible)
                   Container(
                     width: double.infinity,
@@ -467,6 +455,8 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                   Container(
                       width: double.infinity,
                       child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white),
                         onPressed: () async {
                           DateTime now = DateTime.now();
                           int formattedDate =
@@ -496,7 +486,10 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                             });
                           }
                         },
-                        child: Text('Закончить работу'),
+                        child: Text(
+                          'Закончить работу',
+                          style: TextStyle(color: Colors.black),
+                        ),
                       )),
                 if (isVisibleTime)
                   Container(
@@ -504,7 +497,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                     child: Text(
                       'Работу можно начать с 07: до 23:',
                       style:
-                          TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
+                          TextStyle(fontSize: 19, fontWeight: FontWeight.bold, color: Colors.white),
                     ),
                   ),
               ],
