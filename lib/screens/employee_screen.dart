@@ -16,7 +16,8 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 
 import '../data/user_model.dart';
 import '../data/firedase_api.dart';
-import 'administrator_screen.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
+
 
 class EmployeeScreen extends StatefulWidget {
   const EmployeeScreen({Key? key}) : super(key: key);
@@ -27,17 +28,16 @@ class EmployeeScreen extends StatefulWidget {
 
 class _EmployeeScreenState extends State<EmployeeScreen> {
   final ImagePicker _picker = ImagePicker();
-  static var countdownDuration = Duration(minutes: 10);
+  static var countdownDuration = Duration();
 
-  // GlobalKey<CurvedNavigationBarState> _bottomNavigationKey = GlobalKey();
   Duration duration = Duration();
   Timer? timer;
   bool countDown = true,
       isVisible = false,
       isVisibleTime = false,
-      isVisibleBar = true;
+      isVisibleText = false;
   String _name = '';
-  int _tame = 0, _page = 0;
+  int _page = 0;
   UploadTask? task;
   File? startFilePhoto, endFilePhoto;
   List<UserModel> listUser = [];
@@ -147,11 +147,26 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
     );
   }
 
+  // void startCamera() async {
+  //   cameras = await availableCameras();
+  //
+  //   cameraController = CameraController(cameras[0], ResolutionPreset.high, enableAudio: false);
+  //
+  //   await cameraController.initialize().then((value) {
+  //     if(!mounted) {
+  //       return;
+  //     }
+  //     setState(() {
+  //
+  //     });
+  //   });
+  // }
+
   Future makeStartPhoto() async {
     final XFile? photo = await _picker.pickImage(
         imageQuality: 9,
         source: ImageSource.camera,
-        preferredCameraDevice: CameraDevice.rear);
+        preferredCameraDevice: CameraDevice.front);
 
     if (photo != null) {
       setState(() {
@@ -255,7 +270,8 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
           'endUri': '',
           'endDate': '',
           'money': 0.0,
-          'status': doc['status'],
+          'status': doc['post'],
+          'post': doc['post'],
         };
 
         dockUsers.set(json);
@@ -300,6 +316,10 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
           currentDate.day,
         );
 
+        setState(() {
+          isVisibleText = true;
+        });
+
         if (data['id_user'] == FirebaseAuth.instance.currentUser?.uid) {
           if (timeStart == currentTime) {
             if (data['endDate'] != '') {
@@ -311,7 +331,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                   listUser.add(UserModel(
                       name: data["name"],
                       email: data["email"],
-                      status: data["status"],
+                      status: data["post"],
                       startUri: data["startUri"],
                       endUri: data["endUri"],
                       startDate: data["startDate"],
@@ -330,25 +350,17 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
 
             if (data['endDate'] == '') {
               setState(() {
-                _tame = DateTime.now().difference(dateTimeStart).inMinutes;
                 isVisible = true;
               });
 
-              var hours, mints, secs;
-              hours = int.parse(
-                  DateTime.now().difference(dateTimeStart).inHours.toString());
-              mints = int.parse(DateTime.now()
-                  .difference(dateTimeStart)
-                  .inMinutes
-                  .toString());
-              secs = int.parse(DateTime.now()
-                  .difference(dateTimeStart)
-                  .inSeconds
-                  .toString());
-              countdownDuration =
-                  Duration(hours: hours, minutes: mints, seconds: secs);
-              startTimer();
+              countdownDuration = Duration(
+                  seconds: int.parse(DateTime.now()
+                      .difference(dateTimeStart)
+                      .inSeconds
+                      .toString()));
+
               reset();
+              startTimer();
             }
           }
         }
@@ -357,20 +369,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
 
     if (listUser.length != 0) {
       if (!isVisible) {
-        var hours, mints, secs;
-        hours = int.parse('00');
-        mints = listUser[0].workTime;
-        secs = int.parse('00');
-        countdownDuration =
-            Duration(hours: hours, minutes: mints, seconds: secs);
-        reset();
-      } else {
-        var hours, mints, secs;
-        hours = int.parse('00');
-        mints = listUser[0].workTime + _tame;
-        secs = int.parse('00');
-        countdownDuration =
-            Duration(hours: hours, minutes: mints, seconds: secs);
+        countdownDuration = Duration(minutes: listUser[0].workTime);
         reset();
       }
     }
@@ -379,6 +378,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
   @override
   void initState() {
     super.initState();
+    // startCamera();
     readUserFirebase();
   }
 
@@ -491,13 +491,40 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                           style: TextStyle(color: Colors.black),
                         ),
                       )),
+                if (!isVisibleTime)
+                  if (!isVisible)
+                    if (isVisibleText)
+                      Container(
+                        padding: EdgeInsets.only(top: 20),
+                        alignment: Alignment.center,
+                        child: AnimatedTextKit(
+                          animatedTexts: [
+                            TypewriterAnimatedText(
+                              textAlign: TextAlign.center,
+                              'Пожалуйста начните работу...',
+                              speed: Duration(milliseconds: 200),
+                              textStyle: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                          isRepeatingAnimation: true,
+                          repeatForever: true,
+                          displayFullTextOnTap: true,
+                          stopPauseOnTap: false,
+                        ),
+                      ),
                 if (isVisibleTime)
                   Container(
                     padding: EdgeInsets.only(top: 30, bottom: 20),
                     child: Text(
                       'Работу можно начать с 07: до 23:',
-                      style:
-                          TextStyle(fontSize: 19, fontWeight: FontWeight.bold, color: Colors.white),
+                      style: TextStyle(
+                          fontSize: 19,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white),
                     ),
                   ),
               ],
@@ -506,6 +533,15 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
         ),
       );
     }
+
+    //
+    // Widget text() {
+    //    {
+    //     return
+    //   }
+    //   return Container(
+    //   );
+    // }
 
     Widget childEmployee() {
       var child;
@@ -535,7 +571,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
           height: 60.0,
 
           items: <Widget>[
-            Icon(Icons.add, size: 30),
+            Icon(Icons.access_time_outlined, size: 30),
             Icon(Icons.list, size: 30),
             Icon(Icons.perm_identity, size: 30),
           ],

@@ -56,6 +56,11 @@ dev_dependencies:
   pull_to_refresh_flutter3: ^2.0.1
   curved_navigation_bar: ^1.0.3
   avatar_glow: ^2.0.2
+  animated_text_kit: ^4.2.2
+  animations: ^2.0.4
+  modal_bottom_sheet: ^2.1.2
+
+
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

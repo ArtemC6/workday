@@ -19,7 +19,10 @@ class FineScreens extends StatefulWidget {
 }
 
 class _FineScreens extends State<FineScreens> {
-  List<FineModel> listFine = [], listFineFull = [], listFineComplete = [];
+  List<FineModel> listFine = [],
+      listFineFull = [],
+      listFineComplete = [],
+      listFineFull_2 = [];
 
   bool isPosition = true, isPositionVisible = false, isEmpty = true;
   DateTimeRange? _datePeriod;
@@ -42,114 +45,8 @@ class _FineScreens extends State<FineScreens> {
   }
 
   void calculationFine() async {
-    await FirebaseFirestore.instance
-        .collection('Fine')
-        .get()
-        .then((QuerySnapshot querySnapshot) {
-      querySnapshot.docs.forEach((document) async {
-        Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-
-        final Timestamp timestampStart = data['time'] as Timestamp;
-        final DateTime dateTimeStart = timestampStart.toDate();
-
-        var timeStart = new DateTime(
-          dateTimeStart.year,
-          dateTimeStart.month,
-          dateTimeStart.day,
-        );
-
-        setState(() {
-          isEmpty = false;
-        });
-
-        listFine.forEach((element) async {
-          final dockFine =
-              await FirebaseFirestore.instance.collection('Fine').doc();
-
-          final Timestamp timestampStartList = element.time as Timestamp;
-          final DateTime dateTimeList = timestampStartList.toDate();
-
-          var timeStartList = new DateTime(
-            dateTimeList.year,
-            dateTimeList.month,
-            dateTimeList.day,
-          );
-
-          if (timeStart != timeStartList) {
-            if (data['id_user'] == element.id_user) {
-              final json = {
-                'name': element.name,
-                'id_user': element.id_user,
-                'id_post': dockFine.id,
-                'change': element.change,
-                'lateness': element.lateness,
-                'time': element.time,
-                'money_fine': element.money_fine,
-              };
-              dockFine.set(json);
-            }
-          }
-
-          if (timeStart != timeStartList) {
-            if (data['id_user'] != element.id_user) {
-              if (listFine.length != querySnapshot.size) {
-                final json = {
-                  'name': element.name,
-                  'change': element.change,
-                  'id_user': element.id_user,
-                  'id_post': dockFine.id,
-                  'lateness': element.lateness,
-                  'time': element.time,
-                  'money_fine': element.money_fine,
-                };
-                dockFine.set(json);
-              }
-            }
-          }
-        });
-      });
-    });
-
-    if (isEmpty) {
-      listFine.forEach((element) async {
-        final dockFine =
-            await FirebaseFirestore.instance.collection('Fine').doc();
-
-        final json = {
-          'name': element.name,
-          'id_user': element.id_user,
-          'id_post': dockFine.id,
-          'lateness': element.lateness,
-          'change': element.change,
-          'time': element.time,
-          'money_fine': element.money_fine,
-        };
-        dockFine.set(json);
-      });
-    }
-  }
-
-  void _showDataTimeRange() async {
-    final DateTimeRange? result = await showDateRangePicker(
-      context: context,
-      firstDate: DateTime(2022, 1, 1),
-      lastDate: DateTime(2030, 12, 31),
-      currentDate: DateTime.now(),
-      saveText: 'Выбрать',
-    );
-
-    if (result != null) {
-      setState(() {
-        _datePeriod = result;
-        readFirebase();
-      });
-    }
-  }
-
-  void readFirebase() async {
     listFine.clear();
-    listFineComplete.clear();
-    listFineFull.clear();
+    listFineFull_2.clear();
 
     await FirebaseFirestore.instance
         .collection('Work')
@@ -238,7 +135,138 @@ class _FineScreens extends State<FineScreens> {
       });
     });
 
-    calculationFine();
+    await FirebaseFirestore.instance
+        .collection('Fine')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((document) async {
+        Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+
+        final Timestamp timestampStart = data['time'] as Timestamp;
+        final DateTime dateTimeStart = timestampStart.toDate();
+
+        var timeStart = new DateTime(
+          dateTimeStart.year,
+          dateTimeStart.month,
+          dateTimeStart.day,
+        );
+
+        setState(() {
+          isEmpty = false;
+
+          listFineFull_2.add(FineModel(
+              name: data['name'],
+              lateness: data['lateness'],
+              time: data['time'],
+              money_fine: data['money_fine'],
+              id_user: data['id_user'],
+              id_post: 'id_post',
+              change: data['change']));
+        });
+      });
+    });
+
+    if (isEmpty) {
+      listFine.forEach((element) async {
+        final dockFine =
+            await FirebaseFirestore.instance.collection('Fine').doc();
+
+        final json = {
+          'name': element.name,
+          'id_user': element.id_user,
+          'id_post': dockFine.id,
+          'lateness': element.lateness,
+          'change': element.change,
+          'time': element.time,
+          'money_fine': element.money_fine,
+        };
+        dockFine.set(json);
+      });
+    } else {
+
+
+      // print(listFineFull_2.length);
+      // print(listFine.length);
+
+
+      List<FineModel> difference =
+          listFine.toSet().difference(listFineFull_2.toSet()).toList();
+
+      difference.forEach((element) {
+        print(element.lateness);
+      });
+
+      // print(difference.length);
+
+      //
+      // listFine.forEach((elementMain) async {
+      //   final dockFine =
+      //   await FirebaseFirestore.instance.collection('Fine').doc();
+      //
+      //   final Timestamp timestampStartListMain = elementMain  .time as Timestamp;
+      //   final DateTime dateTimeListMain = timestampStartListMain.toDate();
+      //
+      //   var timeStartListMain = new DateTime(
+      //     dateTimeListMain.year,
+      //     dateTimeListMain.month,
+      //     dateTimeListMain.day,
+      //   );
+      //
+      //   listFineFull_2.forEach((element) {
+      //
+      //     final Timestamp timestampStartList = element.time as Timestamp;
+      //     final DateTime dateTimeList = timestampStartList.toDate();
+      //
+      //     var timeStartList = new DateTime(
+      //       dateTimeList.year,
+      //       dateTimeList.month,
+      //       dateTimeList.day,
+      //     );
+      //
+      //
+      //
+      //     if (timeStartListMain != timeStartList && elementMain.id_user == element.id_user) {
+      //
+      //
+      //       print("${timeStartListMain} ${elementMain.name} ${elementMain.lateness} 1");
+      //       print("${timeStartList} ${element.name} ${element.lateness} 2");
+      //
+      //       // final json = {
+      //       //   'name': element.name,
+      //       //   'id_user': element.id_user,
+      //       //   'id_post': dockFine.id,
+      //       //   'change': element.change,
+      //       //   'lateness': element.lateness,
+      //       //   'time': element.time,
+      //       //   'money_fine': element.money_fine,
+      //       // };
+      //       // dockFine.set(json);
+      //     }
+      //   });
+      // });
+    }
+  }
+
+  void _showDataTimeRange() async {
+    final DateTimeRange? result = await showDateRangePicker(
+      context: context,
+      firstDate: DateTime(2022, 1, 1),
+      lastDate: DateTime(2030, 12, 31),
+      currentDate: DateTime.now(),
+      saveText: 'Выбрать',
+    );
+
+    if (result != null) {
+      setState(() {
+        _datePeriod = result;
+        readFirebase();
+      });
+    }
+  }
+
+  void readFirebase() async {
+    listFineComplete.clear();
+    listFineFull.clear();
 
     await FirebaseFirestore.instance
         .collection('Fine')
@@ -300,7 +328,7 @@ class _FineScreens extends State<FineScreens> {
   @override
   void initState() {
     super.initState();
-    readFirebase();
+    calculationFine();
   }
 
   @override
@@ -494,9 +522,6 @@ class _FineScreens extends State<FineScreens> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      // appBar: AppBar(
-      //   title: Text('Информация'),
-      // ),
       body: SingleChildScrollView(
         padding: EdgeInsets.only(top: 20),
         child: Container(

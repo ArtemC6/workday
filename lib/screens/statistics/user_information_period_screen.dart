@@ -82,7 +82,7 @@ class _UserInformationPeriodScreen extends State<UserInformationPeriodScreen> {
               listUser.add(UserModel(
                   name: data["name"],
                   email: data["email"],
-                  status: data["status"],
+                  status: data["post"],
                   startUri: data["startUri"],
                   endUri: data["endUri"],
                   startDate: data["startDate"],
@@ -101,7 +101,7 @@ class _UserInformationPeriodScreen extends State<UserInformationPeriodScreen> {
                 listUserFull.add(UserModel(
                     name: data["name"],
                     email: data["email"],
-                    status: data["status"],
+                    status: data["post"],
                     startUri: data["startUri"],
                     endUri: data["endUri"],
                     startDate: data["startDate"],
@@ -152,7 +152,7 @@ class _UserInformationPeriodScreen extends State<UserInformationPeriodScreen> {
                 listUser.add(UserModel(
                     name: data["name"],
                     email: data["email"],
-                    status: data["status"],
+                    status: data["post"],
                     startUri: data["startUri"],
                     endUri: data["endUri"],
                     startDate: data["startDate"],
@@ -171,7 +171,7 @@ class _UserInformationPeriodScreen extends State<UserInformationPeriodScreen> {
                   listUserFull.add(UserModel(
                       name: data["name"],
                       email: data["email"],
-                      status: data["status"],
+                      status: data["post"],
                       startUri: data["startUri"],
                       endUri: data["endUri"],
                       startDate: data["startDate"],

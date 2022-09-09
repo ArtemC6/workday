@@ -9,6 +9,7 @@ import 'package:workday/screens/auth/signin_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:workday/screens/settings/settings_screen.dart';
+import 'package:workday/screens/statistics/information_users_screen.dart';
 
 import '../data/user_model.dart';
 import '../data/variable.dart';
@@ -16,16 +17,24 @@ import 'analytics_screen.dart';
 import 'statistics/detailed_statistics_screen.dart';
 
 class AdministratorScreen extends StatefulWidget {
-  const AdministratorScreen({Key? key}) : super(key: key);
+  var value;
+
+  AdministratorScreen({Key? key, @required this.value}) : super(key: key);
 
   @override
-  State<AdministratorScreen> createState() => _AdministratorScreenState();
+  State<AdministratorScreen> createState() => _AdministratorScreenState(value);
 }
 
 class _AdministratorScreenState extends State<AdministratorScreen> {
+  _AdministratorScreenState(this.value);
+
+  GlobalKey<CurvedNavigationBarState> _bottomNavigationKey = GlobalKey();
+
   List<UserModel> listUser = [], listUserWork = [];
   final formKey = GlobalKey<FormState>();
   double number = 0;
+  var value;
+
   int _page = 0;
 
   RefreshController _refreshController =
@@ -83,7 +92,7 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
                 listUserWork.add(UserModel(
                     name: data["name"],
                     email: data["email"],
-                    status: data["status"],
+                    status: data["post"],
                     startUri: data["startUri"],
                     endUri: '',
                     startDate: data["startDate"],
@@ -103,6 +112,8 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
 
         if (timeStart == currentTime) {
           if (data['endDate'] != '') {
+
+            print(data['name']);
             setState(() {
               var isExist = listUser.indexWhere(
                   (element) => element.id_user == (data['id_user']));
@@ -111,7 +122,7 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
                 listUser.add(UserModel(
                     name: data["name"],
                     email: data["email"],
-                    status: data["status"],
+                    status: data["post"],
                     startUri: data["startUri"],
                     endUri: data["endUri"],
                     startDate: data["startDate"],
@@ -135,140 +146,17 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
   @override
   void initState() {
     super.initState();
+    Future.delayed(const Duration(milliseconds: 100), () {
+      setState(() {
+        if (value != null) {
+          final CurvedNavigationBarState? navBarState =
+              _bottomNavigationKey.currentState;
+          navBarState?.setPage(value);
+        }
+      });
+    });
+
     readFirebase();
-  }
-
-  List<Widget> _getTitleWidgetWorkedUsers() {
-    return [
-      Container(
-        child: Text('Сегодня работали ${listUser.length.toString()}',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17)),
-        width: 200,
-        height: 56,
-        padding: EdgeInsets.only(left: 10),
-        alignment: Alignment.centerLeft,
-      ),
-    ];
-  }
-
-  List<Widget> _getTitleWidgetWork() {
-    return [
-      Container(
-        child: Text('Сейчас работают ${listUserWork.length.toString()}',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17)),
-        width: 200,
-        height: 56,
-        padding: EdgeInsets.only(left: 10),
-        alignment: Alignment.centerLeft,
-      ),
-    ];
-  }
-
-  Widget _generateFirstColumnRowWorkedUsers(BuildContext context, int index) {
-    return Container(
-      child: Text(
-          "${listUser[index].name} закончил(ла) ${getData(listUser[index].endDate)}",
-          style: TextStyle(fontSize: 17)),
-      width: 100,
-      height: 52,
-      padding: EdgeInsets.only(left: 10),
-      alignment: Alignment.centerLeft,
-    );
-  }
-
-  Widget _generateFirstColumnRowWork(BuildContext context, int index) {
-    return Container(
-      child: Text(
-          "${listUserWork[index].name} начал(ла) ${getData(listUserWork[index].startDate)}",
-          style: TextStyle(color: Colors.green, fontSize: 17)),
-      width: 100,
-      height: 52,
-      padding: EdgeInsets.only(left: 10),
-      alignment: Alignment.centerLeft,
-    );
-  }
-
-  Widget _generateRightHandSideColumnRow(BuildContext context, int index) {
-    return Row(
-      children: <Widget>[],
-    );
-  }
-
-  void _settingWindow() {
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (BuildContext context) {
-      return Scaffold(
-        appBar: AppBar(
-          title: Text('Настройки'),
-        ),
-        body: SafeArea(
-          child: Container(
-            padding: EdgeInsets.only(left: 20, right: 20),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Form(
-                  key: formKey,
-                  child: Container(
-                    width: MediaQuery.of(context).size.width,
-                    padding: EdgeInsets.only(left: 10, right: 10, top: 20),
-                    child: TextFormField(
-                      controller:
-                          TextEditingController(text: number.toString()),
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(RegExp(r"[0-9.]")),
-                        TextInputFormatter.withFunction((oldValue, newValue) {
-                          try {
-                            final text = newValue.text;
-                            if (text.isNotEmpty) double.parse(text);
-                            return newValue;
-                          } catch (e) {}
-                          return oldValue;
-                        }),
-                      ],
-                      keyboardType:
-                          TextInputType.numberWithOptions(decimal: true),
-                      decoration: InputDecoration(
-                        hintText: 'Введите процент сотрудникам',
-                      ),
-                      style: TextStyle(
-                        fontSize: 17,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Постое поле';
-                        }
-                        return null;
-                      },
-                      onChanged: (value) {
-                        setState(() async {
-                          if (value.length >= 1) {
-                            SharedPreferences prefs =
-                                await SharedPreferences.getInstance();
-                            prefs.setString('key_price', value);
-                          }
-                        });
-                      },
-                    ),
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.only(top: 20),
-                  width: MediaQuery.of(context).size.width,
-                  child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text('Сохнонить')),
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-    }));
   }
 
   @override
@@ -291,38 +179,85 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
           child: Column(
             children: [
               Container(
-                height: MediaQuery.of(context).size.height / 2,
-                child: HorizontalDataTable(
-                  leftHandSideColumnWidth: MediaQuery.of(context).size.width,
-                  rightHandSideColumnWidth: 600,
-                  isFixedHeader: true,
-                  headerWidgets: _getTitleWidgetWorkedUsers(),
-                  leftSideItemBuilder: _generateFirstColumnRowWorkedUsers,
-                  rightSideItemBuilder: _generateRightHandSideColumnRow,
-                  itemCount: listUser.length,
-                  rowSeparatorWidget: const Divider(
-                    color: Colors.black54,
-                    height: 1.0,
-                    thickness: 0.0,
-                  ),
-                ),
+                padding: EdgeInsets.only(left: 10, top: 50),
+                alignment: Alignment.centerLeft,
+                child: Text('Сегодня работали ${listUser.length.toString()}',
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 17)),
               ),
               Container(
-                height: MediaQuery.of(context).size.height / 2,
-                child: HorizontalDataTable(
-                  leftHandSideColumnWidth: MediaQuery.of(context).size.width,
-                  rightHandSideColumnWidth: 600,
-                  isFixedHeader: true,
-                  headerWidgets: _getTitleWidgetWork(),
-                  leftSideItemBuilder: _generateFirstColumnRowWork,
-                  rightSideItemBuilder: _generateRightHandSideColumnRow,
-                  itemCount: listUserWork.length,
-                  rowSeparatorWidget: const Divider(
-                    color: Colors.black54,
-                    height: 1.0,
-                    thickness: 0.0,
-                  ),
-                ),
+                height: MediaQuery.of(context).size.height / 2.6,
+                child: ListView.separated(
+                    physics: BouncingScrollPhysics(),
+                    itemCount: listUser.length,
+                    separatorBuilder: (BuildContext context, int index) =>
+                        Container(
+                          // padding: EdgeInsets.only(top: 10, bottom: 10),
+                          child: Divider(
+                            height: 1.0,
+                            color: Colors.black54,
+                          ),
+                        ),
+                    itemBuilder: (BuildContext context, int index) {
+                      return InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => InformationUsersScreen(
+                                        id_user: listUser[index].id_user,
+                                      )));
+                        },
+                        child: ListTile(
+                          trailing: Icon(Icons.arrow_forward_ios, size: 18),
+                          title: Text(
+                              "${listUser[index].name} закончил(ла) ${getData(listUser[index].endDate)}",
+                              style: TextStyle(fontSize: 17)),
+                        ),
+                      );
+                    }),
+              ),
+              Container(
+                padding: EdgeInsets.only(left: 10, top: 50),
+                alignment: Alignment.centerLeft,
+                child: Text(
+                    'Сегодня работают ${listUserWork.length.toString()}',
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 17)),
+              ),
+              Container(
+                height: MediaQuery.of(context).size.height / 2.6,
+                child: ListView.separated(
+                    physics: BouncingScrollPhysics(),
+                    itemCount: listUserWork.length,
+                    separatorBuilder: (BuildContext context, int index) =>
+                        Container(
+                          // padding: EdgeInsets.only(top: 10, bottom: 10),
+                          child: Divider(
+                            height: 1.0,
+                            color: Colors.black54,
+                          ),
+                        ),
+                    itemBuilder: (BuildContext context, int index) {
+                      return InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => InformationUsersScreen(
+                                        id_user: listUserWork[index].id_user,
+                                        time: listUserWork[index].startDate,
+                                      )));
+                        },
+                        child: ListTile(
+                          trailing: Icon(Icons.arrow_forward_ios, size: 18),
+                          title: Text(
+                              "${listUserWork[index].name} начал(ла) ${getData(listUserWork[index].startDate)}",
+                              style:
+                                  TextStyle(fontSize: 17, color: Colors.green)),
+                        ),
+                      );
+                    }),
               ),
             ],
           ),
@@ -355,6 +290,7 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
       },
       child: Scaffold(
         bottomNavigationBar: CurvedNavigationBar(
+          key: _bottomNavigationKey,
           index: 0,
           height: 60.0,
           items: <Widget>[

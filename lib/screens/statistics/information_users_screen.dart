@@ -84,6 +84,27 @@ class _InformationUsersScreen extends State<InformationUsersScreen> {
 
         if (idUser == data['id_user']) {
           if (timeStart == currentTime) {
+            if (data['endDate'] == '') {
+              listUser.add(UserModel(
+                  name: data["name"],
+                  email: data["email"],
+                  status: data["post"],
+                  startUri: data["startUri"],
+                  endUri:
+                      'https://www.pinclipart.com/picdir/big/59-598920_clock-svg-png-icon-free-download-304848-weblogic.png',
+                  startDate: data["startDate"],
+                  endDate: data["startDate"],
+                  id_user: data["id_user"],
+                  id_post: data["id_post"],
+                  money: 0.0,
+                  workTime: 0));
+              setState(() {});
+            }
+          }
+        }
+
+        if (idUser == data['id_user']) {
+          if (timeStart == currentTime) {
             if (data['endDate'] != '') {
               if (time == null) {
                 setState(() {
@@ -92,7 +113,7 @@ class _InformationUsersScreen extends State<InformationUsersScreen> {
                 listUser.add(UserModel(
                     name: data["name"],
                     email: data["email"],
-                    status: data["status"],
+                    status: data["post"],
                     startUri: data["startUri"],
                     endUri: data["endUri"],
                     startDate: data["startDate"],
@@ -103,7 +124,7 @@ class _InformationUsersScreen extends State<InformationUsersScreen> {
                     workTime:
                         getUserWorkTime(data["startDate"], data["endDate"])));
                 setState(() {});
-              } else {}
+              }
             }
           }
 
@@ -120,12 +141,10 @@ class _InformationUsersScreen extends State<InformationUsersScreen> {
             );
 
             if (timeStart == timeStartCame) {
-              // print(data['money'));
-
               listUser.add(UserModel(
                   name: data["name"],
                   email: data["email"],
-                  status: data["status"],
+                  status: data["post"],
                   startUri: data["startUri"],
                   endUri: data["endUri"],
                   startDate: data["startDate"],
@@ -386,11 +405,11 @@ class _InformationUsersScreen extends State<InformationUsersScreen> {
                       ],
                     ),
                     actions: <Widget>[
-                         ElevatedButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: Text('Свернуть'),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text('Свернуть'),
                       ),
                     ],
                   ),

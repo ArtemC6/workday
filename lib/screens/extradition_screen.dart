@@ -26,7 +26,7 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
   List<UserModel> listUser = [], listUserWork = [], listUserMoney = [];
   String _sum = '0.0', _percent = '0', _work_price = '0';
   bool isEmpty = false;
-  String status = '';
+  String status = '', statusName = '';
   double money = 0.0;
 
   _ExtraditionScreenScreenState(this.status);
@@ -83,7 +83,7 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
                 listUserMoney.add(UserModel(
                     name: data["name"],
                     email: data["email"],
-                    status: data["status"],
+                    status: data["post"],
                     startUri: data["startUri"],
                     endUri: data["endUri"],
                     startDate: data["startDate"],
@@ -155,6 +155,7 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
             'id_post': dockMoney.id,
             'workTime': element.workTime,
             'extraditionMoney': DateTime.now(),
+            'post': element.status,
           };
           dockMoney.set(json);
         });
@@ -172,6 +173,44 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
       Future.delayed(const Duration(milliseconds: 1000), () async {
         Navigator.pop(context);
       });
+    }
+  }
+
+  void listEntry(Map<String, dynamic> data) {
+    listUserWork.add(UserModel(
+        name: data["name"],
+        email: data["email"],
+        status: data["post"],
+        startUri: data["startUri"],
+        endUri: data["endUri"],
+        startDate: data["startDate"],
+        endDate: data["endDate"],
+        id_user: data["id_user"],
+        id_post: data["id_post"],
+        money: 0.0,
+        workTime: getUserWorkTime(data["startDate"], data["endDate"])));
+    setState(() {});
+
+    var isExist =
+        listUser.indexWhere((element) => element.id_user == (data['id_user']));
+
+    if (isExist < 0) {
+      listUser.add(UserModel(
+          name: data["name"],
+          email: data["email"],
+          status: data["post"],
+          startUri: data["startUri"],
+          endUri: data["endUri"],
+          startDate: data["startDate"],
+          endDate: data["endDate"],
+          id_user: data["id_user"],
+          id_post: data["id_post"],
+          money: 0.0,
+          workTime: getUserWorkTime(data["startDate"], data["endDate"])));
+      setState(() {});
+    } else {
+      listUser[isExist].workTime +=
+          getUserWorkTime(data['startDate'], data['endDate']);
     }
   }
 
@@ -207,68 +246,24 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
 
         if (timeStart == currentTime) {
           if (data['endDate'] != '') {
-            if (data['money'] != '0.0') {
-              var isExistMoney = listUserMoney.indexWhere(
-                  (element) => element.id_user == (data['id_user']));
-
-              if (isExistMoney < 0) {
-                listUserMoney.add(UserModel(
-                    name: data["name"],
-                    email: data["email"],
-                    status: data["status"],
-                    startUri: data["startUri"],
-                    endUri: data["endUri"],
-                    startDate: data["startDate"],
-                    endDate: data["endDate"],
-                    id_user: data["id_user"],
-                    id_post: data["id_post"],
-                    money: data['money'],
-                    workTime:
-                        getUserWorkTime(data["startDate"], data["endDate"])));
-                setState(() {});
-              } else {
-                listUserMoney[isExistMoney].money += data['money'];
-
-                listUserMoney[isExistMoney].workTime +=
-                    getUserWorkTime(data['startDate'], data['endDate']);
-              }
-            }
-
-            listUserWork.add(UserModel(
-                name: data["name"],
-                email: data["email"],
-                status: data["status"],
-                startUri: data["startUri"],
-                endUri: data["endUri"],
-                startDate: data["startDate"],
-                endDate: data["endDate"],
-                id_user: data["id_user"],
-                id_post: data["id_post"],
-                money: 0.0,
-                workTime: getUserWorkTime(data["startDate"], data["endDate"])));
-            setState(() {});
-
-            var isExist = listUser
-                .indexWhere((element) => element.id_user == (data['id_user']));
-
-            if (isExist < 0) {
-              listUser.add(UserModel(
-                  name: data["name"],
-                  email: data["email"],
-                  status: data["status"],
-                  startUri: data["startUri"],
-                  endUri: data["endUri"],
-                  startDate: data["startDate"],
-                  endDate: data["endDate"],
-                  id_user: data["id_user"],
-                  id_post: data["id_post"],
-                  money: 0.0,
-                  workTime:
-                      getUserWorkTime(data["startDate"], data["endDate"])));
-              setState(() {});
+            if (data['post'] == status) {
+              listEntry(data);
+            } else if (data['post'] == status) {
+              listEntry(data);
+            } else if (data['post'] == status) {
+              listEntry(data);
+            } else if (data['post'] == status) {
+              listEntry(data);
+            } else if (data['post'] == status) {
+              listEntry(data);
+            } else if (data['post'] == status) {
+              listEntry(data);
+            } else if (data['post'] == status) {
+              listEntry(data);
+            } else if (data['post'] == status) {
+              listEntry(data);
             } else {
-              listUser[isExist].workTime +=
-                  getUserWorkTime(data['startDate'], data['endDate']);
+              // _post = 'Произошла ошибка';
             }
           }
         }
@@ -279,6 +274,24 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
   @override
   void initState() {
     super.initState();
+
+    if ('barista' == status) {
+      statusName = 'Бириста';
+    } else if ('cook' == status) {
+      statusName = 'Повор';
+    } else if ('trainee' == status) {
+      statusName = 'Практикант';
+    } else if ('maid' == status) {
+      statusName = 'Горнечная';
+    } else if ('Кондитер' == status) {
+      statusName = 'Бириста';
+    } else if ('sous chef' == status) {
+      statusName = 'Су-Шев';
+      // _post = 'Произошла ошибка';
+    } else if ('confectionery' == status) {
+      statusName = 'Кандитер';
+      // _post = 'Произошла ошибка';
+    }
     readFirebase();
   }
 
@@ -289,26 +302,27 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
       totalTime += user.workTime;
     });
 
-    if(status == 'Бармены') {
+    if (status == 'barista') {
       users.forEach((user) {
         user.money = user.workTime / totalTime * sum;
       });
-    } else if(status == 'Повора') {
+    } else {
       users.forEach((user) {
-        user.money = user.workTime / totalTime * sum / double.parse(_work_price);
+        double time = double.parse((user.workTime / 60).toStringAsFixed(1));
+        user.money = time * sum / 10;
       });
     }
+
     return users;
   }
 
   @override
   Widget build(BuildContext context) {
-    if (status == 'Бармены') {
+    if (status == 'barista') {
       double percent = double.parse(_percent) / 100;
-      // double money = double.parse(_sum) * 0.07;
       money = double.parse(_sum) * percent;
-    } else if (status == 'Повора') {
-      money = double.parse(_sum);
+    } else {
+      money = double.parse(_work_price);
     }
 
     Widget _getTitleItemWidget(String label, double width) {
@@ -379,7 +393,7 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text("${status}", style: TextStyle(fontSize: 22)),
+              Text("${statusName}", style: TextStyle(fontSize: 22)),
               Container(
                 padding: EdgeInsets.only(top: 6, bottom: 2),
               ),
@@ -407,7 +421,7 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
                   ),
                 ),
               ),
-              if (status == 'Бармены')
+              if (status == 'barista')
                 Row(
                   children: [
                     Container(
@@ -492,90 +506,46 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
                     ),
                   ],
                 ),
-              if (status == 'Повора')
-                Row(
-                  children: [
-                    Container(
-                      width: MediaQuery.of(context).size.width / 2,
-                      padding: EdgeInsets.only(left: 20, right: 20, top: 10),
-                      child: TextFormField(
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(RegExp(r"[0-9.]")),
-                          TextInputFormatter.withFunction((oldValue, newValue) {
-                            try {
-                              final text = newValue.text;
-                              if (text.isNotEmpty) double.parse(text);
-                              return newValue;
-                            } catch (e) {}
-                            return oldValue;
-                          }),
-                        ],
-                        keyboardType:
-                            TextInputType.numberWithOptions(decimal: true),
-                        decoration: InputDecoration(
-                          hintText: 'Введите выручку',
-                        ),
-                        style: TextStyle(
-                          fontSize: 17,
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Постое поле';
-                          }
-                          return null;
-                        },
-                        onChanged: (value) {
-                          setState(() {
-                            if (value.length >= 1) {
-                              _sum = value;
-                            }
-                          });
-                        },
-                      ),
+              if (status != 'barista')
+                Container(
+                  width: MediaQuery.of(context).size.width / 1,
+                  padding: EdgeInsets.only(left: 20, right: 20, top: 10),
+                  child: TextFormField(
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r"[0-9.]")),
+                      TextInputFormatter.withFunction((oldValue, newValue) {
+                        try {
+                          final text = newValue.text;
+                          if (text.isNotEmpty) double.parse(text);
+                          return newValue;
+                        } catch (e) {}
+                        return oldValue;
+                      }),
+                    ],
+                    keyboardType:
+                        TextInputType.numberWithOptions(decimal: true),
+                    decoration: InputDecoration(
+                      hintText: 'Час работы',
                     ),
-                    Container(
-                      width: MediaQuery.of(context).size.width / 2,
-                      padding: EdgeInsets.only(left: 20, right: 20, top: 10),
-                      child: TextFormField(
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(RegExp(r"[0-9.]")),
-                          TextInputFormatter.withFunction((oldValue, newValue) {
-                            try {
-                              final text = newValue.text;
-                              if (text.isNotEmpty) double.parse(text);
-                              return newValue;
-                            } catch (e) {}
-                            return oldValue;
-                          }),
-                        ],
-                        keyboardType:
-                            TextInputType.numberWithOptions(decimal: true),
-                        decoration: InputDecoration(
-                          hintText: 'Час работы',
-                        ),
-                        style: TextStyle(
-                          fontSize: 17,
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Постое поле';
-                          }
-                          return null;
-                        },
-                        onChanged: (value) {
-                          setState(() {
-                            if (value.length >= 1) {
-                              _work_price = value;
-                            }
-                          });
-                        },
-                      ),
+                    style: TextStyle(
+                      fontSize: 17,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
                     ),
-                  ],
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Постое поле';
+                      }
+                      return null;
+                    },
+                    onChanged: (value) {
+                      setState(() {
+                        if (value.length >= 1) {
+                          _work_price = value;
+                        }
+                      });
+                    },
+                  ),
                 ),
               Container(
                 padding: EdgeInsets.only(left: 20, right: 20, top: 20),
@@ -598,7 +568,9 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (BuildContext context) =>
-                                        AdministratorScreen()));
+                                        AdministratorScreen(
+                                          value: 1,
+                                        )));
                           },
                           child: Text('Вернуться')),
                     ),

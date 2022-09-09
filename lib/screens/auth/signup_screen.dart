@@ -10,6 +10,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:avatar_glow/avatar_glow.dart';
 
+import '../home_screen.dart';
+
 class SignUpScreen extends StatefulWidget {
   @override
   _SignUpScreen createState() => _SignUpScreen();
@@ -17,6 +19,7 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreen extends State<SignUpScreen> {
   String _email = "", _password = "", _name = "";
+  bool _isHidden = true;
 
   showAlertDialog(BuildContext context) {
     AlertDialog alert = AlertDialog(
@@ -57,7 +60,7 @@ class _SignUpScreen extends State<SignUpScreen> {
       backgroundColor: Color(0xff292C31),
       body: SingleChildScrollView(
         child: Container(
-          padding: EdgeInsets.only(left: _width / 10, right: _width / 10),
+          padding: EdgeInsets.only(left: _width / 10, right: _width / 10, top: _height / 20),
           height: _height,
           child: Column(
             children: [
@@ -87,7 +90,8 @@ class _SignUpScreen extends State<SignUpScreen> {
                       splashColor: Colors.transparent,
                       highlightColor: Colors.transparent,
                       onTap: () {
-                        Navigator.push(context, Scale_Transition(SignInScreen()));
+                        Navigator.push(
+                            context, Scale_Transition(SignInScreen()));
                       },
                       child: Container(
                         alignment: Alignment.centerRight,
@@ -119,6 +123,7 @@ class _SignUpScreen extends State<SignUpScreen> {
                       'name': _name,
                       'email': _email,
                       'status': 'waiter',
+                      'post': '',
                     };
 
                     docUser.set(json);
@@ -159,6 +164,63 @@ class _SignUpScreen extends State<SignUpScreen> {
 
   Widget componentTextField(IconData icon, String hintText, bool isPassword,
       bool isEmail, String changed) {
+    if (isPassword) {
+      return Container(
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: Color(0xff212428),
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: TextField(
+          style: TextStyle(color: Colors.white.withOpacity(.7)),
+          obscureText: _isHidden,
+          keyboardType:
+              isEmail ? TextInputType.emailAddress : TextInputType.text,
+          decoration: InputDecoration(
+            suffixIcon: GestureDetector(
+              onTap: () {
+                setState(() {
+                  _isHidden = !_isHidden;
+                });
+              },
+              child: _isHidden
+                  ? Icon(
+                      Icons.remove_red_eye_sharp,
+                      color: Colors.white24,
+                    )
+                  : Icon(
+                      Icons.remove_red_eye,
+                      color: Colors.blueAccent,
+                    ),
+            ),
+            prefixIcon: Icon(
+              icon,
+              color: Colors.white.withOpacity(.7),
+            ),
+            border: InputBorder.none,
+            hintMaxLines: 1,
+            hintText: hintText,
+            hintStyle: TextStyle(
+              fontSize: 14,
+              color: Colors.white.withOpacity(.5),
+            ),
+          ),
+          onChanged: (value) {
+            setState(() {
+              if (changed == 'name') {
+                _name = value;
+              }
+              if (changed == 'email') {
+                _email = value;
+              }
+              if (changed == 'password') {
+                _password = value;
+              }
+            });
+          },
+        ),
+      );
+    }
     return Container(
       alignment: Alignment.center,
       decoration: BoxDecoration(

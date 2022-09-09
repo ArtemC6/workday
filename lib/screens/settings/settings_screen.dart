@@ -16,7 +16,7 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreen extends State<SettingsScreen> {
   final formKey = GlobalKey<FormState>();
-  String _name = '';
+  String _name = '', _post = '';
 
   void readFirebase() {
     FirebaseFirestore.instance
@@ -26,11 +26,35 @@ class _SettingsScreen extends State<SettingsScreen> {
         .then((DocumentSnapshot documentSnapshot) async {
       if (documentSnapshot.exists) {
         setState(() {
+
           _name = documentSnapshot['name'];
+
+          if (documentSnapshot['post'] == 'barista') {
+            _post = 'Бириста';
+          } else if (documentSnapshot['post'] == 'admin') {
+            _post = 'Администратор';
+          } else if (documentSnapshot['post'] == 'boss') {
+            _post = 'Руководитель';
+          } else if (documentSnapshot['post'] == 'cook') {
+            _post = 'Повор';
+          } else if (documentSnapshot['post'] == 'trainee') {
+            _post = 'Стажёр';
+          } else if (documentSnapshot['post'] == 'maid') {
+            _post = 'Горничная';
+          } else if (documentSnapshot['post'] == 'confectioner') {
+            _post = 'Консьерж';
+          } else if (documentSnapshot['post'] == 'sous chef') {
+            _post = 'Су-Шеф';
+          } else {
+            _post = 'Произошла ошибка';
+          }
+
         });
       }
     });
   }
+
+
 
   @override
   void initState() {
@@ -54,6 +78,15 @@ class _SettingsScreen extends State<SettingsScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+
+              Text(
+                '${_post}',
+                style: TextStyle(
+                  fontSize: 24,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               Container(
                 width: MediaQuery.of(context).size.width,
                 padding:
