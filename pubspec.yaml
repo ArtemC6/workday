@@ -59,6 +59,11 @@ dev_dependencies:
   animated_text_kit: ^4.2.2
   animations: ^2.0.4
   modal_bottom_sheet: ^2.1.2
+  flutter_carousel_slider: ^1.0.9
+  progress_state_button: ^1.0.4
+  syncfusion_flutter_charts: ^20.2.48
+  expansion_tile_card: ^2.0.0
+  slider_button: ^2.0.0
 
 
 

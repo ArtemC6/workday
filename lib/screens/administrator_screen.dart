@@ -11,6 +11,7 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:workday/screens/settings/settings_screen.dart';
 import 'package:workday/screens/statistics/information_users_screen.dart';
 
+import '../data/const.dart';
 import '../data/user_model.dart';
 import '../data/variable.dart';
 import 'analytics_screen.dart';
@@ -39,12 +40,6 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
 
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
-
-  int getUserWorkTime(Timestamp startDate, Timestamp endDate) {
-    final DateTime dateTimeStart = startDate.toDate();
-    final DateTime dateTimeEnd = endDate.toDate();
-    return dateTimeEnd.difference(dateTimeStart).inMinutes;
-  }
 
   String getData(Timestamp startDate) {
     final DateTime dateTimeStart = startDate.toDate();
@@ -163,6 +158,7 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
   Widget build(BuildContext context) {
     Widget administratorMain() {
       return SmartRefresher(
+
         onRefresh: () async {
           setState(() {
             Navigator.pushReplacement(
@@ -173,7 +169,7 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
         },
         controller: _refreshController,
         child: Container(
-          color: Colors.white,
+          color: color_main_black,
           height: MediaQuery.of(context).size.height,
           // padding: EdgeInsets.only(left: 10, right: 10),
           child: Column(
@@ -183,22 +179,16 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
                 alignment: Alignment.centerLeft,
                 child: Text('Сегодня работали ${listUser.length.toString()}',
                     style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 17)),
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 17, color: Colors.white)),
               ),
               Container(
+                color: color_main_black,
                 height: MediaQuery.of(context).size.height / 2.6,
-                child: ListView.separated(
+                child: ListView.builder(
+                  itemCount: listUser.length,
                     physics: BouncingScrollPhysics(),
-                    itemCount: listUser.length,
-                    separatorBuilder: (BuildContext context, int index) =>
-                        Container(
-                          // padding: EdgeInsets.only(top: 10, bottom: 10),
-                          child: Divider(
-                            height: 1.0,
-                            color: Colors.black54,
-                          ),
-                        ),
                     itemBuilder: (BuildContext context, int index) {
+
                       return InkWell(
                         onTap: () {
                           Navigator.push(
@@ -209,10 +199,10 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
                                       )));
                         },
                         child: ListTile(
-                          trailing: Icon(Icons.arrow_forward_ios, size: 18),
+                          trailing: Icon(Icons.arrow_forward_ios, size: 18, color: Colors.white,),
                           title: Text(
                               "${listUser[index].name} закончил(ла) ${getData(listUser[index].endDate)}",
-                              style: TextStyle(fontSize: 17)),
+                              style: TextStyle(fontSize: 17, color: Colors.white)),
                         ),
                       );
                     }),
@@ -223,21 +213,14 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
                 child: Text(
                     'Сегодня работают ${listUserWork.length.toString()}',
                     style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 17)),
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 17, color: Colors.white)),
               ),
               Container(
+                color: color_main_black,
                 height: MediaQuery.of(context).size.height / 2.6,
-                child: ListView.separated(
+                child: ListView.builder(
                     physics: BouncingScrollPhysics(),
                     itemCount: listUserWork.length,
-                    separatorBuilder: (BuildContext context, int index) =>
-                        Container(
-                          // padding: EdgeInsets.only(top: 10, bottom: 10),
-                          child: Divider(
-                            height: 1.0,
-                            color: Colors.black54,
-                          ),
-                        ),
                     itemBuilder: (BuildContext context, int index) {
                       return InkWell(
                         onTap: () {
@@ -250,7 +233,7 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
                                       )));
                         },
                         child: ListTile(
-                          trailing: Icon(Icons.arrow_forward_ios, size: 18),
+                          trailing: Icon(Icons.arrow_forward_ios, size: 18, color: Colors.white,),
                           title: Text(
                               "${listUserWork[index].name} начал(ла) ${getData(listUserWork[index].startDate)}",
                               style:
@@ -301,7 +284,7 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
           ],
           color: Colors.white,
           buttonBackgroundColor: Colors.white,
-          backgroundColor: Colors.blueAccent,
+          backgroundColor: color_main_black,
           animationCurve: Curves.easeInOut,
           animationDuration: Duration(milliseconds: 700),
           onTap: (index) {

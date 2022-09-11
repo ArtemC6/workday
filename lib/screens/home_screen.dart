@@ -76,19 +76,19 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
         final DateTime dateTimeStart = timestampStart.toDate();
         DateTime currentDate = DateTime.now();
 
-        var timeStartNot = new DateTime(
+        var timeStartNotHour = new DateTime(
             dateTimeStart.year, dateTimeStart.month, dateTimeStart.day);
 
-        var timeStartCurrent =
+        var timeCurrentNOtHour =
             new DateTime(currentDate.year, currentDate.month, currentDate.day);
+
+        var timeCurrentHour = new DateTime(currentDate.year, currentDate.month,
+            currentDate.day, currentDate.hour);
 
         var timeStart = new DateTime(dateTimeStart.year, dateTimeStart.month,
             dateTimeStart.day, dateTimeStart.hour);
 
         final dockUsers = await FirebaseFirestore.instance.collection('Work');
-
-        DateTime dateOver_7 =
-            DateTime.parse("${DateFormat('yyyy-MM-dd').format(timeStart)} 07");
 
         DateTime dateOver_15 =
             DateTime.parse("${DateFormat('yyyy-MM-dd').format(timeStart)} 15");
@@ -97,30 +97,43 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
             DateTime.parse("${DateFormat('yyyy-MM-dd').format(timeStart)} 23");
 
         if (data['endDate'] == '') {
-          if (timeStart.hour >= dateOver_7.hour &&
-              timeStart.hour < dateOver_15.hour) {
-            if (timeStartCurrent == timeStartNot) {
-              final json = {
-                'endUri':
-                    'https://i0.wp.com/cdn.onlinewebfonts.com/svg/img_521125.png',
-                'endDate': DateTime.parse(
-                    "${DateFormat('yyyy-MM-dd').format(timeStart)} 15"),
-              };
-              dockUsers.doc(document.id).update(json);
-            } else {
-              // print('${data['name']}');
-              final json = {
-                'endUri':
-                    'https://i0.wp.com/cdn.onlinewebfonts.com/svg/img_521125.png',
-                'endDate': DateTime.parse(
-                    "${DateFormat('yyyy-MM-dd').format(timeStart)} 15"),
-              };
-              dockUsers.doc(document.id).update(json);
+          if (data['post'] != 'admin') {
+            if (timeStart.hour >= 7 && timeStart.hour < 15) {
+              if (timeCurrentNOtHour == timeStartNotHour) {
+                if (timeCurrentHour.hour > dateOver_15.hour) {
+                  // print('object');
+
+                  final json = {
+                    'endUri':
+                        'https://i0.wp.com/cdn.onlinewebfonts.com/svg/img_521125.png',
+                    'endDate': DateTime.parse(
+                        "${DateFormat('yyyy-MM-dd').format(timeStart)} 15"),
+                  };
+
+                  dockUsers.doc(document.id).update(json);
+                }
+              } else {
+                final json = {
+                  'endUri':
+                      'https://i0.wp.com/cdn.onlinewebfonts.com/svg/img_521125.png',
+                  'endDate': DateTime.parse(
+                      "${DateFormat('yyyy-MM-dd').format(timeStart)} 15"),
+                };
+                dockUsers.doc(document.id).update(json);
+              }
             }
-          }
-          if (timeStart.hour >= dateOver_15.hour) {
-            if (timeStartCurrent == timeStartNot) {
-              if (timeStart.hour > dateOver_23.hour) {
+            if (timeStart.hour >= 15 && timeStart.hour <= 23) {
+              if (timeCurrentNOtHour == timeStartNotHour) {
+                if (timeCurrentHour.hour >= dateOver_23.hour) {
+                  final json = {
+                    'endUri':
+                        'https://i0.wp.com/cdn.onlinewebfonts.com/svg/img_521125.png',
+                    'endDate': DateTime.parse(
+                        "${DateFormat('yyyy-MM-dd').format(timeStart)} 23"),
+                  };
+                  dockUsers.doc(document.id).update(json);
+                }
+              } else {
                 final json = {
                   'endUri':
                       'https://i0.wp.com/cdn.onlinewebfonts.com/svg/img_521125.png',
@@ -129,14 +142,6 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                 };
                 dockUsers.doc(document.id).update(json);
               }
-            } else {
-              final json = {
-                'endUri':
-                    'https://i0.wp.com/cdn.onlinewebfonts.com/svg/img_521125.png',
-                'endDate': DateTime.parse(
-                    "${DateFormat('yyyy-MM-dd').format(timeStart)} 23"),
-              };
-              dockUsers.doc(document.id).update(json);
             }
           }
         }

@@ -6,36 +6,28 @@ import 'package:intl/intl.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:horizontal_data_table/horizontal_data_table.dart';
 
+import '../../data/const.dart';
 import '../../data/money_model.dart';
 import '../../data/user_model.dart';
 import 'information_users_screen.dart';
 
 class MoneyInformationScreen extends StatefulWidget {
-  const MoneyInformationScreen({Key? key}) : super(key: key);
+  var post;
+
+  MoneyInformationScreen({Key? key, @required this.post}) : super(key: key);
 
   @override
-  State<MoneyInformationScreen> createState() => _MoneyInformationScreen();
+  State<MoneyInformationScreen> createState() => _MoneyInformationScreen(post);
 }
 
 class _MoneyInformationScreen extends State<MoneyInformationScreen> {
-  List<MoneyModel> listUserMoney = [];
-  List<MoneyModel> listUserMoneyFull = [];
+  var post;
 
-  bool isPosition = true;
-  bool isPositionVisible = false;
+  _MoneyInformationScreen(this.post);
+
+  List<MoneyModel> listUserMoney = [],listUserMoneyFull = [];
+  bool isPositionVisible = false, isVisiblyProgress = false, isPosition = true;
   DateTimeRange? _datePeriod;
-
-  int getUserWorkTime(Timestamp startDate, Timestamp endDate) {
-    final DateTime dateTimeStart = startDate.toDate();
-    final DateTime dateTimeEnd = endDate.toDate();
-    return dateTimeEnd.difference(dateTimeStart).inMinutes;
-  }
-
-  String getData(Timestamp startDate) {
-    final DateTime dateTimeStart = startDate.toDate();
-    String formattedDate = DateFormat('yyyy-MM-dd').format(dateTimeStart);
-    return formattedDate;
-  }
 
   String getDataPeriod(DateTime startDate) {
     String formattedDate = DateFormat('yyyy-MM-dd').format(startDate);
@@ -69,20 +61,8 @@ class _MoneyInformationScreen extends State<MoneyInformationScreen> {
         end = end.subtract(Duration(seconds: 1));
 
         if (timeStart.isAfter(start) && timeStart.isBefore(end)) {
-          listUserMoney.add(MoneyModel(
-              name: data["name"],
-              extraditionMoney: data["extraditionMoney"],
-              id_user: data["id_user"],
-              id_post: data["id_post"],
-              money: data['money'],
-              workTime: data['workTime']));
-          setState(() {});
-
-          var isExistMoney = listUserMoneyFull
-              .indexWhere((element) => element.id_user == (data['id_user']));
-
-          if (isExistMoney < 0) {
-            listUserMoneyFull.add(MoneyModel(
+          if (post == data['post']) {
+            listUserMoney.add(MoneyModel(
                 name: data["name"],
                 extraditionMoney: data["extraditionMoney"],
                 id_user: data["id_user"],
@@ -90,18 +70,72 @@ class _MoneyInformationScreen extends State<MoneyInformationScreen> {
                 money: data['money'],
                 workTime: data['workTime']));
             setState(() {});
-          } else {
-            int valuer = data['workTime'];
-            listUserMoneyFull[isExistMoney].money += data['money'];
-            listUserMoneyFull[isExistMoney].workTime += valuer;
+
+            var isExistMoney = listUserMoneyFull
+                .indexWhere((element) => element.id_user == (data['id_user']));
+
+            if (isExistMoney < 0) {
+              listUserMoneyFull.add(MoneyModel(
+                  name: data["name"],
+                  extraditionMoney: data["extraditionMoney"],
+                  id_user: data["id_user"],
+                  id_post: data["id_post"],
+                  money: data['money'],
+                  workTime: data['workTime']));
+              setState(() {});
+            } else {
+              int valuer = data['workTime'];
+              listUserMoneyFull[isExistMoney].money += data['money'];
+              listUserMoneyFull[isExistMoney].workTime += valuer;
+            }
+          }
+        }
+
+        if (timeStart.isAfter(start) && timeStart.isBefore(end)) {
+          if (post == null) {
+            listUserMoney.add(MoneyModel(
+                name: data["name"],
+                extraditionMoney: data["extraditionMoney"],
+                id_user: data["id_user"],
+                id_post: data["id_post"],
+                money: data['money'],
+                workTime: data['workTime']));
+            setState(() {});
+
+            var isExistMoney = listUserMoneyFull
+                .indexWhere((element) => element.id_user == (data['id_user']));
+
+            if (isExistMoney < 0) {
+              listUserMoneyFull.add(MoneyModel(
+                  name: data["name"],
+                  extraditionMoney: data["extraditionMoney"],
+                  id_user: data["id_user"],
+                  id_post: data["id_post"],
+                  money: data['money'],
+                  workTime: data['workTime']));
+              setState(() {});
+            } else {
+              int valuer = data['workTime'];
+              listUserMoneyFull[isExistMoney].money += data['money'];
+              listUserMoneyFull[isExistMoney].workTime += valuer;
+            }
           }
         }
       });
     });
+    setState(() {
+      isVisiblyProgress = false;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+
     void _showDataTimeRange() async {
       final DateTimeRange? result = await showDateRangePicker(
         context: context,
@@ -114,6 +148,7 @@ class _MoneyInformationScreen extends State<MoneyInformationScreen> {
       if (result != null) {
         setState(() {
           _datePeriod = result;
+          isVisiblyProgress = true;
           readUserFirebase();
         });
       }
@@ -121,7 +156,8 @@ class _MoneyInformationScreen extends State<MoneyInformationScreen> {
 
     Widget _getTitleItemWidget(String label, double width) {
       return Container(
-        child: Text(label, style: TextStyle(fontWeight: FontWeight.bold)),
+        child: Text(label,
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
         width: width,
         height: 56,
         padding: EdgeInsets.only(left: 10),
@@ -150,7 +186,8 @@ class _MoneyInformationScreen extends State<MoneyInformationScreen> {
 
     Widget _generateFirstColumnRow(BuildContext context, int index) {
       return Container(
-        child: Text(listUserMoney[index].name, style: TextStyle(fontSize: 16)),
+        child: Text(listUserMoney[index].name,
+            style: TextStyle(fontSize: 16, color: Colors.white)),
         width: 100,
         height: 52,
         padding: EdgeInsets.only(left: 10),
@@ -164,23 +201,17 @@ class _MoneyInformationScreen extends State<MoneyInformationScreen> {
           Container(
             padding: EdgeInsets.only(left: 14, right: 14),
             child: listUserMoney[index].workTime <= 60
-                ? Text(
-                    '${listUserMoney[index].workTime} минут ',
-                    style: TextStyle(fontSize: 16),
-                  )
+                ? Text('${listUserMoney[index].workTime} минут ',
+                    style: TextStyle(fontSize: 16, color: Colors.white))
                 : Text(
                     '${(listUserMoney[index].workTime / 60).toStringAsFixed(1)} часов ',
-                    style: TextStyle(
-                      fontSize: 16,
-                    ),
+                    style: TextStyle(fontSize: 16, color: Colors.white),
                   ),
           ),
           Container(
             child: Text(
               '${double.parse((listUserMoney[index].money).toStringAsFixed(1).toString())} сом ',
-              style: TextStyle(
-                fontSize: 16,
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.white),
             ),
             width: 100,
             height: 52,
@@ -190,9 +221,7 @@ class _MoneyInformationScreen extends State<MoneyInformationScreen> {
           Container(
             child: Text(
               '${getData(listUserMoney[index].extraditionMoney)}',
-              style: TextStyle(
-                fontSize: 16,
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.white),
             ),
             width: 100,
             height: 52,
@@ -227,23 +256,17 @@ class _MoneyInformationScreen extends State<MoneyInformationScreen> {
           Container(
             padding: EdgeInsets.only(left: 14, right: 14),
             child: listUserMoneyFull[index].workTime <= 60
-                ? Text(
-                    '${listUserMoneyFull[index].workTime} минут ',
-                    style: TextStyle(fontSize: 16),
-                  )
+                ? Text('${listUserMoneyFull[index].workTime} минут ',
+                    style: TextStyle(fontSize: 16, color: Colors.white))
                 : Text(
                     '${(listUserMoneyFull[index].workTime / 60).toStringAsFixed(1)} часов ',
-                    style: TextStyle(
-                      fontSize: 16,
-                    ),
+                    style: TextStyle(fontSize: 16, color: Colors.white),
                   ),
           ),
           Container(
             child: Text(
               '${double.parse((listUserMoneyFull[index].money).toStringAsFixed(1).toString())} сом ',
-              style: TextStyle(
-                fontSize: 16,
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.white),
             ),
             width: 100,
             height: 52,
@@ -253,9 +276,7 @@ class _MoneyInformationScreen extends State<MoneyInformationScreen> {
           Container(
             child: Text(
               '${getData(listUserMoneyFull[index].extraditionMoney)}',
-              style: TextStyle(
-                fontSize: 16,
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.white),
             ),
             width: 100,
             height: 52,
@@ -267,31 +288,50 @@ class _MoneyInformationScreen extends State<MoneyInformationScreen> {
     }
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: color_main_black,
       body: SingleChildScrollView(
         padding: EdgeInsets.only(top: 20),
         child: Container(
-          height: MediaQuery.of(context).size.height,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               if (listUserMoney.length != 0)
-                Text(
-                  ' С ${getDataPeriod(_datePeriod!.start)} до ${getDataPeriod(_datePeriod!.end)}',
-                  style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
+                Container(
+                  padding: EdgeInsets.only(top: 20),
+                  child: Text(
+                    ' С ${getDataPeriod(_datePeriod!.start)} до ${getDataPeriod(_datePeriod!.end)}',
+                    style: TextStyle(
+                        fontSize: 19,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
+                  ),
                 ),
               if (listUserMoney.length == 0)
                 Container(
-                  padding: EdgeInsets.only(bottom: 20),
+                  padding: EdgeInsets.only(bottom: 20, top: MediaQuery.of(context).size.height / 2),
                   child: Text(
                     'Информации не найденно',
-                    style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        fontSize: 19,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
                   ),
                 ),
+
+              if (isVisiblyProgress)
+                Container(
+                  padding: EdgeInsets.only(top: 10, bottom: 10),
+                  child: LinearProgressIndicator(
+                      color: Colors.blueAccent,
+                      backgroundColor: color_main_black),
+                ),
+
               if (listUserMoney.length != 0)
                 Container(
-                  height: MediaQuery.of(context).size.height / 2.6,
+                  height: MediaQuery.of(context).size.height / 1.5,
                   child: HorizontalDataTable(
+                    rightHandSideColBackgroundColor: color_main_black,
+                    leftHandSideColBackgroundColor: color_main_black,
                     leftHandSideColumnWidth: 100,
                     rightHandSideColumnWidth: 600,
                     isFixedHeader: true,
@@ -307,38 +347,39 @@ class _MoneyInformationScreen extends State<MoneyInformationScreen> {
                   ),
                 ),
               if (listUserMoneyFull.length != 0)
-                Container(
-                  height: MediaQuery.of(context).size.height / 2.6,
-                  child: HorizontalDataTable(
-                    leftHandSideColumnWidth: 100,
-                    rightHandSideColumnWidth: 600,
-                    isFixedHeader: true,
-                    headerWidgets: _getTitleWidgetFull(),
-                    leftSideItemBuilder: _generateFirstColumnRow,
-                    rightSideItemBuilder: _generateRightHandSideColumnRowFull,
-                    itemCount: listUserMoneyFull.length,
-                    rowSeparatorWidget: const Divider(
-                      color: Colors.black54,
-                      height: 1.0,
-                      thickness: 0.0,
-                    ),
+
+                ExpansionTile(
+                  title: Text(
+                    'Суммировать',
+                    style: TextStyle(color: Colors.white),
                   ),
+                  collapsedIconColor: Colors.white,
+                  children: [
+                    Container(
+                      height: MediaQuery.of(context).size.height / 2.0,
+                      child: HorizontalDataTable(
+                        rightHandSideColBackgroundColor: color_main_black,
+                        leftHandSideColBackgroundColor: color_main_black,
+                        leftHandSideColumnWidth: 100,
+                        rightHandSideColumnWidth: 600,
+                        isFixedHeader: true,
+                        headerWidgets: _getTitleWidgetFull(),
+                        leftSideItemBuilder: _generateFirstColumnRow,
+                        rightSideItemBuilder: _generateRightHandSideColumnRowFull,
+                        itemCount: listUserMoneyFull.length,
+                        rowSeparatorWidget: const Divider(
+                          color: Colors.black54,
+                          height: 1.0,
+                          thickness: 0.0,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               Container(
-                padding: EdgeInsets.only(left: 20, right: 20),
+                padding: EdgeInsets.only(left: 20, right: 20, top: 10),
                 child: Column(
                   children: [
-                    // Container(
-                    //   padding: EdgeInsets.only(bottom: 6),
-                    //   width: MediaQuery.of(context).size.width,
-                    //   child: ElevatedButton(
-                    //       onPressed: () {
-                    //         setState(() {
-                    //           readUserFirebase();
-                    //         });
-                    //       },
-                    //       child: Text('Получить информацию')),
-                    // ),
                     Container(
                       padding: EdgeInsets.only(bottom: 6),
                       width: MediaQuery.of(context).size.width,

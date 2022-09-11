@@ -7,10 +7,15 @@ import 'package:horizontal_data_table/horizontal_data_table.dart';
 import 'package:workday/screens/administrator_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:workday/screens/auth/signin_screen.dart';
+import 'package:progress_state_button/iconed_button.dart';
+import 'package:progress_state_button/progress_button.dart';
+import 'package:workday/screens/statistics/information_users_screen.dart';
 
+import '../data/const.dart';
 import '../data/user_model.dart';
 import '../data/variable.dart';
 import 'auth/signup_screen.dart';
+import 'package:intl/intl.dart';
 
 class ExtraditionScreen extends StatefulWidget {
   var status;
@@ -24,20 +29,22 @@ class ExtraditionScreen extends StatefulWidget {
 
 class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
   List<UserModel> listUser = [], listUserWork = [], listUserMoney = [];
+  ButtonState stateTextWithIcon = ButtonState.idle;
   String _sum = '0.0', _percent = '0', _work_price = '0';
   bool isEmpty = false;
   String status = '', statusName = '';
   double money = 0.0;
+  DateTimeRange? _datePeriod;
 
   _ExtraditionScreenScreenState(this.status);
 
-  int getUserWorkTime(Timestamp startDate, Timestamp endDate) {
-    final DateTime dateTimeStart = startDate.toDate();
-    final DateTime dateTimeEnd = endDate.toDate();
-    return dateTimeEnd.difference(dateTimeStart).inMinutes;
+  String getDataPeriod(DateTime startDate) {
+    String formattedDate = DateFormat('yyyy-MM-dd').format(startDate);
+    return formattedDate;
   }
 
-  void calculation(List<UserModel> listWork) async {
+  void calculation(List<UserModel> listWork, DateTimeRange? datePeriod) async {
+    listUserMoney.clear();
     final dockUsers = FirebaseFirestore.instance.collection('Work');
     listWork.forEach((element) {
       final json = {
@@ -47,8 +54,6 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
       };
       dockUsers.doc(element.id_post).update(json);
     });
-
-    listUserMoney.clear();
 
     await FirebaseFirestore.instance
         .collection('Work')
@@ -66,14 +71,14 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
           dateTimeStart.day,
         );
 
-        DateTime currentDate = DateTime.now();
-        var currentTime = new DateTime(
-          currentDate.year,
-          currentDate.month,
-          currentDate.day,
-        );
+        DateTime start = _datePeriod!.start;
+        DateTime end = _datePeriod!.end;
 
-        if (timeStart == currentTime) {
+        start = start.subtract(Duration(seconds: 1));
+        end = end.add(Duration(days: 1));
+        end = end.subtract(Duration(seconds: 1));
+
+        if (timeStart.isAfter(start) && timeStart.isBefore(end)) {
           if (data['endDate'] != '') {
             if (data['money'] != '0.0') {
               var isExistMoney = listUserMoney.indexWhere(
@@ -121,20 +126,21 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
           dateTimeStart.day,
         );
 
-        DateTime currentDate = DateTime.now();
-        var currentTime = new DateTime(
-          currentDate.year,
-          currentDate.month,
-          currentDate.day,
-        );
+        DateTime start = _datePeriod!.start;
+        DateTime end = _datePeriod!.end;
 
-        if (timeStart == currentTime) {
-          print('object_1');
+        start = start.subtract(Duration(seconds: 1));
+        end = end.add(Duration(days: 1));
+        end = end.subtract(Duration(seconds: 1));
+
+        if (timeStart.isAfter(start) && timeStart.isBefore(end)) {
+          print('${start} ___');
+          print('${end} ___');
+
           final dockUsers =
               await FirebaseFirestore.instance.collection('Money');
           dockUsers.doc(document.id).delete();
         } else {
-          print('object_2');
           setState(() {
             isEmpty = false;
           });
@@ -143,36 +149,35 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
     });
 
     if (!isEmpty) {
-      Future.delayed(const Duration(milliseconds: 300), () async {
+      Future.delayed(const Duration(milliseconds: 500), () async {
         listUserMoney.forEach((element) {
-          final dockMoney =
-              FirebaseFirestore.instance.collection('Money').doc();
-          final json = {
-            'money': double.parse(element.money.toStringAsFixed(1)),
-            'money_full': double.parse(_sum),
-            'name': element.name,
-            'id_user': element.id_user,
-            'id_post': dockMoney.id,
-            'workTime': element.workTime,
-            'extraditionMoney': DateTime.now(),
-            'post': element.status,
-          };
-          dockMoney.set(json);
+          if (element.money != 0.0) {
+            final dockMoney =
+                FirebaseFirestore.instance.collection('Money').doc();
+            final json = {
+              'money': double.parse(element.money.toStringAsFixed(1)),
+              'money_full': double.parse(_sum),
+              'name': element.name,
+              'id_user': element.id_user,
+              'id_post': dockMoney.id,
+              'workTime': element.workTime,
+              'extraditionMoney': element.startDate,
+              'post': element.status,
+            };
+            dockMoney.set(json);
+          }
         });
       });
 
-      showDialog(
-        context: context,
-        builder: (context) => new AlertDialog(
-          title: new Text(''),
-          content: Image.asset('images/ic_check.png'),
-          actions: <Widget>[],
-        ),
-      );
-
-      Future.delayed(const Duration(milliseconds: 1000), () async {
-        Navigator.pop(context);
-      });
+      if (listUserWork.length != 0) {
+        setState(() {
+          stateTextWithIcon = ButtonState.success;
+        });
+      } else {
+        setState(() {
+          stateTextWithIcon = ButtonState.fail;
+        });
+      }
     }
   }
 
@@ -215,6 +220,9 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
   }
 
   void readFirebase() async {
+    listUser.clear();
+    listUserWork.clear();
+
     setState(() {
       if (FirebaseAuth.instance.currentUser == null) {
         Navigator.push(context, Scale_Transition(SignInScreen()));
@@ -237,33 +245,17 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
           dateTimeStart.day,
         );
 
-        DateTime currentDate = DateTime.now();
-        var currentTime = new DateTime(
-          currentDate.year,
-          currentDate.month,
-          currentDate.day,
-        );
+        DateTime start = _datePeriod!.start;
+        DateTime end = _datePeriod!.end;
 
-        if (timeStart == currentTime) {
+        start = start.subtract(Duration(seconds: 1));
+        end = end.add(Duration(days: 1));
+        end = end.subtract(Duration(seconds: 1));
+
+        if (timeStart.isAfter(start) && timeStart.isBefore(end)) {
           if (data['endDate'] != '') {
             if (data['post'] == status) {
               listEntry(data);
-            } else if (data['post'] == status) {
-              listEntry(data);
-            } else if (data['post'] == status) {
-              listEntry(data);
-            } else if (data['post'] == status) {
-              listEntry(data);
-            } else if (data['post'] == status) {
-              listEntry(data);
-            } else if (data['post'] == status) {
-              listEntry(data);
-            } else if (data['post'] == status) {
-              listEntry(data);
-            } else if (data['post'] == status) {
-              listEntry(data);
-            } else {
-              // _post = 'Произошла ошибка';
             }
           }
         }
@@ -274,25 +266,27 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
   @override
   void initState() {
     super.initState();
-
     if ('barista' == status) {
       statusName = 'Бириста';
     } else if ('cook' == status) {
       statusName = 'Повор';
     } else if ('trainee' == status) {
-      statusName = 'Практикант';
+      statusName = 'Стажёр';
     } else if ('maid' == status) {
       statusName = 'Горнечная';
     } else if ('Кондитер' == status) {
       statusName = 'Бириста';
-    } else if ('sous chef' == status) {
+    } else if ('sous-chef' == status) {
       statusName = 'Су-Шев';
-      // _post = 'Произошла ошибка';
-    } else if ('confectionery' == status) {
-      statusName = 'Кандитер';
-      // _post = 'Произошла ошибка';
+    } else if ('chef-cook' == status) {
+      statusName = 'Шеф-Повор';
+    } else if ('confectioner' == status) {
+      statusName = 'Кондитер';
+    } else if ('concierge' == status) {
+      statusName = 'Коньсьерж';
+    } else if ('admin' == status) {
+      statusName = 'Администратор';
     }
-    readFirebase();
   }
 
   List<UserModel> getTotalTime(List<UserModel> users, double sum) {
@@ -309,11 +303,71 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
     } else {
       users.forEach((user) {
         double time = double.parse((user.workTime / 60).toStringAsFixed(1));
-        user.money = time * sum / 10;
+        user.money = time * sum;
       });
     }
 
     return users;
+  }
+
+  void onPressedIconWithText() async {
+    switch (stateTextWithIcon) {
+      case ButtonState.idle:
+        stateTextWithIcon = ButtonState.loading;
+
+        if (money == 0) {
+          Future.delayed(Duration(seconds: 1), () {
+            setState(() {
+              stateTextWithIcon = ButtonState.fail;
+            });
+          });
+        } else {
+          if (listUserWork.length != 0) {
+            calculation(getTotalTime(listUserWork, money), _datePeriod);
+          }
+        }
+
+        break;
+      case ButtonState.loading:
+        break;
+
+      case ButtonState.success:
+        stateTextWithIcon = ButtonState.idle;
+        break;
+
+      case ButtonState.fail:
+        stateTextWithIcon = ButtonState.idle;
+        break;
+    }
+    setState(() {
+      stateTextWithIcon = stateTextWithIcon;
+    });
+  }
+
+  Widget buildButton() {
+    return Container(
+      width: MediaQuery.of(context).size.width / 1.5,
+      padding: EdgeInsets.only(top: 20, bottom: 50),
+      child: ProgressButton.icon(iconedButtons: {
+        ButtonState.idle: IconedButton(
+            text: "Выдать",
+            icon: Icon(Icons.send, color: Colors.white),
+            color: Colors.blueAccent),
+        ButtonState.loading:
+            IconedButton(text: "Загрузка...", color: Colors.blue),
+        ButtonState.fail: IconedButton(
+            text: "Ошибка",
+            icon: Icon(Icons.cancel, color: Colors.white),
+            color: Colors.red.shade300),
+        ButtonState.success: IconedButton(
+            text: "Успешно",
+            icon: Icon(
+              Icons.check_circle,
+              color: Colors.white,
+            ),
+            color: Colors.green.shade400)
+      }, onPressed: onPressedIconWithText, state: stateTextWithIcon),
+    );
   }
 
   @override
@@ -325,9 +379,27 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
       money = double.parse(_work_price);
     }
 
+    void _showDataTimeRange() async {
+      final DateTimeRange? result = await showDateRangePicker(
+        context: context,
+        firstDate: DateTime(2022, 1, 1),
+        lastDate: DateTime(2030, 12, 31),
+        currentDate: DateTime.now(),
+        saveText: 'Выбрать',
+      );
+
+      if (result != null) {
+        setState(() {
+          _datePeriod = result;
+          readFirebase();
+        });
+      }
+    }
+
     Widget _getTitleItemWidget(String label, double width) {
       return Container(
-        child: Text(label, style: TextStyle(fontWeight: FontWeight.bold)),
+        child: Text(label,
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
         width: width,
         height: 56,
         padding: EdgeInsets.only(left: 10),
@@ -337,15 +409,20 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
 
     List<Widget> _getTitleWidget() {
       return [
-        _getTitleItemWidget('Имя', 100),
-        _getTitleItemWidget('Время', 100),
-        _getTitleItemWidget('Сумма', 200),
+        _getTitleItemWidget('Имя', 110),
+        _getTitleItemWidget('Время', 110),
+        _getTitleItemWidget('Сумма', 100),
+        _getTitleItemWidget('Дата', 100),
+        _getTitleItemWidget('Подробней', 100),
       ];
     }
 
     Widget _generateFirstColumnRow(BuildContext context, int index) {
       return Container(
-        child: Text(listUser[index].name),
+        child: Text(
+          listUser[index].name,
+          style: TextStyle(color: Colors.white),
+        ),
         width: 100,
         height: 52,
         padding: EdgeInsets.only(left: 10),
@@ -357,57 +434,80 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
       return Row(
         children: <Widget>[
           Container(
-            padding: EdgeInsets.only(left: 14),
+            padding: EdgeInsets.only(left: 10),
             child: listUser[index].workTime <= 60
                 ? Text(
                     '${listUser[index].workTime} минут ',
-                    style: TextStyle(fontSize: 15),
+                    style: TextStyle(fontSize: 15, color: Colors.white),
                   )
                 : Text(
                     '${(listUser[index].workTime / 60).toStringAsFixed(1)} часов ',
-                    style: TextStyle(
-                      fontSize: 15,
-                    ),
+                    style: TextStyle(fontSize: 15, color: Colors.white),
                   ),
           ),
           Container(
-            padding: EdgeInsets.only(left: 34),
+            padding: EdgeInsets.only(left: 44),
             child: Text(
-                "${getTotalTime(listUser, money)[index].money.toStringAsFixed(1)} сом"),
-            width: 200,
+              "${getTotalTime(listUser, money)[index].money.toStringAsFixed(1)} сом",
+              style: TextStyle(color: Colors.white),
+            ),
+            width: 120,
+            height: 52,
+            alignment: Alignment.centerLeft,
+          ),
+          Container(
+            padding: EdgeInsets.only(left: 40),
+            child: Text(
+              "${getData(listUser[index].startDate)}",
+              style: TextStyle(color: Colors.white),
+            ),
+            width: 150,
             height: 52,
             // padding: EdgeInsets.only(left: 10),
             alignment: Alignment.centerLeft,
+          ),
+          Container(
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => InformationUsersScreen(
+                              id_user: listUser[index].id_user,
+                              time: listUser[index].startDate,
+                            )));
+              },
+              child: Text(
+                'Подробней',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+            width: 140,
+            height: 30,
+            padding: EdgeInsets.only(left: 10),
           ),
         ],
       );
     }
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: color_main_black,
+      resizeToAvoidBottomInset: true,
       body: SingleChildScrollView(
         child: Container(
-          alignment: Alignment.topCenter,
-          height: MediaQuery.of(context).size.height,
-          padding: EdgeInsets.only(top: 40),
+          padding: EdgeInsets.only(top: 30),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text("${statusName}", style: TextStyle(fontSize: 22)),
+              Text("${statusName}",
+                  style: TextStyle(fontSize: 22, color: Colors.white)),
               Container(
-                padding: EdgeInsets.only(top: 6, bottom: 2),
-              ),
-              Text("Общаая выручка: ${_sum}", style: TextStyle(fontSize: 22)),
-              Container(
-                padding: EdgeInsets.only(top: 6, bottom: 6),
-              ),
-              Text("Сотрудникам: ${(money).toStringAsFixed(1)}",
-                  style: TextStyle(fontSize: 22)),
-              Padding(padding: EdgeInsets.only(top: 10)),
-              Container(
-                height: MediaQuery.of(context).size.height / 1.8,
+                height: MediaQuery.of(context).size.height / 1.9,
                 child: HorizontalDataTable(
-                  leftHandSideColumnWidth: 80,
+                  rightHandSideColBackgroundColor: color_main_black,
+                  leftHandSideColBackgroundColor: color_main_black,
+                  leftHandSideColumnWidth: 90,
                   rightHandSideColumnWidth: 600,
                   isFixedHeader: true,
                   headerWidgets: _getTitleWidget(),
@@ -415,19 +515,64 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
                   rightSideItemBuilder: _generateRightHandSideColumnRow,
                   itemCount: listUser.length,
                   rowSeparatorWidget: const Divider(
-                    color: Colors.black54,
+                    // color: Colors.black54,
                     height: 1.0,
                     thickness: 0.0,
                   ),
                 ),
+              ),
+              if (_datePeriod != null)
+                Container(
+                  padding: EdgeInsets.only(top: 20, bottom: 10),
+                  child: Text(
+                    ' С ${getDataPeriod(_datePeriod!.start)} до ${getDataPeriod(_datePeriod!.end)}',
+                    style: TextStyle(
+                        fontSize: 19,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
+                  ),
+                ),
+              Container(
+                padding:
+                    EdgeInsets.only(top: 10, left: 20, right: 20, bottom: 10),
+                width: MediaQuery.of(context).size.width,
+                child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blueAccent),
+                    onPressed: () {
+                      _showDataTimeRange();
+                    },
+                    child: Text('Выбрать дни оплаты',
+                        style: TextStyle(color: Colors.white))),
               ),
               if (status == 'barista')
                 Row(
                   children: [
                     Container(
                       width: MediaQuery.of(context).size.width / 2,
-                      padding: EdgeInsets.only(left: 20, right: 20, top: 10),
+                      padding: EdgeInsets.only(
+                          left: 20, right: 20, top: 20, bottom: 20),
                       child: TextFormField(
+                        decoration: InputDecoration(
+                          // hintText: 'Ведите выручку',
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(14)),
+                            borderSide: BorderSide(
+                                color: Colors.blueAccent, width: 1.5),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(14)),
+                            borderSide: BorderSide(
+                                color: Colors.blueAccent, width: 2.0),
+                          ),
+
+                          hintMaxLines: 1,
+                          hintText: 'Ведите вырочку',
+                          hintStyle: TextStyle(
+                            fontSize: 14,
+                            color: Colors.white,
+                          ),
+                        ),
                         inputFormatters: [
                           FilteringTextInputFormatter.allow(RegExp(r"[0-9.]")),
                           TextInputFormatter.withFunction((oldValue, newValue) {
@@ -441,12 +586,9 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
                         ],
                         keyboardType:
                             TextInputType.numberWithOptions(decimal: true),
-                        decoration: InputDecoration(
-                          hintText: 'Введите выручку',
-                        ),
                         style: TextStyle(
                           fontSize: 17,
-                          color: Colors.black,
+                          color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),
                         validator: (value) {
@@ -466,8 +608,29 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
                     ),
                     Container(
                       width: MediaQuery.of(context).size.width / 2,
-                      padding: EdgeInsets.only(left: 20, right: 20, top: 10),
+                      padding: EdgeInsets.only(
+                          left: 20, right: 20, top: 10, bottom: 10),
                       child: TextFormField(
+                        decoration: InputDecoration(
+                          // hintText: 'Ведите выручку',
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(14)),
+                            borderSide: BorderSide(
+                                color: Colors.blueAccent, width: 1.5),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(14)),
+                            borderSide: BorderSide(
+                                color: Colors.blueAccent, width: 2.0),
+                          ),
+
+                          hintMaxLines: 1,
+                          hintText: 'Ведите процент',
+                          hintStyle: TextStyle(
+                            fontSize: 14,
+                            color: Colors.white,
+                          ),
+                        ),
                         inputFormatters: [
                           FilteringTextInputFormatter.allow(RegExp(r"[0-9.]")),
                           TextInputFormatter.withFunction((oldValue, newValue) {
@@ -481,12 +644,9 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
                         ],
                         keyboardType:
                             TextInputType.numberWithOptions(decimal: true),
-                        decoration: InputDecoration(
-                          hintText: 'Введите процент',
-                        ),
                         style: TextStyle(
                           fontSize: 17,
-                          color: Colors.black,
+                          color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),
                         validator: (value) {
@@ -509,8 +669,29 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
               if (status != 'barista')
                 Container(
                   width: MediaQuery.of(context).size.width / 1,
-                  padding: EdgeInsets.only(left: 20, right: 20, top: 10),
+                  padding:
+                      EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 20),
                   child: TextFormField(
+                    decoration: InputDecoration(
+                      // hintText: 'Ведите выручку',
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(14)),
+                        borderSide:
+                            BorderSide(color: Colors.blueAccent, width: 1.5),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(14)),
+                        borderSide:
+                            BorderSide(color: Colors.blueAccent, width: 2.0),
+                      ),
+
+                      hintMaxLines: 1,
+                      hintText: 'Ведите час работы',
+                      hintStyle: TextStyle(
+                        fontSize: 14,
+                        color: Colors.white,
+                      ),
+                    ),
                     inputFormatters: [
                       FilteringTextInputFormatter.allow(RegExp(r"[0-9.]")),
                       TextInputFormatter.withFunction((oldValue, newValue) {
@@ -524,12 +705,9 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
                     ],
                     keyboardType:
                         TextInputType.numberWithOptions(decimal: true),
-                    decoration: InputDecoration(
-                      hintText: 'Час работы',
-                    ),
                     style: TextStyle(
                       fontSize: 17,
-                      color: Colors.black,
+                      color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
                     validator: (value) {
@@ -547,36 +725,7 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
                     },
                   ),
                 ),
-              Container(
-                padding: EdgeInsets.only(left: 20, right: 20, top: 20),
-                child: Column(
-                  children: [
-                    Container(
-                      width: MediaQuery.of(context).size.width,
-                      child: ElevatedButton(
-                          onPressed: () async {
-                            calculation(getTotalTime(listUserWork, money));
-                          },
-                          child: Text('Выдать дньги')),
-                    ),
-                    Container(
-                      padding: EdgeInsets.only(bottom: 20),
-                      width: MediaQuery.of(context).size.width,
-                      child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (BuildContext context) =>
-                                        AdministratorScreen(
-                                          value: 1,
-                                        )));
-                          },
-                          child: Text('Вернуться')),
-                    ),
-                  ],
-                ),
-              ),
+              buildButton(),
             ],
           ),
         ),

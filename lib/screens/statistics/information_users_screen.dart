@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import 'package:horizontal_data_table/horizontal_data_table.dart';
 
+import '../../data/const.dart';
 import '../../data/user_model.dart';
 
 class InformationUsersScreen extends StatefulWidget {
@@ -30,17 +31,6 @@ class _InformationUsersScreen extends State<InformationUsersScreen> {
   List<UserModel> listUser = [];
   bool isVisible = false;
 
-  int getUserWorkTime(Timestamp startDate, Timestamp endDate) {
-    final DateTime dateTimeStart = startDate.toDate();
-    final DateTime dateTimeEnd = endDate.toDate();
-    return dateTimeEnd.difference(dateTimeStart).inMinutes;
-  }
-
-  String getData(Timestamp startDate) {
-    final DateTime dateTimeStart = startDate.toDate();
-    String formattedDate = DateFormat('yyyy-MM-dd').format(dateTimeStart);
-    return formattedDate;
-  }
 
   List<String> getUerWorkTimeDifference(
       Timestamp startDate, Timestamp endDate) {

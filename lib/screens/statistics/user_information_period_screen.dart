@@ -6,43 +6,31 @@ import 'package:intl/intl.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:horizontal_data_table/horizontal_data_table.dart';
 
+import '../../data/const.dart';
 import '../../data/money_model.dart';
 import '../../data/user_model.dart';
 import 'information_users_screen.dart';
 
 class UserInformationPeriodScreen extends StatefulWidget {
-  var uid;
+  var uid, post;
 
-  UserInformationPeriodScreen({Key? key, @required this.uid}) : super(key: key);
+  UserInformationPeriodScreen(
+      {Key? key, @required this.uid, @required this.post})
+      : super(key: key);
 
   @override
   State<UserInformationPeriodScreen> createState() =>
-      _UserInformationPeriodScreen(uid);
+      _UserInformationPeriodScreen(uid, post);
 }
 
 class _UserInformationPeriodScreen extends State<UserInformationPeriodScreen> {
-  var uid;
+  var uid, post;
 
-  _UserInformationPeriodScreen(this.uid);
+  _UserInformationPeriodScreen(this.uid, post);
 
-  List<UserModel> listUser = [];
-  List<UserModel> listUserFull = [];
-
-  bool isPosition = true;
-  bool isPositionVisible = false;
+  List<UserModel> listUser = [], listUserFull = [];
+  bool isPositionVisible = false, isVisiblyProgress = false, isPosition = true;
   DateTimeRange? _datePeriod;
-
-  int getUserWorkTime(Timestamp startDate, Timestamp endDate) {
-    final DateTime dateTimeStart = startDate.toDate();
-    final DateTime dateTimeEnd = endDate.toDate();
-    return dateTimeEnd.difference(dateTimeStart).inMinutes;
-  }
-
-  String getData(Timestamp startDate) {
-    final DateTime dateTimeStart = startDate.toDate();
-    String formattedDate = DateFormat('yyyy-MM-dd').format(dateTimeStart);
-    return formattedDate;
-  }
 
   String getDataPeriod(DateTime startDate) {
     String formattedDate = DateFormat('yyyy-MM-dd').format(startDate);
@@ -53,52 +41,84 @@ class _UserInformationPeriodScreen extends State<UserInformationPeriodScreen> {
     listUser.clear();
     listUserFull.clear();
 
-    if (uid == null) {
-      await FirebaseFirestore.instance
-          .collection('Work')
-          .get()
-          .then((QuerySnapshot querySnapshot) {
-        querySnapshot.docs.forEach((document) async {
-          Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+    await FirebaseFirestore.instance
+        .collection('Work')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((document) async {
+        Map<String, dynamic> data = document.data() as Map<String, dynamic>;
 
-          final Timestamp timestampStart = data['startDate'] as Timestamp;
-          final DateTime dateTimeStart = timestampStart.toDate();
+        final Timestamp timestampStart = data['startDate'] as Timestamp;
+        final DateTime dateTimeStart = timestampStart.toDate();
 
-          var timeStart = new DateTime(
-            dateTimeStart.year,
-            dateTimeStart.month,
-            dateTimeStart.day,
-          );
+        var timeStart = new DateTime(
+          dateTimeStart.year,
+          dateTimeStart.month,
+          dateTimeStart.day,
+        );
 
-          DateTime start = _datePeriod!.start;
-          DateTime end = _datePeriod!.end;
+        DateTime start = _datePeriod!.start;
+        DateTime end = _datePeriod!.end;
 
-          start = start.subtract(Duration(seconds: 1));
-          end = end.add(Duration(days: 1));
-          end = end.subtract(Duration(seconds: 1));
+        start = start.subtract(Duration(seconds: 1));
+        end = end.add(Duration(days: 1));
+        end = end.subtract(Duration(seconds: 1));
 
-          if (data['endDate'] != '') {
-            if (timeStart.isAfter(start) && timeStart.isBefore(end)) {
-              listUser.add(UserModel(
-                  name: data["name"],
-                  email: data["email"],
-                  status: data["post"],
-                  startUri: data["startUri"],
-                  endUri: data["endUri"],
-                  startDate: data["startDate"],
-                  endDate: data["endDate"],
-                  id_user: data["id_user"],
-                  id_post: data["id_post"],
-                  money: data['money'],
-                  workTime:
-                      getUserWorkTime(data["startDate"], data["endDate"])));
-              setState(() {});
+        if (uid == null) {
+          if (post != null) {
+            if (data['post'] == post) {
+              if (data['endDate'] != '') {
+                if (timeStart.isAfter(start) && timeStart.isBefore(end)) {
+                  listUser.add(UserModel(
+                      name: data["name"],
+                      email: data["email"],
+                      status: data["post"],
+                      startUri: data["startUri"],
+                      endUri: data["endUri"],
+                      startDate: data["startDate"],
+                      endDate: data["endDate"],
+                      id_user: data["id_user"],
+                      id_post: data["id_post"],
+                      money: data['money'],
+                      workTime:
+                          getUserWorkTime(data["startDate"], data["endDate"])));
+                  setState(() {});
 
-              var isExistMoney = listUserFull.indexWhere(
-                  (element) => element.id_user == (data['id_user']));
+                  var isExistMoney = listUserFull.indexWhere(
+                      (element) => element.id_user == (data['id_user']));
 
-              if (isExistMoney < 0) {
-                listUserFull.add(UserModel(
+                  if (isExistMoney < 0) {
+                    listUserFull.add(UserModel(
+                        name: data["name"],
+                        email: data["email"],
+                        status: data["post"],
+                        startUri: data["startUri"],
+                        endUri: data["endUri"],
+                        startDate: data["startDate"],
+                        endDate: data["endDate"],
+                        id_user: data["id_user"],
+                        id_post: data["id_post"],
+                        money: data['money'],
+                        workTime: getUserWorkTime(
+                            data["startDate"], data["endDate"])));
+                    setState(() {});
+                  } else {
+                    listUserFull[isExistMoney].money += data['money'];
+
+                    listUserFull[isExistMoney].workTime +=
+                        getUserWorkTime(data['startDate'], data['endDate']);
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        if (uid == null) {
+          if (post == null) {
+            if (data['endDate'] != '') {
+              if (timeStart.isAfter(start) && timeStart.isBefore(end)) {
+                listUser.add(UserModel(
                     name: data["name"],
                     email: data["email"],
                     status: data["post"],
@@ -112,40 +132,37 @@ class _UserInformationPeriodScreen extends State<UserInformationPeriodScreen> {
                     workTime:
                         getUserWorkTime(data["startDate"], data["endDate"])));
                 setState(() {});
-              } else {
-                listUserFull[isExistMoney].money += data['money'];
 
-                listUserFull[isExistMoney].workTime +=
-                    getUserWorkTime(data['startDate'], data['endDate']);
+                var isExistMoney = listUserFull.indexWhere(
+                    (element) => element.id_user == (data['id_user']));
+
+                if (isExistMoney < 0) {
+                  listUserFull.add(UserModel(
+                      name: data["name"],
+                      email: data["email"],
+                      status: data["post"],
+                      startUri: data["startUri"],
+                      endUri: data["endUri"],
+                      startDate: data["startDate"],
+                      endDate: data["endDate"],
+                      id_user: data["id_user"],
+                      id_post: data["id_post"],
+                      money: data['money'],
+                      workTime:
+                          getUserWorkTime(data["startDate"], data["endDate"])));
+                  setState(() {});
+                } else {
+                  listUserFull[isExistMoney].money += data['money'];
+
+                  listUserFull[isExistMoney].workTime +=
+                      getUserWorkTime(data['startDate'], data['endDate']);
+                }
               }
             }
           }
-        });
-      });
-    } else {
-      await FirebaseFirestore.instance
-          .collection('Work')
-          .get()
-          .then((QuerySnapshot querySnapshot) {
-        querySnapshot.docs.forEach((document) async {
-          Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+        }
 
-          final Timestamp timestampStart = data['startDate'] as Timestamp;
-          final DateTime dateTimeStart = timestampStart.toDate();
-
-          var timeStart = new DateTime(
-            dateTimeStart.year,
-            dateTimeStart.month,
-            dateTimeStart.day,
-          );
-
-          DateTime start = _datePeriod!.start;
-          DateTime end = _datePeriod!.end;
-
-          start = start.subtract(Duration(seconds: 1));
-          end = end.add(Duration(days: 1));
-          end = end.subtract(Duration(seconds: 1));
-
+        if (uid != null) {
           if (data['id_user'] == uid) {
             if (data['endDate'] != '') {
               if (timeStart.isAfter(start) && timeStart.isBefore(end)) {
@@ -191,9 +208,13 @@ class _UserInformationPeriodScreen extends State<UserInformationPeriodScreen> {
               }
             }
           }
-        });
+        }
       });
-    }
+    });
+
+    setState(() {
+      isVisiblyProgress = false;
+    });
   }
 
   @override
@@ -210,6 +231,7 @@ class _UserInformationPeriodScreen extends State<UserInformationPeriodScreen> {
       if (result != null) {
         setState(() {
           _datePeriod = result;
+          isVisiblyProgress = true;
           readUserFirebase();
         });
       }
@@ -217,7 +239,8 @@ class _UserInformationPeriodScreen extends State<UserInformationPeriodScreen> {
 
     Widget _getTitleItemWidget(String label, double width) {
       return Container(
-        child: Text(label, style: TextStyle(fontWeight: FontWeight.bold)),
+        child: Text(label,
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
         width: width,
         height: 56,
         padding: EdgeInsets.only(left: 10),
@@ -246,7 +269,8 @@ class _UserInformationPeriodScreen extends State<UserInformationPeriodScreen> {
 
     Widget _generateFirstColumnRow(BuildContext context, int index) {
       return Container(
-        child: Text(listUser[index].name, style: TextStyle(fontSize: 16)),
+        child: Text(listUser[index].name,
+            style: TextStyle(fontSize: 16, color: Colors.white)),
         width: 100,
         height: 52,
         padding: EdgeInsets.only(left: 10),
@@ -262,21 +286,17 @@ class _UserInformationPeriodScreen extends State<UserInformationPeriodScreen> {
             child: listUser[index].workTime <= 60
                 ? Text(
                     '${listUser[index].workTime} минут ',
-                    style: TextStyle(fontSize: 16),
+                    style: TextStyle(fontSize: 16, color: Colors.white),
                   )
                 : Text(
                     '${(listUser[index].workTime / 60).toStringAsFixed(1)} часов ',
-                    style: TextStyle(
-                      fontSize: 16,
-                    ),
+                    style: TextStyle(fontSize: 16, color: Colors.white),
                   ),
           ),
           Container(
             child: Text(
               '${double.parse((listUser[index].money).toStringAsFixed(1).toString())} сом ',
-              style: TextStyle(
-                fontSize: 16,
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.white),
             ),
             width: 100,
             height: 52,
@@ -286,9 +306,7 @@ class _UserInformationPeriodScreen extends State<UserInformationPeriodScreen> {
           Container(
             child: Text(
               '${getData(listUser[index].startDate)}',
-              style: TextStyle(
-                fontSize: 16,
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.white),
             ),
             width: 100,
             height: 52,
@@ -297,6 +315,7 @@ class _UserInformationPeriodScreen extends State<UserInformationPeriodScreen> {
           ),
           Container(
             child: ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
               onPressed: () {
                 Navigator.push(
                     context,
@@ -306,7 +325,10 @@ class _UserInformationPeriodScreen extends State<UserInformationPeriodScreen> {
                               time: listUser[index].startDate,
                             )));
               },
-              child: Text('Подробней'),
+              child: Text(
+                'Подробней',
+                style: TextStyle(color: Colors.black),
+              ),
             ),
             width: 140,
             height: 30,
@@ -325,21 +347,17 @@ class _UserInformationPeriodScreen extends State<UserInformationPeriodScreen> {
             child: listUserFull[index].workTime <= 60
                 ? Text(
                     '${listUserFull[index].workTime} минут ',
-                    style: TextStyle(fontSize: 16),
+                    style: TextStyle(fontSize: 16, color: Colors.white),
                   )
                 : Text(
                     '${(listUserFull[index].workTime / 60).toStringAsFixed(1)} часов ',
-                    style: TextStyle(
-                      fontSize: 16,
-                    ),
+                    style: TextStyle(fontSize: 16, color: Colors.white),
                   ),
           ),
           Container(
             child: Text(
               '${double.parse((listUserFull[index].money).toStringAsFixed(1).toString())} сом ',
-              style: TextStyle(
-                fontSize: 16,
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.white),
             ),
             width: 100,
             height: 52,
@@ -349,9 +367,7 @@ class _UserInformationPeriodScreen extends State<UserInformationPeriodScreen> {
           Container(
             child: Text(
               '${getData(listUserFull[index].startDate)}',
-              style: TextStyle(
-                fontSize: 16,
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.white),
             ),
             width: 100,
             height: 52,
@@ -363,31 +379,49 @@ class _UserInformationPeriodScreen extends State<UserInformationPeriodScreen> {
     }
 
     return Scaffold(
-      backgroundColor: Colors.white,
-      // appBar: AppBar(
-      //   title: Text('Информация'),
-      // ),
+      backgroundColor: color_main_black,
       body: SingleChildScrollView(
         padding: EdgeInsets.only(top: 20),
         child: Container(
-          height: MediaQuery.of(context).size.height,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               if (listUser.length != 0)
-                Text(
-                  ' С ${getDataPeriod(_datePeriod!.start)} до ${getDataPeriod(_datePeriod!.end)}',
-                  style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
+                Container(
+                  padding: EdgeInsets.only(top: 20),
+                  child: Text(
+                    ' С ${getDataPeriod(_datePeriod!.start)} до ${getDataPeriod(_datePeriod!.end)}',
+                    style: TextStyle(
+                        fontSize: 19,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
+                  ),
                 ),
               if (listUser.length == 0)
-                Text(
-                  'Информации не найденно',
-                  style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
+                Container(
+                  padding: EdgeInsets.only(
+                      top: MediaQuery.of(context).size.height / 2),
+                  child: Text(
+                    'Информации не найденно',
+                    style: TextStyle(
+                        fontSize: 19,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
+                  ),
+                ),
+              if (isVisiblyProgress)
+                Container(
+                  padding: EdgeInsets.only(top: 10, bottom: 10),
+                  child: LinearProgressIndicator(
+                      color: Colors.blueAccent,
+                      backgroundColor: color_main_black),
                 ),
               if (listUser.length != 0)
                 Container(
-                  height: MediaQuery.of(context).size.height / 2.6,
+                  height: MediaQuery.of(context).size.height / 1.5,
                   child: HorizontalDataTable(
+                    leftHandSideColBackgroundColor: color_main_black,
+                    rightHandSideColBackgroundColor: color_main_black,
                     leftHandSideColumnWidth: 100,
                     rightHandSideColumnWidth: 600,
                     isFixedHeader: true,
@@ -403,48 +437,87 @@ class _UserInformationPeriodScreen extends State<UserInformationPeriodScreen> {
                   ),
                 ),
               if (listUserFull.length != 0)
-                Container(
-                  height: MediaQuery.of(context).size.height / 2.6,
-                  child: HorizontalDataTable(
-                    leftHandSideColumnWidth: 100,
-                    rightHandSideColumnWidth: 600,
-                    isFixedHeader: true,
-                    headerWidgets: _getTitleWidgetFull(),
-                    leftSideItemBuilder: _generateFirstColumnRow,
-                    rightSideItemBuilder: _generateRightHandSideColumnRowFull,
-                    itemCount: listUserFull.length,
-                    rowSeparatorWidget: const Divider(
-                      color: Colors.black54,
-                      height: 1.0,
-                      thickness: 0.0,
-                    ),
+                ExpansionTile(
+                  title: Text(
+                    'Суммировать',
+                    style: TextStyle(color: Colors.white),
                   ),
+                  collapsedIconColor: Colors.white,
+                  children: [
+                    Container(
+                      height: MediaQuery.of(context).size.height / 2.0,
+                      child: HorizontalDataTable(
+                        leftHandSideColBackgroundColor: color_main_black,
+                        rightHandSideColBackgroundColor: color_main_black,
+                        leftHandSideColumnWidth: 100,
+                        rightHandSideColumnWidth: 600,
+                        isFixedHeader: true,
+                        headerWidgets: _getTitleWidgetFull(),
+                        leftSideItemBuilder: _generateFirstColumnRow,
+                        rightSideItemBuilder:
+                            _generateRightHandSideColumnRowFull,
+                        itemCount: listUserFull.length,
+                        rowSeparatorWidget: const Divider(
+                          color: Colors.black54,
+                          height: 1.0,
+                          thickness: 0.0,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               Container(
                 padding: EdgeInsets.only(left: 20, right: 20),
                 child: Column(
                   children: [
+                    if (uid != null)
+                      Container(
+                        padding: EdgeInsets.only(bottom: 40, top: 20),
+                        width: MediaQuery.of(context).size.width,
+                        child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.white),
+                            onPressed: () {
+                              setState(() async {
+                                _showDataTimeRange();
+                              });
+                            },
+                            child: Text(
+                              'Указать период',
+                              style: TextStyle(color: Colors.black),
+                            )),
+                      ),
+                    if (uid == null)
                     Container(
-                      padding: EdgeInsets.only(bottom: 6, top: 20),
+                      padding: EdgeInsets.only(bottom: 10, top: 20),
                       width: MediaQuery.of(context).size.width,
                       child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white),
                           onPressed: () {
                             setState(() async {
                               _showDataTimeRange();
                             });
                           },
-                          child: Text('Указать период')),
+                          child: Text(
+                            'Указать период',
+                            style: TextStyle(color: Colors.black),
+                          )),
                     ),
-
                     if (uid == null)
                       Container(
-                        padding: EdgeInsets.only(bottom: 20),
+                        padding: EdgeInsets.only(),
                         width: MediaQuery.of(context).size.width,
                         child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.white),
                             onPressed: () {
                               Navigator.pop(context);
                             },
-                            child: Text('Вернуться')),
+                            child: Text(
+                              'Вернуться',
+                              style: TextStyle(color: Colors.black),
+                            )),
                       ),
                   ],
                 ),

@@ -4,6 +4,8 @@ import 'package:flutter/services.dart';
 import 'package:workday/screens/auth/signin_screen.dart';
 import 'package:workday/screens/auth/signup_screen.dart';
 
+
+import '../../data/const.dart';
 import '../../data/variable.dart';
 import '../../main.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -16,6 +18,7 @@ import '../administrator_screen.dart';
 import '../employee_screen.dart';
 import '../home_screen.dart';
 
+
 class SignInScreen extends StatefulWidget {
   @override
   _SignInScreen createState() => _SignInScreen();
@@ -24,32 +27,7 @@ class SignInScreen extends StatefulWidget {
 class _SignInScreen extends State<SignInScreen>
     with SingleTickerProviderStateMixin {
   String _email = "", _password = "";
-  bool _isHidden = true;
-
-  showAlertDialog(BuildContext context) {
-    AlertDialog alert = AlertDialog(
-        content: new Container(
-      decoration: new BoxDecoration(
-        shape: BoxShape.rectangle,
-        color: const Color(0xFFFFFF),
-        borderRadius: new BorderRadius.all(new Radius.circular(32.0)),
-      ),
-      child: Row(
-        children: [
-          CircularProgressIndicator(),
-          Container(
-              margin: EdgeInsets.only(left: 18), child: Text("Загрузка...")),
-        ],
-      ),
-    ));
-    showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (BuildContext context) {
-        return alert;
-      },
-    );
-  }
+  bool _isHidden = true, isVisibleSizedBox = false;
 
   @override
   void initState() {
@@ -73,6 +51,7 @@ class _SignInScreen extends State<SignInScreen>
           }
         }
       });
+
   }
 
   Widget componentTextField(IconData icon, String hintText, bool isPassword,
@@ -81,10 +60,15 @@ class _SignInScreen extends State<SignInScreen>
       return Container(
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: Color(0xff212428),
+          color: color_main_black,
           borderRadius: BorderRadius.circular(15),
         ),
         child: TextField(
+          onTap: () {
+            setState(() {
+              isVisibleSizedBox = true;
+            });
+          },
           style: TextStyle(color: Colors.white.withOpacity(.7)),
           obscureText: _isHidden,
           keyboardType:
@@ -135,10 +119,15 @@ class _SignInScreen extends State<SignInScreen>
     return Container(
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: Color(0xff212428),
+        color: color_main_black,
         borderRadius: BorderRadius.circular(15),
       ),
       child: TextField(
+        onTap: () {
+          setState(() {
+            isVisibleSizedBox = true;
+          });
+        },
         style: TextStyle(color: Colors.white.withOpacity(.7)),
         keyboardType: isEmail ? TextInputType.emailAddress : TextInputType.text,
         decoration: InputDecoration(
@@ -173,6 +162,7 @@ class _SignInScreen extends State<SignInScreen>
     double _width = MediaQuery.of(context).size.width;
     double _height = MediaQuery.of(context).size.height;
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: Color(0xff292C31),
       body: ScrollConfiguration(
         behavior: MyBehavior(),
@@ -219,7 +209,7 @@ class _SignInScreen extends State<SignInScreen>
                   splashColor: Colors.transparent,
                   highlightColor: Colors.transparent,
                   onTap: () {
-                    showAlertDialog(context);
+                    showAlertDialogMy(context);
                     FirebaseAuth.instance
                         .signInWithEmailAndPassword(
                             email: _email, password: _password)
@@ -251,6 +241,9 @@ class _SignInScreen extends State<SignInScreen>
                     ),
                   ),
                 ),
+
+                if(isVisibleSizedBox)
+                SizedBox(height: 150,),
               ],
             ),
           ),

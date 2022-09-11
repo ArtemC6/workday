@@ -7,37 +7,37 @@ import 'package:flutter/cupertino.dart';
 import 'package:horizontal_data_table/horizontal_data_table.dart';
 import 'package:workday/data/fine_model.dart';
 
+import '../../data/const.dart';
 import '../../data/money_model.dart';
 import '../../data/user_model.dart';
 import 'information_users_screen.dart';
 
 class FineScreens extends StatefulWidget {
-  const FineScreens({Key? key}) : super(key: key);
+  var post;
+
+  FineScreens({Key? key, @required this.post}) : super(key: key);
 
   @override
-  State<FineScreens> createState() => _FineScreens();
+  State<FineScreens> createState() => _FineScreens(post);
 }
 
 class _FineScreens extends State<FineScreens> {
+  var post;
+
+  _FineScreens(this.post);
+
   List<FineModel> listFine = [],
       listFineFull = [],
       listFineComplete = [],
-      listFineFull_2 = [];
+      listFineFullDownloaded = [];
 
-  bool isPosition = true, isPositionVisible = false, isEmpty = true;
+  bool isPosition = true,
+      isPositionVisible = false,
+      isEmpty = true,
+      isVisiblyProgress = false;
+
   DateTimeRange? _datePeriod;
 
-  int getUserWorkTime(Timestamp startDate, Timestamp endDate) {
-    final DateTime dateTimeStart = startDate.toDate();
-    final DateTime dateTimeEnd = endDate.toDate();
-    return dateTimeEnd.difference(dateTimeStart).inMinutes;
-  }
-
-  String getData(Timestamp startDate) {
-    final DateTime dateTimeStart = startDate.toDate();
-    String formattedDate = DateFormat('yyyy-MM-dd').format(dateTimeStart);
-    return formattedDate;
-  }
 
   String getDataPeriod(DateTime startDate) {
     String formattedDate = DateFormat('yyyy-MM-dd').format(startDate);
@@ -46,7 +46,7 @@ class _FineScreens extends State<FineScreens> {
 
   void calculationFine() async {
     listFine.clear();
-    listFineFull_2.clear();
+    listFineFullDownloaded.clear();
 
     await FirebaseFirestore.instance
         .collection('Work')
@@ -68,10 +68,11 @@ class _FineScreens extends State<FineScreens> {
             DateTime.parse("${DateFormat('yyyy-MM-dd').format(timeStart)} 15");
 
         setState(() {
-          if (timeStart.hour == dateOver_7.hour) {
+          if (timeStart.hour >= dateOver_7.hour && timeStart.hour < 15) {
             if (timeStart.minute <= 5) {
               listFine.add(FineModel(
                   name: data['name'],
+                  post: data['post'],
                   lateness: timeStart.minute,
                   time: data['startDate'],
                   money_fine: 100,
@@ -81,6 +82,7 @@ class _FineScreens extends State<FineScreens> {
             } else if (timeStart.minute <= 15) {
               listFine.add(FineModel(
                   name: data['name'],
+                  post: data['post'],
                   lateness: timeStart.minute,
                   time: data['startDate'],
                   money_fine: 200,
@@ -90,6 +92,7 @@ class _FineScreens extends State<FineScreens> {
             } else {
               listFine.add(FineModel(
                   name: data['name'],
+                  post: data['post'],
                   lateness: timeStart.minute,
                   time: data['startDate'],
                   money_fine: 300,
@@ -100,11 +103,12 @@ class _FineScreens extends State<FineScreens> {
           }
 
           // 15
-          if (timeStart.hour == dateOver_15.hour) {
-            print(timeStart.minute);
+          if (timeStart.hour >= dateOver_15.hour && timeStart.hour < 23) {
+            // print(timeStart.hour);
             if (timeStart.minute <= 5) {
               listFine.add(FineModel(
                   name: data['name'],
+                  post: data['post'],
                   lateness: timeStart.minute,
                   time: data['startDate'],
                   money_fine: 100,
@@ -114,6 +118,7 @@ class _FineScreens extends State<FineScreens> {
             } else if (timeStart.minute <= 15) {
               listFine.add(FineModel(
                   name: data['name'],
+                  post: data['post'],
                   lateness: timeStart.minute,
                   time: data['startDate'],
                   money_fine: 200,
@@ -123,6 +128,7 @@ class _FineScreens extends State<FineScreens> {
             } else {
               listFine.add(FineModel(
                   name: data['name'],
+                  post: data['post'],
                   lateness: timeStart.minute,
                   time: data['startDate'],
                   money_fine: 300,
@@ -142,25 +148,17 @@ class _FineScreens extends State<FineScreens> {
       querySnapshot.docs.forEach((document) async {
         Map<String, dynamic> data = document.data() as Map<String, dynamic>;
 
-        final Timestamp timestampStart = data['time'] as Timestamp;
-        final DateTime dateTimeStart = timestampStart.toDate();
-
-        var timeStart = new DateTime(
-          dateTimeStart.year,
-          dateTimeStart.month,
-          dateTimeStart.day,
-        );
-
         setState(() {
           isEmpty = false;
 
-          listFineFull_2.add(FineModel(
+          listFineFullDownloaded.add(FineModel(
               name: data['name'],
+              post: data['post'],
               lateness: data['lateness'],
               time: data['time'],
               money_fine: data['money_fine'],
               id_user: data['id_user'],
-              id_post: 'id_post',
+              id_post: data['id_post'],
               change: data['change']));
         });
       });
@@ -173,6 +171,7 @@ class _FineScreens extends State<FineScreens> {
 
         final json = {
           'name': element.name,
+          'post': element.post,
           'id_user': element.id_user,
           'id_post': dockFine.id,
           'lateness': element.lateness,
@@ -183,67 +182,118 @@ class _FineScreens extends State<FineScreens> {
         dockFine.set(json);
       });
     } else {
+      await FirebaseFirestore.instance
+          .collection('Fine')
+          .get()
+          .then((QuerySnapshot querySnapshot) {
+        querySnapshot.docs.forEach((document) async {
+          Map<String, dynamic> data = document.data() as Map<String, dynamic>;
 
+          final dockFine = await FirebaseFirestore.instance
+              .collection('Fine')
+              .doc(document.id);
 
-      // print(listFineFull_2.length);
-      // print(listFine.length);
-
-
-      List<FineModel> difference =
-          listFine.toSet().difference(listFineFull_2.toSet()).toList();
-
-      difference.forEach((element) {
-        print(element.lateness);
+          dockFine.delete();
+        });
       });
 
-      // print(difference.length);
+      listFine.forEach((element) async {
+        final dockFine =
+            await FirebaseFirestore.instance.collection('Fine').doc();
 
+        final json = {
+          'name': element.name,
+          'post': element.post,
+          'id_user': element.id_user,
+          'id_post': dockFine.id,
+          'lateness': element.lateness,
+          'change': element.change,
+          'time': element.time,
+          'money_fine': element.money_fine,
+        };
+        dockFine.set(json);
+      });
+
+      // await FirebaseFirestore.instance
+      //     .collection('Fine')
+      //     .get()
+      //     .then((QuerySnapshot querySnapshot) {
+      //   querySnapshot.docs.forEach((document) async {
+      //     Map<String, dynamic> data = document.data() as Map<String, dynamic>;
       //
-      // listFine.forEach((elementMain) async {
-      //   final dockFine =
-      //   await FirebaseFirestore.instance.collection('Fine').doc();
+      //     listFine.forEach((element) async {
+      //       final dockFine = await FirebaseFirestore.instance
+      //           .collection('Fine')
+      //           .doc(element.id_post);
       //
-      //   final Timestamp timestampStartListMain = elementMain  .time as Timestamp;
-      //   final DateTime dateTimeListMain = timestampStartListMain.toDate();
+      //       if (data['id_post'] == element.id_post) {
       //
-      //   var timeStartListMain = new DateTime(
-      //     dateTimeListMain.year,
-      //     dateTimeListMain.month,
-      //     dateTimeListMain.day,
-      //   );
+      //         print(" ${element.po}${element.name}");
       //
-      //   listFineFull_2.forEach((element) {
+      //         // final json = {
+      //         //   'name': element.name,
+      //         //   'post': element.post,
+      //         //   'id_user': element.id_user,
+      //         //   'id_post': element.id_post,
+      //         //   'lateness': element.lateness,
+      //         //   'change': element.change,
+      //         //   'time': element.time,
+      //         //   'money_fine': element.money_fine,
+      //         // };
+      //         // dockFine.set(json);
       //
-      //     final Timestamp timestampStartList = element.time as Timestamp;
-      //     final DateTime dateTimeList = timestampStartList.toDate();
-      //
-      //     var timeStartList = new DateTime(
-      //       dateTimeList.year,
-      //       dateTimeList.month,
-      //       dateTimeList.day,
-      //     );
-      //
-      //
-      //
-      //     if (timeStartListMain != timeStartList && elementMain.id_user == element.id_user) {
-      //
-      //
-      //       print("${timeStartListMain} ${elementMain.name} ${elementMain.lateness} 1");
-      //       print("${timeStartList} ${element.name} ${element.lateness} 2");
-      //
-      //       // final json = {
-      //       //   'name': element.name,
-      //       //   'id_user': element.id_user,
-      //       //   'id_post': dockFine.id,
-      //       //   'change': element.change,
-      //       //   'lateness': element.lateness,
-      //       //   'time': element.time,
-      //       //   'money_fine': element.money_fine,
-      //       // };
-      //       // dockFine.set(json);
-      //     }
+      //       }
+      //     });
       //   });
       // });
+
+      listFine.forEach((elementMain) {
+        // print(elementMain.name);
+
+        final DateTime dateTimeStartMain = elementMain.time.toDate();
+        var timeStartMain = new DateTime(
+          dateTimeStartMain.year,
+          dateTimeStartMain.month,
+          dateTimeStartMain.day,
+        );
+
+        listFineFullDownloaded.forEach((element) {
+          final DateTime dateTimeStart = element.time.toDate();
+          var timeStart = new DateTime(
+            dateTimeStart.year,
+            dateTimeStart.month,
+            dateTimeStart.day,
+          );
+
+          // if (element.time == elementMain.time && element.lateness == elementMain.lateness) {
+          // if (timeStartMain == timeStart && elementMain.id_user == element.id_user && elementMain.lateness == element.lateness) {
+          //   elementMain.id_post = element.id_post;
+          // }
+        });
+      });
+
+      Future.delayed(const Duration(milliseconds: 1200), () {
+        listFine.forEach((element) async {
+          if (element.id_post == '') {
+            final dockFine =
+                await FirebaseFirestore.instance.collection('Fine').doc();
+
+            // print("${element.id_post} ${element.name}  ${element.lateness}___");
+
+            // final json = {
+            //   'name': element.name,
+            //   'id_user': element.id_user,
+            //   'id_post': dockFine.id,
+            //   'change': element.change,
+            //   'lateness': element.lateness,
+            //   'time': element.time,
+            //   'money_fine': element.money_fine,
+            // };
+            // dockFine.set(json);
+
+          }
+        });
+      });
     }
   }
 
@@ -259,6 +309,7 @@ class _FineScreens extends State<FineScreens> {
     if (result != null) {
       setState(() {
         _datePeriod = result;
+        isVisiblyProgress = true;
         readFirebase();
       });
     }
@@ -291,22 +342,49 @@ class _FineScreens extends State<FineScreens> {
         end = end.add(Duration(days: 1));
         end = end.subtract(Duration(seconds: 1));
 
-        if (timeStart.isAfter(start) && timeStart.isBefore(end)) {
-          setState(() {
-            listFineFull.add(FineModel(
-                name: data['name'],
-                lateness: data['lateness'],
-                time: data['time'],
-                money_fine: data['money_fine'],
-                id_user: data['id_user'],
-                id_post: 'id_post',
-                change: data['change']));
+        if (post != null) {
+          if (post == data['post']) {
+            if (timeStart.isAfter(start) && timeStart.isBefore(end)) {
+              setState(() {
+                listFineFull.add(FineModel(
+                    post: data['post'],
+                    name: data['name'],
+                    lateness: data['lateness'],
+                    time: data['time'],
+                    money_fine: data['money_fine'],
+                    id_user: data['id_user'],
+                    id_post: 'id_post',
+                    change: data['change']));
 
-            var isExistMoney = listFineComplete
-                .indexWhere((element) => element.id_user == (data['id_user']));
+                var isExistMoney = listFineComplete.indexWhere(
+                    (element) => element.id_user == (data['id_user']));
 
-            if (isExistMoney < 0) {
-              listFineComplete.add(FineModel(
+                if (isExistMoney < 0) {
+                  listFineComplete.add(FineModel(
+                      post: data['post'],
+                      name: data['name'],
+                      lateness: data['lateness'],
+                      time: data['time'],
+                      money_fine: data['money_fine'],
+                      id_user: data['id_user'],
+                      id_post: 'id_post',
+                      change: data['change']));
+                } else {
+                  int valuer = data['lateness'];
+                  listFineComplete[isExistMoney].money_fine +=
+                      data['money_fine'];
+                  listFineComplete[isExistMoney].lateness += valuer;
+                }
+              });
+            }
+          }
+        }
+
+        if (post == null) {
+          if (timeStart.isAfter(start) && timeStart.isBefore(end)) {
+            setState(() {
+              listFineFull.add(FineModel(
+                  post: data['post'],
                   name: data['name'],
                   lateness: data['lateness'],
                   time: data['time'],
@@ -314,14 +392,33 @@ class _FineScreens extends State<FineScreens> {
                   id_user: data['id_user'],
                   id_post: 'id_post',
                   change: data['change']));
-            } else {
-              int valuer = data['lateness'];
-              listFineComplete[isExistMoney].money_fine += data['money_fine'];
-              listFineComplete[isExistMoney].lateness += valuer;
-            }
-          });
+
+              var isExistMoney = listFineComplete.indexWhere(
+                  (element) => element.id_user == (data['id_user']));
+
+              if (isExistMoney < 0) {
+                listFineComplete.add(FineModel(
+                    post: data['post'],
+                    name: data['name'],
+                    lateness: data['lateness'],
+                    time: data['time'],
+                    money_fine: data['money_fine'],
+                    id_user: data['id_user'],
+                    id_post: 'id_post',
+                    change: data['change']));
+              } else {
+                int valuer = data['lateness'];
+                listFineComplete[isExistMoney].money_fine += data['money_fine'];
+                listFineComplete[isExistMoney].lateness += valuer;
+              }
+            });
+          }
         }
       });
+    });
+
+    setState(() {
+      isVisiblyProgress = false;
     });
   }
 
@@ -335,7 +432,8 @@ class _FineScreens extends State<FineScreens> {
   Widget build(BuildContext context) {
     Widget _getTitleItemWidget(String label, double width) {
       return Container(
-        child: Text(label, style: TextStyle(fontWeight: FontWeight.bold)),
+        child: Text(label,
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
         width: width,
         height: 56,
         padding: EdgeInsets.only(left: 10),
@@ -354,20 +452,10 @@ class _FineScreens extends State<FineScreens> {
       ];
     }
 
-    List<Widget> _getTitleWidgetFull() {
-      return [
-        _getTitleItemWidget('Имя', 100),
-        _getTitleItemWidget('Время', 100),
-        _getTitleItemWidget('Штраф', 100),
-        _getTitleItemWidget('Дата', 100),
-        _getTitleItemWidget('Смена', 100),
-        _getTitleItemWidget('Подробней', 100),
-      ];
-    }
-
     Widget _generateFirstColumnRow(BuildContext context, int index) {
       return Container(
-        child: Text(listFineFull[index].name, style: TextStyle(fontSize: 16)),
+        child: Text(listFineFull[index].name,
+            style: TextStyle(fontSize: 16, color: Colors.white)),
         width: 100,
         height: 52,
         padding: EdgeInsets.only(left: 10),
@@ -381,9 +469,7 @@ class _FineScreens extends State<FineScreens> {
           Container(
             child: Text(
               '${listFineFull[index].lateness.toString()}',
-              style: TextStyle(
-                fontSize: 16,
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.white),
             ),
             width: 100,
             height: 52,
@@ -393,9 +479,7 @@ class _FineScreens extends State<FineScreens> {
           Container(
             child: Text(
               '${listFineFull[index].money_fine.toString()}',
-              style: TextStyle(
-                fontSize: 16,
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.white),
             ),
             width: 100,
             height: 52,
@@ -405,9 +489,7 @@ class _FineScreens extends State<FineScreens> {
           Container(
             child: Text(
               '${getData(listFineFull[index].time)}',
-              style: TextStyle(
-                fontSize: 16,
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.white),
             ),
             width: 100,
             height: 52,
@@ -417,9 +499,7 @@ class _FineScreens extends State<FineScreens> {
           Container(
             child: Text(
               '${listFineFull[index].change.toString()}',
-              style: TextStyle(
-                fontSize: 16,
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.white),
             ),
             width: 100,
             height: 52,
@@ -454,9 +534,7 @@ class _FineScreens extends State<FineScreens> {
           Container(
             child: Text(
               '${listFineComplete[index].lateness.toString()}',
-              style: TextStyle(
-                fontSize: 16,
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.white),
             ),
             width: 100,
             height: 52,
@@ -466,9 +544,7 @@ class _FineScreens extends State<FineScreens> {
           Container(
             child: Text(
               '${listFineComplete[index].money_fine.toString()}',
-              style: TextStyle(
-                fontSize: 16,
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.white),
             ),
             width: 100,
             height: 52,
@@ -478,9 +554,7 @@ class _FineScreens extends State<FineScreens> {
           Container(
             child: Text(
               '${getData(listFineComplete[index].time)}',
-              style: TextStyle(
-                fontSize: 16,
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.white),
             ),
             width: 100,
             height: 52,
@@ -490,9 +564,7 @@ class _FineScreens extends State<FineScreens> {
           Container(
             child: Text(
               '${listFineComplete[index].change.toString()}',
-              style: TextStyle(
-                fontSize: 16,
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.white),
             ),
             width: 100,
             height: 52,
@@ -521,31 +593,50 @@ class _FineScreens extends State<FineScreens> {
     }
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: color_main_black,
       body: SingleChildScrollView(
         padding: EdgeInsets.only(top: 20),
         child: Container(
-          height: MediaQuery.of(context).size.height,
+          padding: EdgeInsets.only(left: 10, right: 10),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               if (listFineFull.length != 0)
-                Text(
-                  ' С ${getDataPeriod(_datePeriod!.start)} до ${getDataPeriod(_datePeriod!.end)}',
-                  style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
+                Container(
+                  padding: EdgeInsets.only(top: 20),
+                  child: Text(
+                    ' С ${getDataPeriod(_datePeriod!.start)} до ${getDataPeriod(_datePeriod!.end)}',
+                    style: TextStyle(
+                        fontSize: 19,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
+                  ),
                 ),
               if (listFineFull.length == 0)
                 Container(
-                  padding: EdgeInsets.only(bottom: 20),
+                  padding: EdgeInsets.only(
+                      bottom: 20, top: MediaQuery.of(context).size.height / 2),
                   child: Text(
                     'Информации не найденно',
-                    style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        fontSize: 19,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
                   ),
+                ),
+              if (isVisiblyProgress)
+                Container(
+                  padding: EdgeInsets.only(top: 10, bottom: 10),
+                  child: LinearProgressIndicator(
+                      color: Colors.blueAccent,
+                      backgroundColor: color_main_black),
                 ),
               if (listFineFull.length != 0)
                 Container(
-                  height: MediaQuery.of(context).size.height / 2.6,
+                  height: MediaQuery.of(context).size.height / 1.5,
                   child: HorizontalDataTable(
+                    leftHandSideColBackgroundColor: color_main_black,
+                    rightHandSideColBackgroundColor: color_main_black,
                     leftHandSideColumnWidth: 100,
                     rightHandSideColumnWidth: 600,
                     isFixedHeader: true,
@@ -561,49 +652,58 @@ class _FineScreens extends State<FineScreens> {
                   ),
                 ),
               if (listFineComplete.length != 0)
-                Container(
-                  height: MediaQuery.of(context).size.height / 2.6,
-                  child: HorizontalDataTable(
-                    leftHandSideColumnWidth: 100,
-                    rightHandSideColumnWidth: 600,
-                    isFixedHeader: true,
-                    headerWidgets: _getTitleWidgetFull(),
-                    leftSideItemBuilder: _generateFirstColumnRow,
-                    rightSideItemBuilder: _generateRightHandSideColumnRowFull,
-                    itemCount: listFineComplete.length,
-                    rowSeparatorWidget: const Divider(
-                      color: Colors.black54,
-                      height: 1.0,
-                      thickness: 0.0,
-                    ),
+                ExpansionTile(
+                  title: Text(
+                    'Суммировать',
+                    style: TextStyle(color: Colors.white),
                   ),
-                ),
-              Container(
-                padding: EdgeInsets.only(left: 20, right: 20),
-                child: Column(
+                  collapsedIconColor: Colors.white,
                   children: [
                     Container(
-                      padding: EdgeInsets.only(bottom: 6),
-                      width: MediaQuery.of(context).size.width,
-                      child: ElevatedButton(
-                          onPressed: () {
-                            setState(() async {
-                              _showDataTimeRange();
-                            });
-                          },
-                          child: Text('Указать период')),
-                    ),
-                    Container(
-                      padding: EdgeInsets.only(bottom: 20),
-                      width: MediaQuery.of(context).size.width,
-                      child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: Text('Вернуться')),
+                      height: MediaQuery.of(context).size.height / 2.0,
+                      child: HorizontalDataTable(
+                        leftHandSideColBackgroundColor: color_main_black,
+                        rightHandSideColBackgroundColor: color_main_black,
+                        leftHandSideColumnWidth: 100,
+                        rightHandSideColumnWidth: 600,
+                        isFixedHeader: true,
+                        headerWidgets: _getTitleWidget(),
+                        leftSideItemBuilder: _generateFirstColumnRow,
+                        rightSideItemBuilder:
+                            _generateRightHandSideColumnRowFull,
+                        itemCount: listFineComplete.length,
+                        rowSeparatorWidget: const Divider(
+                          color: Colors.black54,
+                          height: 1.0,
+                          thickness: 0.0,
+                        ),
+                      ),
                     ),
                   ],
                 ),
+              Column(
+                children: [
+                  Container(
+                    padding: EdgeInsets.only(bottom: 6, top: 10),
+                    width: MediaQuery.of(context).size.width,
+                    child: ElevatedButton(
+                        onPressed: () {
+                          setState(() async {
+                            _showDataTimeRange();
+                          });
+                        },
+                        child: Text('Указать период')),
+                  ),
+                  Container(
+                    padding: EdgeInsets.only(bottom: 20),
+                    width: MediaQuery.of(context).size.width,
+                    child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text('Вернуться')),
+                  ),
+                ],
               ),
             ],
           ),

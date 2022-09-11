@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FineModel {
   String name;
+  String post;
   Timestamp time;
   int lateness;
   int change;
@@ -12,6 +13,7 @@ class FineModel {
   FineModel(
       {required this.name,
         required this.lateness,
+        required this.post,
         required this.time,
         required this.change,
         required this.money_fine,

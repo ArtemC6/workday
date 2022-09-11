@@ -13,11 +13,12 @@ import 'package:workday/screens/auth/signin_screen.dart';
 import 'package:workday/screens/settings/settings_screen.dart';
 import 'package:workday/screens/statistics/user_information_period_screen.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:slider_button/slider_button.dart';
 
+import '../data/const.dart';
 import '../data/user_model.dart';
 import '../data/firedase_api.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
-
 
 class EmployeeScreen extends StatefulWidget {
   const EmployeeScreen({Key? key}) : super(key: key);
@@ -112,55 +113,9 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
           SizedBox(
             height: 24,
           ),
-          Text(header, style: TextStyle(color: Colors.black45)),
+          Text(header, style: TextStyle(color: Colors.white)),
         ],
       );
-
-  int getUserWorkTime(Timestamp startDate, Timestamp endDate) {
-    final DateTime dateTimeStart = startDate.toDate();
-    final DateTime dateTimeEnd = endDate.toDate();
-    return dateTimeEnd.difference(dateTimeStart).inMinutes;
-  }
-
-  showAlertDialog(BuildContext context) {
-    AlertDialog alert = AlertDialog(
-        content: new Container(
-      decoration: new BoxDecoration(
-        shape: BoxShape.rectangle,
-        color: const Color(0xFFFFFF),
-        borderRadius: new BorderRadius.all(new Radius.circular(32.0)),
-      ),
-      child: Row(
-        children: [
-          CircularProgressIndicator(),
-          Container(
-              margin: EdgeInsets.only(left: 18), child: Text("Загрузка...")),
-        ],
-      ),
-    ));
-    showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (BuildContext context) {
-        return alert;
-      },
-    );
-  }
-
-  // void startCamera() async {
-  //   cameras = await availableCameras();
-  //
-  //   cameraController = CameraController(cameras[0], ResolutionPreset.high, enableAudio: false);
-  //
-  //   await cameraController.initialize().then((value) {
-  //     if(!mounted) {
-  //       return;
-  //     }
-  //     setState(() {
-  //
-  //     });
-  //   });
-  // }
 
   Future makeStartPhoto() async {
     final XFile? photo = await _picker.pickImage(
@@ -398,7 +353,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
         },
         child: SingleChildScrollView(
           child: Container(
-            color: Colors.blueAccent,
+            color: color_main_black,
             alignment: Alignment.center,
             height: MediaQuery.of(context).size.height,
             padding: EdgeInsets.only(right: 30, left: 30),
@@ -423,7 +378,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                         if (formattedDate >= 07 && formattedDate <= 23) {
                           isVisibleTime = false;
                           await makeStartPhoto();
-                          showAlertDialog(context);
+                          showAlertDialogMy(context);
 
                           setState(() {
                             isVisible = !isVisible;
@@ -463,7 +418,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                               int.parse(DateFormat('kk').format(now));
                           if (formattedDate >= 07 && formattedDate <= 23) {
                             await makeEndPhoto();
-                            showAlertDialog(context);
+                            showAlertDialogMy(context);
 
                             setState(() {
                               isVisible = !isVisible;
@@ -534,15 +489,6 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
       );
     }
 
-    //
-    // Widget text() {
-    //    {
-    //     return
-    //   }
-    //   return Container(
-    //   );
-    // }
-
     Widget childEmployee() {
       var child;
       switch (_page) {
@@ -578,7 +524,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
 
           color: Colors.white,
           buttonBackgroundColor: Colors.white,
-          backgroundColor: Colors.blueAccent,
+          backgroundColor: color_main_black,
           animationCurve: Curves.easeInOut,
           animationDuration: Duration(milliseconds: 700),
           onTap: (index) {

@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:workday/screens/administrator_screen.dart';
 import 'package:workday/screens/extradition_screen.dart';
 
+import '../data/const.dart';
 import '../data/user_model.dart';
 import 'statistics/information_users_screen.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -20,12 +21,6 @@ class AnalyticScreen extends StatefulWidget {
 class _AnalyticScreenState extends State<AnalyticScreen> {
   List<UserModel> listUser = [], listUserWork = [], listUserMoney = [];
   bool isPosition = true, isEmpty = false;
-
-  int getUserWorkTime(Timestamp startDate, Timestamp endDate) {
-    final DateTime dateTimeStart = startDate.toDate();
-    final DateTime dateTimeEnd = endDate.toDate();
-    return dateTimeEnd.difference(dateTimeStart).inMinutes;
-  }
 
   void readFirebase() async {
     await FirebaseFirestore.instance
@@ -128,7 +123,7 @@ class _AnalyticScreenState extends State<AnalyticScreen> {
         padding: EdgeInsets.all(10.0),
         decoration: BoxDecoration(
           border: Border.all(color: Colors.blue, width: 2.0),
-          borderRadius: BorderRadius.circular(11.0),
+          borderRadius: BorderRadius.circular(30),
         ),
         child: Column(
           children: <Widget>[
@@ -156,10 +151,10 @@ class _AnalyticScreenState extends State<AnalyticScreen> {
                       context,
                       MaterialPageRoute(
                           builder: (BuildContext context) => ExtraditionScreen(
-                                status: 'cook',
+                                status: 'maid',
                               )));
                 },
-                child: Text('Выдать поворам'),
+                child: Text('Выдать горничным'),
               ),
             ),
             Container(
@@ -171,27 +166,12 @@ class _AnalyticScreenState extends State<AnalyticScreen> {
                       context,
                       MaterialPageRoute(
                           builder: (BuildContext context) => ExtraditionScreen(
-                                status: 'maid',
+                                status: 'concierge',
                               )));
                 },
-                child: Text('Выдать горничным'),
+                child: Text('Выдать консьержу'),
               ),
             ),
-            // Container(
-            //   padding: EdgeInsets.only(left: 20, right: 20, top: 10),
-            //   width: double.infinity,
-            //   child: ElevatedButton(
-            //     onPressed: () async {
-            //       Navigator.push(
-            //           context,
-            //           MaterialPageRoute(
-            //               builder: (BuildContext context) => ExtraditionScreen(
-            //                     status: 'confectionery',
-            //                   )));
-            //     },
-            //     child: Text('Выдать консьержу'),
-            //   ),
-            // ),
             Container(
               padding: EdgeInsets.only(left: 20, right: 20, top: 10),
               width: double.infinity,
@@ -205,6 +185,66 @@ class _AnalyticScreenState extends State<AnalyticScreen> {
                               )));
                 },
                 child: Text('Выдать администратору'),
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.only(left: 20, right: 20, top: 10),
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () async {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (BuildContext context) => ExtraditionScreen(
+                                status: 'chef-cook',
+                              )));
+                },
+                child: Text('Выдать Шеф-Повору'),
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.only(left: 20, right: 20, top: 10),
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () async {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (BuildContext context) => ExtraditionScreen(
+                                status: 'sous-chef',
+                              )));
+                },
+                child: Text('Выдать Сy-Шефу'),
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.only(left: 20, right: 20, top: 10),
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () async {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (BuildContext context) => ExtraditionScreen(
+                                status: 'confectioner',
+                              )));
+                },
+                child: Text('Выдать Кондитеру'),
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.only(left: 20, right: 20, top: 10),
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () async {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (BuildContext context) => ExtraditionScreen(
+                                status: 'cook',
+                              )));
+                },
+                child: Text('Выдать Поворам'),
               ),
             ),
           ],
@@ -238,6 +278,7 @@ class _AnalyticScreenState extends State<AnalyticScreen> {
         },
         child: SingleChildScrollView(
           child: Container(
+            color: color_main_black,
             height: _height,
             child: Column(
               children: [
@@ -248,21 +289,15 @@ class _AnalyticScreenState extends State<AnalyticScreen> {
                       child: Text(
                         "Сегодня работали ${listUser.length.toString()}",
                         style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
                       )),
                 Container(
                   height: MediaQuery.of(context).size.height / 1.5,
-                  child: ListView.separated(
+                  child: ListView.builder(
                       physics: BouncingScrollPhysics(),
                       itemCount: listUser.length,
-                      separatorBuilder: (BuildContext context, int index) =>
-                          Container(
-                            // padding: EdgeInsets.only(top: 10, bottom: 10),
-                            child: Divider(
-                              height: 1.0,
-                              color: Colors.black54,
-                            ),
-                          ),
                       itemBuilder: (BuildContext context, int index) {
                         return InkWell(
                           onTap: () {
@@ -277,19 +312,27 @@ class _AnalyticScreenState extends State<AnalyticScreen> {
                           child: listUser[index].workTime <= 60
                               ? Container(
                                   child: ListTile(
-                                  trailing:
-                                      Icon(Icons.arrow_forward_ios, size: 18),
+                                  trailing: Icon(
+                                    Icons.arrow_forward_ios,
+                                    size: 18,
+                                    color: Colors.white,
+                                  ),
                                   title: Text(
                                       "${listUser[index].name} ${listUser[index].workTime} минут ",
-                                      style: TextStyle(fontSize: 17)),
+                                      style: TextStyle(
+                                          fontSize: 17, color: Colors.white)),
                                 ))
                               : Container(
                                   child: ListTile(
-                                  trailing:
-                                      Icon(Icons.arrow_forward_ios, size: 18),
+                                  trailing: Icon(
+                                    Icons.arrow_forward_ios,
+                                    size: 18,
+                                    color: Colors.white,
+                                  ),
                                   title: Text(
                                       "${listUser[index].name} ${(listUser[index].workTime / 60).toStringAsFixed(1)} часов ",
-                                      style: TextStyle(fontSize: 17)),
+                                      style: TextStyle(
+                                          fontSize: 17, color: Colors.white)),
                                 )),
                         );
                       }),
@@ -298,15 +341,21 @@ class _AnalyticScreenState extends State<AnalyticScreen> {
                   padding: EdgeInsets.only(left: 20, right: 20, top: 10),
                   width: double.infinity,
                   child: ElevatedButton(
+                    style:
+                        ElevatedButton.styleFrom(backgroundColor: Colors.white),
                     onPressed: () async {
                       showCupertinoModalBottomSheet(
+                        topRadius: Radius.circular(30),
                         duration: Duration(milliseconds: 700),
-                        backgroundColor: Color(0xff212428),
+                        backgroundColor: color_main_black,
                         context: context,
                         builder: (context) => _buildBottomSheet(context),
                       );
                     },
-                    child: Text('Выдача'),
+                    child: Text(
+                      'Выдача',
+                      style: TextStyle(color: Colors.black),
+                    ),
                   ),
                 ),
               ],

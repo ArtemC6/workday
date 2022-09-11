@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:workday/screens/auth/signin_screen.dart';
 
+import '../../data/const.dart';
 import '../../data/variable.dart';
 import '../../main.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -19,32 +20,7 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreen extends State<SignUpScreen> {
   String _email = "", _password = "", _name = "";
-  bool _isHidden = true;
-
-  showAlertDialog(BuildContext context) {
-    AlertDialog alert = AlertDialog(
-        content: new Container(
-      decoration: new BoxDecoration(
-        shape: BoxShape.rectangle,
-        color: const Color(0xFFFFFF),
-        borderRadius: new BorderRadius.all(new Radius.circular(32.0)),
-      ),
-      child: Row(
-        children: [
-          CircularProgressIndicator(),
-          Container(
-              margin: EdgeInsets.only(left: 18), child: Text("Загрузка...")),
-        ],
-      ),
-    ));
-    showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (BuildContext context) {
-        return alert;
-      },
-    );
-  }
+  bool _isHidden = true, isVisibleSizedBox = false;
 
   @override
   void initState() {
@@ -57,10 +33,12 @@ class _SignUpScreen extends State<SignUpScreen> {
     double _height = MediaQuery.of(context).size.height;
 
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: Color(0xff292C31),
       body: SingleChildScrollView(
         child: Container(
-          padding: EdgeInsets.only(left: _width / 10, right: _width / 10, top: _height / 20),
+          padding: EdgeInsets.only(
+              left: _width / 10, right: _width / 10, top: _height / 20),
           height: _height,
           child: Column(
             children: [
@@ -108,7 +86,7 @@ class _SignUpScreen extends State<SignUpScreen> {
                 splashColor: Colors.transparent,
                 highlightColor: Colors.transparent,
                 onTap: () {
-                  showAlertDialog(context);
+                  showAlertDialogMy(context);
 
                   FirebaseAuth.instance
                       .createUserWithEmailAndPassword(
@@ -155,6 +133,8 @@ class _SignUpScreen extends State<SignUpScreen> {
                   ),
                 ),
               ),
+              if (isVisibleSizedBox)
+                Padding(padding: EdgeInsets.only(bottom: 150)),
             ],
           ),
         ),
@@ -168,10 +148,15 @@ class _SignUpScreen extends State<SignUpScreen> {
       return Container(
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: Color(0xff212428),
+          color: color_main_black,
           borderRadius: BorderRadius.circular(15),
         ),
         child: TextField(
+          onTap: () {
+            setState(() {
+              isVisibleSizedBox = true;
+            });
+          },
           style: TextStyle(color: Colors.white.withOpacity(.7)),
           obscureText: _isHidden,
           keyboardType:
@@ -224,10 +209,15 @@ class _SignUpScreen extends State<SignUpScreen> {
     return Container(
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: Color(0xff212428),
+        color: color_main_black,
         borderRadius: BorderRadius.circular(15),
       ),
       child: TextField(
+        onTap: () {
+          setState(() {
+            isVisibleSizedBox = true;
+          });
+        },
         style: TextStyle(color: Colors.white.withOpacity(.7)),
         obscureText: isPassword,
         keyboardType: isEmail ? TextInputType.emailAddress : TextInputType.text,
