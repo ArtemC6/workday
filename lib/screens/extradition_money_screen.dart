@@ -4,30 +4,26 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:horizontal_data_table/horizontal_data_table.dart';
-import 'package:workday/screens/administrator_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:workday/screens/auth/signin_screen.dart';
 import 'package:progress_state_button/iconed_button.dart';
 import 'package:progress_state_button/progress_button.dart';
-import 'package:workday/screens/statistics/information_users_screen.dart';
+import 'package:workday/screens/statistics/users_detailed_informaiton_screen.dart';
 
 import '../data/const.dart';
 import '../data/user_model.dart';
-import '../data/variable.dart';
-import 'auth/signup_screen.dart';
-import 'package:intl/intl.dart';
 
-class ExtraditionScreen extends StatefulWidget {
+class ExtraditionMoneyScreen extends StatefulWidget {
   var status;
 
-  ExtraditionScreen({Key? key, @required this.status}) : super(key: key);
+  ExtraditionMoneyScreen({Key? key, @required this.status}) : super(key: key);
 
   @override
-  State<ExtraditionScreen> createState() =>
+  State<ExtraditionMoneyScreen> createState() =>
       _ExtraditionScreenScreenState(status);
 }
 
-class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
+class _ExtraditionScreenScreenState extends State<ExtraditionMoneyScreen> {
   List<UserModel> listUser = [], listUserWork = [], listUserMoney = [];
   ButtonState stateTextWithIcon = ButtonState.idle;
   String _sum = '0.0', _percent = '0', _work_price = '0';
@@ -37,11 +33,6 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
   DateTimeRange? _datePeriod;
 
   _ExtraditionScreenScreenState(this.status);
-
-  String getDataPeriod(DateTime startDate) {
-    String formattedDate = DateFormat('yyyy-MM-dd').format(startDate);
-    return formattedDate;
-  }
 
   void calculation(List<UserModel> listWork, DateTimeRange? datePeriod) async {
     listUserMoney.clear();
@@ -266,27 +257,7 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
   @override
   void initState() {
     super.initState();
-    if ('barista' == status) {
-      statusName = 'Бириста';
-    } else if ('cook' == status) {
-      statusName = 'Повор';
-    } else if ('trainee' == status) {
-      statusName = 'Стажёр';
-    } else if ('maid' == status) {
-      statusName = 'Горнечная';
-    } else if ('Кондитер' == status) {
-      statusName = 'Бириста';
-    } else if ('sous-chef' == status) {
-      statusName = 'Су-Шев';
-    } else if ('chef-cook' == status) {
-      statusName = 'Шеф-Повор';
-    } else if ('confectioner' == status) {
-      statusName = 'Кондитер';
-    } else if ('concierge' == status) {
-      statusName = 'Коньсьерж';
-    } else if ('admin' == status) {
-      statusName = 'Администратор';
-    }
+    statusName = getName(status);
   }
 
   List<UserModel> getTotalTime(List<UserModel> users, double sum) {
@@ -372,6 +343,9 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double _width = MediaQuery.of(context).size.width;
+    double _height = MediaQuery.of(context).size.height;
+
     if (status == 'barista') {
       double percent = double.parse(_percent) / 100;
       money = double.parse(_sum) * percent;
@@ -434,17 +408,11 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
       return Row(
         children: <Widget>[
           Container(
-            padding: EdgeInsets.only(left: 10),
-            child: listUser[index].workTime <= 60
-                ? Text(
-                    '${listUser[index].workTime} минут ',
-                    style: TextStyle(fontSize: 15, color: Colors.white),
-                  )
-                : Text(
-                    '${(listUser[index].workTime / 60).toStringAsFixed(1)} часов ',
-                    style: TextStyle(fontSize: 15, color: Colors.white),
-                  ),
-          ),
+              padding: EdgeInsets.only(left: 10),
+              child: Text(
+                '${printDurationTime(Duration(minutes: listUser[index].workTime))} минут ',
+                style: TextStyle(fontSize: 15, color: Colors.white),
+              )),
           Container(
             padding: EdgeInsets.only(left: 44),
             child: Text(
@@ -533,8 +501,8 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
                   ),
                 ),
               Container(
-                padding:
-                    EdgeInsets.only(top: 10, left: 20, right: 20, bottom: 10),
+                padding: EdgeInsets.only(
+                    top: 10, left: _width / 20, right: _width / 20, bottom: 10),
                 width: MediaQuery.of(context).size.width,
                 child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
@@ -551,7 +519,10 @@ class _ExtraditionScreenScreenState extends State<ExtraditionScreen> {
                     Container(
                       width: MediaQuery.of(context).size.width / 2,
                       padding: EdgeInsets.only(
-                          left: 20, right: 20, top: 20, bottom: 20),
+                          top: 20,
+                          left: _width / 20,
+                          right: _width / 20,
+                          bottom: 20),
                       child: TextFormField(
                         decoration: InputDecoration(
                           // hintText: 'Ведите выручку',

@@ -2,10 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:workday/screens/Log.dart';
 import 'package:workday/screens/home_screen.dart';
 import 'package:workday/screens/administrator_screen.dart';
-import 'package:workday/screens/analytics_screen.dart';
-import 'package:workday/screens/statistics/detailed_statistics_screen.dart';
+import 'package:workday/screens/analytics_today_screen.dart';
+import 'package:workday/screens/statistics/global_statistics_screen.dart';
 import 'package:workday/screens/auth/signin_screen.dart';
 import 'package:workday/screens/auth/signup_screen.dart';
 import 'package:workday/screens/employee_screen.dart';
@@ -36,9 +37,8 @@ class MyApp extends StatelessWidget {
         '/detailed': (context) => const DetailedStatics(),
         '/signIn': (context) => SignInScreen(),
         '/signup': (context) => SignUpScreen(),
-        '/waiter': (context) => const EmployeeScreen(),
-      },
-      // home: const HomeScreen(),
+        '/waiter': (context) => EmployeeScreen(),
+      }, /* home: const HomeScreen(),*/
     );
   }
 }

@@ -1,38 +1,31 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:workday/screens/auth/signin_screen.dart';
 import 'package:workday/screens/auth/signup_screen.dart';
-
+import 'package:animated_text_kit/animated_text_kit.dart';
 
 import '../../data/const.dart';
-import '../../data/variable.dart';
-import '../../main.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:avatar_glow/avatar_glow.dart';
 
-import '../Log.dart';
 import '../administrator_screen.dart';
 import '../employee_screen.dart';
 import '../home_screen.dart';
-
 
 class SignInScreen extends StatefulWidget {
   @override
   _SignInScreen createState() => _SignInScreen();
 }
 
-class _SignInScreen extends State<SignInScreen>
-    with SingleTickerProviderStateMixin {
+class _SignInScreen extends State<SignInScreen> {
   String _email = "", _password = "";
   bool _isHidden = true, isVisibleSizedBox = false;
 
   @override
   void initState() {
     super.initState();
-    if (FirebaseAuth.instance.currentUser != null)
+    if (FirebaseAuth.instance.currentUser?.uid != null) {
       FirebaseFirestore.instance
           .collection('User')
           .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -42,16 +35,16 @@ class _SignInScreen extends State<SignInScreen>
           Map<String, dynamic> data =
               documentSnapshot.data() as Map<String, dynamic>;
 
-          if (data['status'] == 'waiter') {
-            Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => EmployeeScreen()));
-          } else {
+          if (data['post'] == 'boss') {
             Navigator.of(context).pushReplacement(
                 MaterialPageRoute(builder: (context) => AdministratorScreen()));
+          } else {
+            Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => EmployeeScreen()));
           }
         }
       });
-
+    }
   }
 
   Widget componentTextField(IconData icon, String hintText, bool isPassword,
@@ -64,6 +57,21 @@ class _SignInScreen extends State<SignInScreen>
           borderRadius: BorderRadius.circular(15),
         ),
         child: TextField(
+          onSubmitted: (value) {
+            setState(() {
+              isVisibleSizedBox = false;
+
+              showAlertDialogMy(context);
+              FirebaseAuth.instance
+                  .signInWithEmailAndPassword(
+                      email: _email, password: _password)
+                  .then((value) => {
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(
+                            builder: (context) => HomeScreen()))
+                      })
+                  .catchError((e) => Navigator.pop(context));
+            });
+          },
           onTap: () {
             setState(() {
               isVisibleSizedBox = true;
@@ -161,12 +169,20 @@ class _SignInScreen extends State<SignInScreen>
   Widget build(BuildContext context) {
     double _width = MediaQuery.of(context).size.width;
     double _height = MediaQuery.of(context).size.height;
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      backgroundColor: Color(0xff292C31),
-      body: ScrollConfiguration(
-        behavior: MyBehavior(),
-        child: SingleChildScrollView(
+    return WillPopScope(
+      onWillPop: () async {
+        FocusScope.of(context).requestFocus(new FocusNode());
+
+        setState(() {
+          isVisibleSizedBox = false;
+        });
+
+        return await false;
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        backgroundColor: Color(0xff292C31),
+        body: SingleChildScrollView(
           child: Container(
             padding: EdgeInsets.only(
                 left: _width / 10, right: _width / 10, top: _height / 8),
@@ -187,21 +203,36 @@ class _SignInScreen extends State<SignInScreen>
                 componentTextField(
                     Icons.email_outlined, 'Email...', false, true, 'email'),
                 Padding(padding: EdgeInsets.only(top: 25)),
-                componentTextField(
-                    Icons.lock_outline, 'Password...', true, false, "password"),
+                componentTextField(Icons.lock_outline, 'Password...', true,
+                    false, "password"),
                 Padding(padding: EdgeInsets.only(top: 25)),
-                InkWell(
-                  splashColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
-                  onTap: () {
-                    Navigator.push(context, Scale_Transition(SignUpScreen()));
-                  },
-                  child: Container(
-                    alignment: Alignment.centerRight,
-                    child: Text('Зарегистрировать аккаунт',
-                        style:
-                            TextStyle(color: Colors.blueAccent, fontSize: 17),
-                        textAlign: TextAlign.right),
+                Container(
+                  alignment: Alignment.centerRight,
+                  child: AnimatedTextKit(
+                    displayFullTextOnTap: true,
+                    isRepeatingAnimation: true,
+                    repeatForever: true,
+                    stopPauseOnTap: true,
+                    animatedTexts: [
+                      ColorizeAnimatedText(
+                        'Зарегистрировать аккаунт',
+                        textStyle: TextStyle(fontSize: 17),
+                        colors: [
+                          Colors.blueAccent,
+                          Colors.purple,
+                          Colors.pink,
+                          Colors.indigo,
+                          Colors.deepPurpleAccent,
+                          Colors.purpleAccent,
+                          Colors.deepPurpleAccent,
+                          Colors.blueAccent
+                        ],
+                      ),
+                    ],
+                    onTap: () {
+                      Navigator.push(
+                          context, Scale_Transition(SignUpScreen()));
+                    },
                   ),
                 ),
                 Padding(padding: EdgeInsets.only(top: 30)),
@@ -242,8 +273,10 @@ class _SignInScreen extends State<SignInScreen>
                   ),
                 ),
 
-                if(isVisibleSizedBox)
-                SizedBox(height: 150,),
+                if (isVisibleSizedBox)
+                  SizedBox(
+                    height: 150,
+                  ),
               ],
             ),
           ),
@@ -253,10 +286,3 @@ class _SignInScreen extends State<SignInScreen>
   }
 }
 
-class MyBehavior extends ScrollBehavior {
-  @override
-  Widget buildViewportChrome(
-      BuildContext context, Widget child, AxisDirection axisDirection) {
-    return child;
-  }
-}

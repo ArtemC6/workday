@@ -10,7 +10,7 @@ import 'package:workday/data/fine_model.dart';
 import '../../data/const.dart';
 import '../../data/money_model.dart';
 import '../../data/user_model.dart';
-import 'information_users_screen.dart';
+import 'users_detailed_informaiton_screen.dart';
 
 class FineScreens extends StatefulWidget {
   var post;
@@ -23,6 +23,8 @@ class FineScreens extends StatefulWidget {
 
 class _FineScreens extends State<FineScreens> {
   var post;
+
+  Duration timeLeft = Duration(minutes: 200);
 
   _FineScreens(this.post);
 
@@ -37,7 +39,6 @@ class _FineScreens extends State<FineScreens> {
       isVisiblyProgress = false;
 
   DateTimeRange? _datePeriod;
-
 
   String getDataPeriod(DateTime startDate) {
     String formattedDate = DateFormat('yyyy-MM-dd').format(startDate);
@@ -70,15 +71,17 @@ class _FineScreens extends State<FineScreens> {
         setState(() {
           if (timeStart.hour >= dateOver_7.hour && timeStart.hour < 15) {
             if (timeStart.minute <= 5) {
-              listFine.add(FineModel(
-                  name: data['name'],
-                  post: data['post'],
-                  lateness: timeStart.minute,
-                  time: data['startDate'],
-                  money_fine: 100,
-                  id_user: data['id_user'],
-                  id_post: '',
-                  change: 1));
+              if (timeStart.minute >= 1) {
+                listFine.add(FineModel(
+                    name: data['name'],
+                    post: data['post'],
+                    lateness: timeStart.minute,
+                    time: data['startDate'],
+                    money_fine: 100,
+                    id_user: data['id_user'],
+                    id_post: '',
+                    change: 1));
+              }
             } else if (timeStart.minute <= 15) {
               listFine.add(FineModel(
                   name: data['name'],
@@ -90,31 +93,53 @@ class _FineScreens extends State<FineScreens> {
                   id_post: '',
                   change: 1));
             } else {
-              listFine.add(FineModel(
-                  name: data['name'],
-                  post: data['post'],
-                  lateness: timeStart.minute,
-                  time: data['startDate'],
-                  money_fine: 300,
-                  id_user: data['id_user'],
-                  id_post: '',
-                  change: 1));
+              if (data['endDate'] == "") {
+                listFine.add(FineModel(
+                    name: data['name'],
+                    post: data['post'],
+                    lateness: getDataTime(dateOver_7, DateTime.now()),
+                    time: data['startDate'],
+                    money_fine: 300,
+                    id_user: data['id_user'],
+                    id_post: '',
+                    change: 1));
+              } else {
+                listFine.add(FineModel(
+                    name: data['name'],
+                    post: data['post'],
+                    lateness: getDataTime(dateOver_7, timeStart),
+                    time: data['startDate'],
+                    money_fine: 300,
+                    id_user: data['id_user'],
+                    id_post: '',
+                    change: 1));
+              }
+              // listFine.add(FineModel(
+              //     name: data['name'],
+              //     post: data['post'],
+              //     lateness: timeStart.minute,
+              //     time: data['startDate'],
+              //     money_fine: 300,
+              //     id_user: data['id_user'],
+              //     id_post: '',
+              //     change: 1));
             }
           }
 
           // 15
           if (timeStart.hour >= dateOver_15.hour && timeStart.hour < 23) {
-            // print(timeStart.hour);
             if (timeStart.minute <= 5) {
-              listFine.add(FineModel(
-                  name: data['name'],
-                  post: data['post'],
-                  lateness: timeStart.minute,
-                  time: data['startDate'],
-                  money_fine: 100,
-                  id_user: data['id_user'],
-                  id_post: '',
-                  change: 2));
+              if (timeStart.minute >= 1) {
+                listFine.add(FineModel(
+                    name: data['name'],
+                    post: data['post'],
+                    lateness: timeStart.minute,
+                    time: data['startDate'],
+                    money_fine: 100,
+                    id_user: data['id_user'],
+                    id_post: '',
+                    change: 2));
+              }
             } else if (timeStart.minute <= 15) {
               listFine.add(FineModel(
                   name: data['name'],
@@ -126,15 +151,52 @@ class _FineScreens extends State<FineScreens> {
                   id_post: '',
                   change: 2));
             } else {
-              listFine.add(FineModel(
-                  name: data['name'],
-                  post: data['post'],
-                  lateness: timeStart.minute,
-                  time: data['startDate'],
-                  money_fine: 300,
-                  id_user: data['id_user'],
-                  id_post: '',
-                  change: 2));
+              if (data['endDate'] == "") {
+                listFine.add(FineModel(
+                    name: data['name'],
+                    post: data['post'],
+                    lateness: getDataTime(dateOver_15, DateTime.now()),
+                    time: data['startDate'],
+                    money_fine: 300,
+                    id_user: data['id_user'],
+                    id_post: '',
+                    change: 2));
+              } else {
+                listFine.add(FineModel(
+                    name: data['name'],
+                    post: data['post'],
+                    lateness: getDataTime(dateOver_15, timeStart),
+                    time: data['startDate'],
+                    money_fine: 300,
+                    id_user: data['id_user'],
+                    id_post: '',
+                    change: 2));
+              }
+
+              // listFine.add(FineModel(
+              //     name: data['name'],
+              //     post: data['post'],
+              //     lateness: timeStart.minute,
+              //     time: data['startDate'],
+              //     money_fine: 300,
+              //     id_user: data['id_user'],
+              //     id_post: '',
+              //     change: 2));
+
+              // print(data['endDate'] + '___');
+
+              // if(data['endDate' == '']) {
+
+              // if( == '']) {
+              //   print('object');
+              // }
+              // print(data['startDate']);
+              // print(data['endDate']);
+
+              // } else {
+              // print(data['startDate']);
+
+              // }
             }
           }
         });
@@ -182,74 +244,7 @@ class _FineScreens extends State<FineScreens> {
         dockFine.set(json);
       });
     } else {
-      await FirebaseFirestore.instance
-          .collection('Fine')
-          .get()
-          .then((QuerySnapshot querySnapshot) {
-        querySnapshot.docs.forEach((document) async {
-          Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-
-          final dockFine = await FirebaseFirestore.instance
-              .collection('Fine')
-              .doc(document.id);
-
-          dockFine.delete();
-        });
-      });
-
-      listFine.forEach((element) async {
-        final dockFine =
-            await FirebaseFirestore.instance.collection('Fine').doc();
-
-        final json = {
-          'name': element.name,
-          'post': element.post,
-          'id_user': element.id_user,
-          'id_post': dockFine.id,
-          'lateness': element.lateness,
-          'change': element.change,
-          'time': element.time,
-          'money_fine': element.money_fine,
-        };
-        dockFine.set(json);
-      });
-
-      // await FirebaseFirestore.instance
-      //     .collection('Fine')
-      //     .get()
-      //     .then((QuerySnapshot querySnapshot) {
-      //   querySnapshot.docs.forEach((document) async {
-      //     Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-      //
-      //     listFine.forEach((element) async {
-      //       final dockFine = await FirebaseFirestore.instance
-      //           .collection('Fine')
-      //           .doc(element.id_post);
-      //
-      //       if (data['id_post'] == element.id_post) {
-      //
-      //         print(" ${element.po}${element.name}");
-      //
-      //         // final json = {
-      //         //   'name': element.name,
-      //         //   'post': element.post,
-      //         //   'id_user': element.id_user,
-      //         //   'id_post': element.id_post,
-      //         //   'lateness': element.lateness,
-      //         //   'change': element.change,
-      //         //   'time': element.time,
-      //         //   'money_fine': element.money_fine,
-      //         // };
-      //         // dockFine.set(json);
-      //
-      //       }
-      //     });
-      //   });
-      // });
-
       listFine.forEach((elementMain) {
-        // print(elementMain.name);
-
         final DateTime dateTimeStartMain = elementMain.time.toDate();
         var timeStartMain = new DateTime(
           dateTimeStartMain.year,
@@ -265,32 +260,31 @@ class _FineScreens extends State<FineScreens> {
             dateTimeStart.day,
           );
 
-          // if (element.time == elementMain.time && element.lateness == elementMain.lateness) {
-          // if (timeStartMain == timeStart && elementMain.id_user == element.id_user && elementMain.lateness == element.lateness) {
-          //   elementMain.id_post = element.id_post;
-          // }
+          if (timeStartMain == timeStart &&
+              element.lateness == elementMain.lateness &&
+              element.id_user == elementMain.id_user) {
+            elementMain.id_post = element.id_post;
+          }
         });
       });
 
-      Future.delayed(const Duration(milliseconds: 1200), () {
+      Future.delayed(const Duration(milliseconds: 1300), () {
         listFine.forEach((element) async {
           if (element.id_post == '') {
             final dockFine =
                 await FirebaseFirestore.instance.collection('Fine').doc();
 
-            // print("${element.id_post} ${element.name}  ${element.lateness}___");
-
-            // final json = {
-            //   'name': element.name,
-            //   'id_user': element.id_user,
-            //   'id_post': dockFine.id,
-            //   'change': element.change,
-            //   'lateness': element.lateness,
-            //   'time': element.time,
-            //   'money_fine': element.money_fine,
-            // };
-            // dockFine.set(json);
-
+            final json = {
+              'name': element.name,
+              'id_user': element.id_user,
+              'id_post': dockFine.id,
+              'change': element.change,
+              'lateness': element.lateness,
+              'post': element.post,
+              'time': element.time,
+              'money_fine': element.money_fine,
+            };
+            dockFine.set(json);
           }
         });
       });
@@ -468,7 +462,7 @@ class _FineScreens extends State<FineScreens> {
         children: <Widget>[
           Container(
             child: Text(
-              '${listFineFull[index].lateness.toString()}',
+              '${printDurationTime(Duration(minutes: listFineFull[index].lateness))}',
               style: TextStyle(fontSize: 16, color: Colors.white),
             ),
             width: 100,
@@ -533,7 +527,7 @@ class _FineScreens extends State<FineScreens> {
         children: <Widget>[
           Container(
             child: Text(
-              '${listFineComplete[index].lateness.toString()}',
+              '${printDurationTime(Duration(minutes: listFineComplete[index].lateness))}',
               style: TextStyle(fontSize: 16, color: Colors.white),
             ),
             width: 100,

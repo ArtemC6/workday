@@ -4,11 +4,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:workday/screens/administrator_screen.dart';
-import 'package:workday/screens/extradition_screen.dart';
+import 'package:workday/screens/extradition_money_screen.dart';
 
 import '../data/const.dart';
 import '../data/user_model.dart';
-import 'statistics/information_users_screen.dart';
+import 'statistics/users_detailed_informaiton_screen.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 class AnalyticScreen extends StatefulWidget {
@@ -132,10 +132,12 @@ class _AnalyticScreenState extends State<AnalyticScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
-                  Navigator.push(
+                  Navigator.pop(context);
+
+                  await Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (BuildContext context) => ExtraditionScreen(
+                          builder: (BuildContext context) => ExtraditionMoneyScreen(
                                 status: 'barista',
                               )));
                 },
@@ -147,10 +149,11 @@ class _AnalyticScreenState extends State<AnalyticScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
+                  Navigator.pop(context);
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (BuildContext context) => ExtraditionScreen(
+                          builder: (BuildContext context) => ExtraditionMoneyScreen(
                                 status: 'maid',
                               )));
                 },
@@ -162,10 +165,12 @@ class _AnalyticScreenState extends State<AnalyticScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
+                  Navigator.pop(context);
+
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (BuildContext context) => ExtraditionScreen(
+                          builder: (BuildContext context) => ExtraditionMoneyScreen(
                                 status: 'concierge',
                               )));
                 },
@@ -177,10 +182,12 @@ class _AnalyticScreenState extends State<AnalyticScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
+                  Navigator.pop(context);
+
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (BuildContext context) => ExtraditionScreen(
+                          builder: (BuildContext context) => ExtraditionMoneyScreen(
                                 status: 'admin',
                               )));
                 },
@@ -192,10 +199,12 @@ class _AnalyticScreenState extends State<AnalyticScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
+                  Navigator.pop(context);
+
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (BuildContext context) => ExtraditionScreen(
+                          builder: (BuildContext context) => ExtraditionMoneyScreen(
                                 status: 'chef-cook',
                               )));
                 },
@@ -207,10 +216,12 @@ class _AnalyticScreenState extends State<AnalyticScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
+                  Navigator.pop(context);
+
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (BuildContext context) => ExtraditionScreen(
+                          builder: (BuildContext context) => ExtraditionMoneyScreen(
                                 status: 'sous-chef',
                               )));
                 },
@@ -222,10 +233,12 @@ class _AnalyticScreenState extends State<AnalyticScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
+                  Navigator.pop(context);
+
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (BuildContext context) => ExtraditionScreen(
+                          builder: (BuildContext context) => ExtraditionMoneyScreen(
                                 status: 'confectioner',
                               )));
                 },
@@ -237,14 +250,31 @@ class _AnalyticScreenState extends State<AnalyticScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
+                  Navigator.pop(context);
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (BuildContext context) => ExtraditionScreen(
+                          builder: (BuildContext context) => ExtraditionMoneyScreen(
                                 status: 'cook',
                               )));
                 },
                 child: Text('Выдать Поворам'),
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.only(left: 20, right: 20, top: 10),
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () async {
+                  Navigator.pop(context);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (BuildContext context) => ExtraditionMoneyScreen(
+                                status: 'workers-cook',
+                              )));
+                },
+                child: Text('Кух-работники'),
               ),
             ),
           ],
@@ -272,7 +302,7 @@ class _AnalyticScreenState extends State<AnalyticScreen> {
                 context,
                 MaterialPageRoute(
                     builder: (BuildContext context) => AdministratorScreen(
-                          value: 1,
+                          positionBottomNavigation: 1,
                         )));
           });
         },
@@ -309,31 +339,18 @@ class _AnalyticScreenState extends State<AnalyticScreen> {
                                           id_user: listUser[index].id_user,
                                         )));
                           },
-                          child: listUser[index].workTime <= 60
-                              ? Container(
-                                  child: ListTile(
-                                  trailing: Icon(
-                                    Icons.arrow_forward_ios,
-                                    size: 18,
-                                    color: Colors.white,
-                                  ),
-                                  title: Text(
-                                      "${listUser[index].name} ${listUser[index].workTime} минут ",
-                                      style: TextStyle(
-                                          fontSize: 17, color: Colors.white)),
-                                ))
-                              : Container(
-                                  child: ListTile(
-                                  trailing: Icon(
-                                    Icons.arrow_forward_ios,
-                                    size: 18,
-                                    color: Colors.white,
-                                  ),
-                                  title: Text(
-                                      "${listUser[index].name} ${(listUser[index].workTime / 60).toStringAsFixed(1)} часов ",
-                                      style: TextStyle(
-                                          fontSize: 17, color: Colors.white)),
-                                )),
+                          child: Container(
+                              child: ListTile(
+                            trailing: Icon(
+                              Icons.arrow_forward_ios,
+                              size: 18,
+                              color: Colors.white,
+                            ),
+                            title: Text(
+                                "${listUser[index].name} ${printDurationTime(Duration(minutes: listUser[index].workTime))} минут ",
+                                style: TextStyle(
+                                    fontSize: 17, color: Colors.white)),
+                          )),
                         );
                       }),
                 ),

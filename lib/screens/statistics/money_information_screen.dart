@@ -9,7 +9,7 @@ import 'package:horizontal_data_table/horizontal_data_table.dart';
 import '../../data/const.dart';
 import '../../data/money_model.dart';
 import '../../data/user_model.dart';
-import 'information_users_screen.dart';
+import 'users_detailed_informaiton_screen.dart';
 
 class MoneyInformationScreen extends StatefulWidget {
   var post;
@@ -25,7 +25,7 @@ class _MoneyInformationScreen extends State<MoneyInformationScreen> {
 
   _MoneyInformationScreen(this.post);
 
-  List<MoneyModel> listUserMoney = [],listUserMoneyFull = [];
+  List<MoneyModel> listUserMoney = [], listUserMoneyFull = [];
   bool isPositionVisible = false, isVisiblyProgress = false, isPosition = true;
   DateTimeRange? _datePeriod;
 
@@ -135,7 +135,6 @@ class _MoneyInformationScreen extends State<MoneyInformationScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     void _showDataTimeRange() async {
       final DateTimeRange? result = await showDateRangePicker(
         context: context,
@@ -199,15 +198,10 @@ class _MoneyInformationScreen extends State<MoneyInformationScreen> {
       return Row(
         children: <Widget>[
           Container(
-            padding: EdgeInsets.only(left: 14, right: 14),
-            child: listUserMoney[index].workTime <= 60
-                ? Text('${listUserMoney[index].workTime} минут ',
-                    style: TextStyle(fontSize: 16, color: Colors.white))
-                : Text(
-                    '${(listUserMoney[index].workTime / 60).toStringAsFixed(1)} часов ',
-                    style: TextStyle(fontSize: 16, color: Colors.white),
-                  ),
-          ),
+              padding: EdgeInsets.only(left: 14, right: 14),
+              child: Text(
+                  '${printDurationTime(Duration(minutes: listUserMoney[index].workTime))} минут ',
+                  style: TextStyle(fontSize: 16, color: Colors.white))),
           Container(
             child: Text(
               '${double.parse((listUserMoney[index].money).toStringAsFixed(1).toString())} сом ',
@@ -254,15 +248,10 @@ class _MoneyInformationScreen extends State<MoneyInformationScreen> {
       return Row(
         children: <Widget>[
           Container(
-            padding: EdgeInsets.only(left: 14, right: 14),
-            child: listUserMoneyFull[index].workTime <= 60
-                ? Text('${listUserMoneyFull[index].workTime} минут ',
-                    style: TextStyle(fontSize: 16, color: Colors.white))
-                : Text(
-                    '${(listUserMoneyFull[index].workTime / 60).toStringAsFixed(1)} часов ',
-                    style: TextStyle(fontSize: 16, color: Colors.white),
-                  ),
-          ),
+              padding: EdgeInsets.only(left: 14, right: 14),
+              child: Text(
+                  '${printDurationTime(Duration(minutes: listUserMoneyFull[index].workTime))} минут ',
+                  style: TextStyle(fontSize: 16, color: Colors.white))),
           Container(
             child: Text(
               '${double.parse((listUserMoneyFull[index].money).toStringAsFixed(1).toString())} сом ',
@@ -308,7 +297,8 @@ class _MoneyInformationScreen extends State<MoneyInformationScreen> {
                 ),
               if (listUserMoney.length == 0)
                 Container(
-                  padding: EdgeInsets.only(bottom: 20, top: MediaQuery.of(context).size.height / 2),
+                  padding: EdgeInsets.only(
+                      bottom: 20, top: MediaQuery.of(context).size.height / 2),
                   child: Text(
                     'Информации не найденно',
                     style: TextStyle(
@@ -317,7 +307,6 @@ class _MoneyInformationScreen extends State<MoneyInformationScreen> {
                         color: Colors.white),
                   ),
                 ),
-
               if (isVisiblyProgress)
                 Container(
                   padding: EdgeInsets.only(top: 10, bottom: 10),
@@ -325,7 +314,6 @@ class _MoneyInformationScreen extends State<MoneyInformationScreen> {
                       color: Colors.blueAccent,
                       backgroundColor: color_main_black),
                 ),
-
               if (listUserMoney.length != 0)
                 Container(
                   height: MediaQuery.of(context).size.height / 1.5,
@@ -347,7 +335,6 @@ class _MoneyInformationScreen extends State<MoneyInformationScreen> {
                   ),
                 ),
               if (listUserMoneyFull.length != 0)
-
                 ExpansionTile(
                   title: Text(
                     'Суммировать',
@@ -365,7 +352,8 @@ class _MoneyInformationScreen extends State<MoneyInformationScreen> {
                         isFixedHeader: true,
                         headerWidgets: _getTitleWidgetFull(),
                         leftSideItemBuilder: _generateFirstColumnRow,
-                        rightSideItemBuilder: _generateRightHandSideColumnRowFull,
+                        rightSideItemBuilder:
+                            _generateRightHandSideColumnRowFull,
                         itemCount: listUserMoneyFull.length,
                         rowSeparatorWidget: const Divider(
                           color: Colors.black54,

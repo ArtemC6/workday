@@ -7,8 +7,10 @@ import 'package:workday/screens/employee_screen.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../../data/const.dart';
+import '../../data/user_model.dart';
 import '../administrator_screen.dart';
 import '../auth/signin_screen.dart';
+import 'package:intl/intl.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -19,8 +21,99 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreen extends State<SettingsScreen> {
   final formKey = GlobalKey<FormState>();
+  List<UserModel> listUser = [], listUserWork = [], listUserMoney = [];
+  List<_SalesData> dataUser = [];
   String _name = '', _post = '', _postMain = '';
-  bool isVisible = false;
+  bool isVisible = false, isBoss = false;
+  var timeBarista = 0.0,
+      timeAdministrator = 0.0,
+      timeMaid = 0.0,
+      timeCook = 0.0;
+
+  showAlertDialogSettingUser(BuildContext context) {
+    AlertDialog alert = AlertDialog(
+      backgroundColor: color_main_black,
+      content: Container(
+        width: MediaQuery.of(context).size.width,
+        padding: EdgeInsets.only(
+          top: 20,
+        ),
+        child: TextFormField(
+          controller: TextEditingController(text: _name),
+          decoration: InputDecoration(
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(14)),
+              borderSide: BorderSide(color: Colors.blueAccent, width: 1.5),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(14)),
+              borderSide: BorderSide(color: Colors.blueAccent, width: 2.0),
+            ),
+            hintMaxLines: 1,
+            hintText: 'Имя',
+            hintStyle: TextStyle(
+              fontSize: 14,
+              color: Colors.white.withOpacity(.5),
+            ),
+          ),
+          style: TextStyle(
+            fontSize: 17,
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Постое поле';
+            }
+            return null;
+          },
+          onChanged: (value) {
+            setState(() async {
+              if (value.length >= 3) {
+                _name = value;
+
+                if (formKey.currentState!.validate()) {
+                  final dockUsers =
+                      await FirebaseFirestore.instance.collection('User');
+
+                  final json = {
+                    'name': _name,
+                  };
+                  dockUsers
+                      .doc(FirebaseAuth.instance.currentUser!.uid)
+                      .update(json);
+                }
+              }
+            });
+          },
+        ),
+      ),
+      actions: [
+        Container(
+          padding: EdgeInsets.only(bottom: 20, left: 20, right: 20),
+          width: double.infinity,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text(
+              'Сохронить',
+              style: TextStyle(color: Colors.black),
+            ),
+          ),
+        ),
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
 
   void readFirebase() async {
     await FirebaseFirestore.instance
@@ -38,6 +131,7 @@ class _SettingsScreen extends State<SettingsScreen> {
           } else if (documentSnapshot['post'] == 'admin') {
             _post = 'Администратор';
           } else if (documentSnapshot['post'] == 'boss') {
+            isBoss = true;
             _post = 'Руководитель';
           } else if (documentSnapshot['post'] == 'cook') {
             _post = 'Повор';
@@ -51,8 +145,10 @@ class _SettingsScreen extends State<SettingsScreen> {
             _post = 'Шеф-Повор';
           } else if (documentSnapshot['post'] == 'sous-chef') {
             _post = 'Су-Шеф';
-          } else if (documentSnapshot['post'] == '???') {
-            _post = '???';
+          } else if (documentSnapshot['post'] == 'concierge') {
+            _post = 'Коньсьерж';
+          } else if (documentSnapshot['post'] == 'workers-cook') {
+            _post = 'Кух-работники';
           } else {
             _post = 'Произошла ошибка';
           }
@@ -60,7 +156,73 @@ class _SettingsScreen extends State<SettingsScreen> {
       }
     });
 
-    Future.delayed(const Duration(milliseconds: 400), () {
+    await FirebaseFirestore.instance
+        .collection('Work')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((document) async {
+        Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+
+        final Timestamp timestampStart = data['startDate'] as Timestamp;
+        final DateTime dateTimeStart = timestampStart.toDate();
+
+        var timeStart = new DateTime(
+          dateTimeStart.year,
+          dateTimeStart.month,
+          dateTimeStart.day,
+        );
+
+        DateTime currentDate = DateTime.now();
+        var currentTime = new DateTime(
+          currentDate.year,
+          currentDate.month,
+          currentDate.day,
+        );
+
+        var currentTimeDay = new DateTime(
+          currentDate.year,
+          currentDate.month,
+          currentDate.day - 7,
+        );
+
+        DateTime start = currentTimeDay;
+        DateTime end = timeStart;
+
+        start = start.subtract(Duration(seconds: 1));
+        end = end.add(Duration(days: 1));
+        end = end.subtract(Duration(seconds: 1));
+
+        if (timeStart.isAfter(start) && timeStart.isBefore(end)) {
+          setState(() {
+            if (data['post'] == 'barista') {
+              print(getUserWorkTimeDouble(data["startDate"], data['endDate']));
+              timeBarista +=
+                  getUserWorkTimeDouble(data["startDate"], data['endDate']);
+            } else if (data['post'] == 'admin') {
+              timeAdministrator +=
+                  getUserWorkTimeDouble(data["startDate"], data['endDate']);
+            } else if (data['post'] == 'cook') {
+              timeCook +=
+                  getUserWorkTimeDouble(data["startDate"], data['endDate']);
+            } else if (data['post'] == 'maid') {
+              timeMaid +=
+                  getUserWorkTimeDouble(data["startDate"], data['endDate']);
+            }
+          });
+        }
+      });
+    });
+
+    dataUser.add(_SalesData(timeBarista, 'Бармены'));
+    dataUser.add(_SalesData(timeCook, 'Повора'));
+    dataUser.add(_SalesData(timeAdministrator, 'Администраторы'));
+    dataUser.add(_SalesData(timeMaid, 'Горничные'));
+
+    dataUser.forEach((element) {
+      print(element.time);
+    });
+
+    Future.delayed(const Duration(milliseconds: 100), () {
       setState(() {
         isVisible = true;
       });
@@ -75,13 +237,8 @@ class _SettingsScreen extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    List<_SalesData> dataUser = [
-      _SalesData('Jan', 35),
-      _SalesData('Feb', 28),
-      _SalesData('Mar', 34),
-      _SalesData('Apr', 32),
-      _SalesData('May', 40)
-    ];
+    double _width = MediaQuery.of(context).size.width;
+    double _height = MediaQuery.of(context).size.height;
 
     return WillPopScope(
       onWillPop: () async {
@@ -93,12 +250,20 @@ class _SettingsScreen extends State<SettingsScreen> {
           body: RefreshIndicator(
             onRefresh: () async {
               setState(() {
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (BuildContext context) => AdministratorScreen(
-                              value: 3,
-                            )));
+                if (isBoss) {
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              AdministratorScreen(
+                                positionBottomNavigation: 3,
+                              )));
+                } else {
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (BuildContext context) => EmployeeScreen(positionBottomNavigation: 2,)));
+                }
               });
             },
             child: SingleChildScrollView(
@@ -107,104 +272,85 @@ class _SettingsScreen extends State<SettingsScreen> {
                 child: Container(
                   height: MediaQuery.of(context).size.height,
                   color: color_main_black,
-                  padding: EdgeInsets.only(left: 20, right: 20),
+                  padding:
+                      EdgeInsets.only(left: _width / 20, right: _width / 20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        '${_post}',
-                        style: TextStyle(
-                          fontSize: 24,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
+                      Container(
+                        padding: EdgeInsets.only(bottom: 40),
+                        child: Text(
+                          _post,
+                          style: TextStyle(
+                            fontSize: 24,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                      if (_postMain == 'boss')
-                        if (isVisible)
-                          Container(
-                            height: MediaQuery.of(context).size.height / 2,
-                            child: SfCircularChart(
+                      // if (_postMain == 'boss')
+                      if (isVisible)
+                        Container(
+                          height: MediaQuery.of(context).size.height / 2.0,
+                          width: MediaQuery.of(context).size.width / 1.0,
+                          child: SfCircularChart(
+                              enableMultiSelection: true,
                               legend: Legend(
+                                  overflowMode: LegendItemOverflowMode.wrap,
+                                  width: '100%',
+                                  textStyle: TextStyle(color: Colors.white),
+                                  orientation: LegendItemOrientation.horizontal,
                                   isVisible: true,
                                   position: LegendPosition.bottom),
                               series: <PieSeries>[
                                 PieSeries<_SalesData, String>(
+                                    enableTooltip: true,
                                     dataSource: dataUser,
                                     xValueMapper: (_SalesData sales, _) =>
                                         sales.name,
                                     yValueMapper: (_SalesData sales, _) =>
                                         sales.time,
+                                    dataLabelMapper: (_SalesData sales, _) =>
+                                        (printDurationTime(Duration(
+                                                minutes: sales.time.toInt())))
+                                            .toString(),
+                                    radius: '80%',
                                     dataLabelSettings: DataLabelSettings(
-                                        isVisible: true,
-                                        // labelPosition: LabelP,
-                                        labelIntersectAction:
-                                            LabelIntersectAction.none)),
-                              ],
-                            ),
-                          ),
+                                      isVisible: true,
+                                      margin: EdgeInsets.zero,
+                                      textStyle: TextStyle(
+                                          color: Colors.white, fontSize: 10),
+                                      connectorLineSettings:
+                                          ConnectorLineSettings(
+                                              width: 1.5,
+                                              type: ConnectorType.curve,
+                                              length: '6%'),
+                                      labelPosition:
+                                          ChartDataLabelPosition.outside,
+                                    )),
+                              ]),
+                        ),
                       Container(
-                        width: MediaQuery.of(context).size.width,
-                        padding: EdgeInsets.only(top: 30, bottom: 20),
-                        child: TextFormField(
-                          controller: TextEditingController(text: _name),
-                          decoration: InputDecoration(
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(14)),
-                              borderSide: BorderSide(
-                                  color: Colors.blueAccent, width: 1.5),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(14)),
-                              borderSide: BorderSide(
-                                  color: Colors.blueAccent, width: 2.0),
-                            ),
-                            hintMaxLines: 1,
-                            hintText: 'Имя',
-                            hintStyle: TextStyle(
-                              fontSize: 14,
-                              color: Colors.white.withOpacity(.5),
-                            ),
-                          ),
-                          style: TextStyle(
-                            fontSize: 17,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Постое поле';
-                            }
-                            return null;
+                        padding: EdgeInsets.only(
+                            top: 30, left: _width / 18, right: _width / 18),
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white),
+                          onPressed: () {
+                            showAlertDialogSettingUser(context);
                           },
-                          onChanged: (value) {
-                            setState(() async {
-                              if (value.length >= 3) {
-                                _name = value;
-
-                                if (formKey.currentState!.validate()) {
-                                  final dockUsers = await FirebaseFirestore
-                                      .instance
-                                      .collection('User');
-
-                                  final json = {
-                                    'name': _name,
-                                  };
-                                  dockUsers
-                                      .doc(FirebaseAuth
-                                          .instance.currentUser!.uid)
-                                      .update(json);
-                                }
-                              }
-                            });
-                          },
+                          child: Text(
+                            'Настройки',
+                            style: TextStyle(color: Colors.black),
+                          ),
                         ),
                       ),
                       Container(
-                        padding: EdgeInsets.only(top: 10),
                         width: double.infinity,
+                        padding: EdgeInsets.only(
+                            left: _width / 18, right: _width / 18),
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.white),
@@ -234,5 +380,5 @@ class _SalesData {
   final String name;
   final double time;
 
-  _SalesData(this.name, this.time);
+  _SalesData(this.time, this.name);
 }

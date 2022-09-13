@@ -7,9 +7,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:horizontal_data_table/horizontal_data_table.dart';
 
 import '../../data/const.dart';
-import '../../data/money_model.dart';
 import '../../data/user_model.dart';
-import 'information_users_screen.dart';
+import 'users_detailed_informaiton_screen.dart';
+
 
 class UserInformationPeriodScreen extends StatefulWidget {
   var uid, post;
@@ -31,6 +31,7 @@ class _UserInformationPeriodScreen extends State<UserInformationPeriodScreen> {
   List<UserModel> listUser = [], listUserFull = [];
   bool isPositionVisible = false, isVisiblyProgress = false, isPosition = true;
   DateTimeRange? _datePeriod;
+  var timeMain = 0;
 
   String getDataPeriod(DateTime startDate) {
     String formattedDate = DateFormat('yyyy-MM-dd').format(startDate);
@@ -219,6 +220,8 @@ class _UserInformationPeriodScreen extends State<UserInformationPeriodScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var durationTime = Duration(minutes: timeMain);
+
     void _showDataTimeRange() async {
       final DateTimeRange? result = await showDateRangePicker(
         context: context,
@@ -282,17 +285,11 @@ class _UserInformationPeriodScreen extends State<UserInformationPeriodScreen> {
       return Row(
         children: <Widget>[
           Container(
-            padding: EdgeInsets.only(left: 14, right: 14),
-            child: listUser[index].workTime <= 60
-                ? Text(
-                    '${listUser[index].workTime} минут ',
-                    style: TextStyle(fontSize: 16, color: Colors.white),
-                  )
-                : Text(
-                    '${(listUser[index].workTime / 60).toStringAsFixed(1)} часов ',
-                    style: TextStyle(fontSize: 16, color: Colors.white),
-                  ),
-          ),
+              padding: EdgeInsets.only(left: 14, right: 14),
+              child: Text(
+                '${printDurationTime(Duration(minutes: listUser[index].workTime))} минут ',
+                style: TextStyle(fontSize: 16, color: Colors.white),
+              )),
           Container(
             child: Text(
               '${double.parse((listUser[index].money).toStringAsFixed(1).toString())} сом ',
@@ -343,17 +340,11 @@ class _UserInformationPeriodScreen extends State<UserInformationPeriodScreen> {
       return Row(
         children: <Widget>[
           Container(
-            padding: EdgeInsets.only(left: 14, right: 14),
-            child: listUserFull[index].workTime <= 60
-                ? Text(
-                    '${listUserFull[index].workTime} минут ',
-                    style: TextStyle(fontSize: 16, color: Colors.white),
-                  )
-                : Text(
-                    '${(listUserFull[index].workTime / 60).toStringAsFixed(1)} часов ',
-                    style: TextStyle(fontSize: 16, color: Colors.white),
-                  ),
-          ),
+              padding: EdgeInsets.only(left: 14, right: 14),
+              child: Text(
+                '${printDurationTime(Duration(minutes: listUserFull[index].workTime))} минут ',
+                style: TextStyle(fontSize: 16, color: Colors.white),
+              )),
           Container(
             child: Text(
               '${double.parse((listUserFull[index].money).toStringAsFixed(1).toString())} сом ',
@@ -488,22 +479,22 @@ class _UserInformationPeriodScreen extends State<UserInformationPeriodScreen> {
                             )),
                       ),
                     if (uid == null)
-                    Container(
-                      padding: EdgeInsets.only(bottom: 10, top: 20),
-                      width: MediaQuery.of(context).size.width,
-                      child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white),
-                          onPressed: () {
-                            setState(() async {
-                              _showDataTimeRange();
-                            });
-                          },
-                          child: Text(
-                            'Указать период',
-                            style: TextStyle(color: Colors.black),
-                          )),
-                    ),
+                      Container(
+                        padding: EdgeInsets.only(bottom: 10, top: 20),
+                        width: MediaQuery.of(context).size.width,
+                        child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.white),
+                            onPressed: () {
+                              setState(() async {
+                                _showDataTimeRange();
+                              });
+                            },
+                            child: Text(
+                              'Указать период',
+                              style: TextStyle(color: Colors.black),
+                            )),
+                      ),
                     if (uid == null)
                       Container(
                         padding: EdgeInsets.only(),

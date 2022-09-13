@@ -4,17 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:workday/screens/statistics/fine_screen.dart';
+import 'package:workday/screens/statistics/fine_information_screen.dart';
 import 'package:workday/screens/statistics/money_information_screen.dart';
-import 'package:workday/screens/statistics/user_information_period_screen.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 import '../../data/const.dart';
 import '../../data/money_model.dart';
 import '../../data/user_model.dart';
 import '../administrator_screen.dart';
-import '../extradition_screen.dart';
-import 'information_users_screen.dart';
+import '../extradition_money_screen.dart';
+import 'user_information_screen.dart';
+import 'users_detailed_informaiton_screen.dart';
 
 class DetailedStatics extends StatefulWidget {
   const DetailedStatics({Key? key}) : super(key: key);
@@ -39,6 +39,7 @@ class _DetailedStatics extends State<DetailedStatics> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
+                  Navigator.pop(context);
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -54,6 +55,7 @@ class _DetailedStatics extends State<DetailedStatics> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
+                  Navigator.pop(context);
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -61,7 +63,7 @@ class _DetailedStatics extends State<DetailedStatics> {
                                 post: 'maid',
                               )));
                 },
-                child: Text('Горнечные'),
+                child: Text('Горничные'),
               ),
             ),
             Container(
@@ -69,6 +71,7 @@ class _DetailedStatics extends State<DetailedStatics> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
+                  Navigator.pop(context);
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -84,6 +87,7 @@ class _DetailedStatics extends State<DetailedStatics> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
+                  Navigator.pop(context);
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -99,6 +103,7 @@ class _DetailedStatics extends State<DetailedStatics> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
+                  Navigator.pop(context);
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -114,6 +119,7 @@ class _DetailedStatics extends State<DetailedStatics> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
+                  Navigator.pop(context);
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -129,6 +135,7 @@ class _DetailedStatics extends State<DetailedStatics> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
+                  Navigator.pop(context);
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -144,6 +151,7 @@ class _DetailedStatics extends State<DetailedStatics> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
+                  Navigator.pop(context);
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -152,6 +160,22 @@ class _DetailedStatics extends State<DetailedStatics> {
                               )));
                 },
                 child: Text('Повора'),
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.only(left: 20, right: 20, top: 10),
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () async {
+                  Navigator.pop(context);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => MoneyInformationScreen(
+                                post: 'workers-cook',
+                              )));
+                },
+                child: Text('Кух-работники'),
               ),
             ),
           ],
@@ -175,6 +199,7 @@ class _DetailedStatics extends State<DetailedStatics> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
+                  Navigator.pop(context);
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -190,6 +215,7 @@ class _DetailedStatics extends State<DetailedStatics> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
+                  Navigator.pop(context);
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -197,7 +223,7 @@ class _DetailedStatics extends State<DetailedStatics> {
                                 post: 'maid',
                               )));
                 },
-                child: Text('Горнечные'),
+                child: Text('Горничные'),
               ),
             ),
             Container(
@@ -205,6 +231,7 @@ class _DetailedStatics extends State<DetailedStatics> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
+                  Navigator.pop(context);
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -220,6 +247,7 @@ class _DetailedStatics extends State<DetailedStatics> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
+                  Navigator.pop(context);
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -235,6 +263,7 @@ class _DetailedStatics extends State<DetailedStatics> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
+                  Navigator.pop(context);
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -250,6 +279,7 @@ class _DetailedStatics extends State<DetailedStatics> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
+                  Navigator.pop(context);
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -265,6 +295,7 @@ class _DetailedStatics extends State<DetailedStatics> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
+                  Navigator.pop(context);
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -280,6 +311,7 @@ class _DetailedStatics extends State<DetailedStatics> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
+                  Navigator.pop(context);
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -288,6 +320,22 @@ class _DetailedStatics extends State<DetailedStatics> {
                               )));
                 },
                 child: Text('Повора'),
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.only(left: 20, right: 20, top: 10),
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () async {
+                  Navigator.pop(context);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => UserInformationPeriodScreen(
+                                post: 'workers-cook',
+                              )));
+                },
+                child: Text('Кух-работники'),
               ),
             ),
           ],
@@ -311,6 +359,7 @@ class _DetailedStatics extends State<DetailedStatics> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
+                  Navigator.pop(context);
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -326,6 +375,7 @@ class _DetailedStatics extends State<DetailedStatics> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
+                  Navigator.pop(context);
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -333,7 +383,7 @@ class _DetailedStatics extends State<DetailedStatics> {
                                 post: 'maid',
                               )));
                 },
-                child: Text('Горнечные'),
+                child: Text('Горничные'),
               ),
             ),
             Container(
@@ -341,6 +391,7 @@ class _DetailedStatics extends State<DetailedStatics> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
+                  Navigator.pop(context);
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -356,6 +407,7 @@ class _DetailedStatics extends State<DetailedStatics> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
+                  Navigator.pop(context);
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -371,6 +423,7 @@ class _DetailedStatics extends State<DetailedStatics> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
+                  Navigator.pop(context);
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -386,6 +439,7 @@ class _DetailedStatics extends State<DetailedStatics> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
+                  Navigator.pop(context);
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -401,6 +455,7 @@ class _DetailedStatics extends State<DetailedStatics> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
+                  Navigator.pop(context);
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -416,6 +471,7 @@ class _DetailedStatics extends State<DetailedStatics> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
+                  Navigator.pop(context);
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -424,6 +480,22 @@ class _DetailedStatics extends State<DetailedStatics> {
                               )));
                 },
                 child: Text('Повора'),
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.only(left: 20, right: 20, top: 10),
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () async {
+                  Navigator.pop(context);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => FineScreens(
+                                post: 'workers-cook',
+                              )));
+                },
+                child: Text('Кух-работники'),
               ),
             ),
           ],
@@ -443,7 +515,7 @@ class _DetailedStatics extends State<DetailedStatics> {
                 context,
                 MaterialPageRoute(
                     builder: (BuildContext context) => AdministratorScreen(
-                          value: 2,
+                          positionBottomNavigation: 2,
                         )));
           });
         },

@@ -9,32 +9,31 @@ import 'package:workday/screens/auth/signin_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:workday/screens/settings/settings_screen.dart';
-import 'package:workday/screens/statistics/information_users_screen.dart';
+import 'package:workday/screens/statistics/users_detailed_informaiton_screen.dart';
 
 import '../data/const.dart';
 import '../data/user_model.dart';
-import '../data/variable.dart';
-import 'analytics_screen.dart';
-import 'statistics/detailed_statistics_screen.dart';
+import 'analytics_today_screen.dart';
+import 'statistics/global_statistics_screen.dart';
 
 class AdministratorScreen extends StatefulWidget {
-  var value;
+  var positionBottomNavigation;
 
-  AdministratorScreen({Key? key, @required this.value}) : super(key: key);
+  AdministratorScreen({Key? key, @required this.positionBottomNavigation}) : super(key: key);
 
   @override
-  State<AdministratorScreen> createState() => _AdministratorScreenState(value);
+  State<AdministratorScreen> createState() => _AdministratorScreenState(positionBottomNavigation);
 }
 
 class _AdministratorScreenState extends State<AdministratorScreen> {
-  _AdministratorScreenState(this.value);
+  _AdministratorScreenState(this.positionBottomNavigation);
 
   GlobalKey<CurvedNavigationBarState> _bottomNavigationKey = GlobalKey();
 
   List<UserModel> listUser = [], listUserWork = [];
   final formKey = GlobalKey<FormState>();
   double number = 0;
-  var value;
+  var positionBottomNavigation;
 
   int _page = 0;
 
@@ -141,12 +140,13 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
   @override
   void initState() {
     super.initState();
+
     Future.delayed(const Duration(milliseconds: 100), () {
       setState(() {
-        if (value != null) {
+        if (positionBottomNavigation != null) {
           final CurvedNavigationBarState? navBarState =
               _bottomNavigationKey.currentState;
-          navBarState?.setPage(value);
+          navBarState?.setPage(positionBottomNavigation);
         }
       });
     });

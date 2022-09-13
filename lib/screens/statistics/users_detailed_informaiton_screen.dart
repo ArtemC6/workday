@@ -1,12 +1,10 @@
-import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:intl/intl.dart';
 import 'package:horizontal_data_table/horizontal_data_table.dart';
+import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../data/const.dart';
 import '../../data/user_model.dart';
@@ -30,7 +28,6 @@ class _InformationUsersScreen extends State<InformationUsersScreen> {
 
   List<UserModel> listUser = [];
   bool isVisible = false;
-
 
   List<String> getUerWorkTimeDifference(
       Timestamp startDate, Timestamp endDate) {
@@ -81,7 +78,7 @@ class _InformationUsersScreen extends State<InformationUsersScreen> {
                   status: data["post"],
                   startUri: data["startUri"],
                   endUri:
-                      'https://www.pinclipart.com/picdir/big/59-598920_clock-svg-png-icon-free-download-304848-weblogic.png',
+                      'https://img1.badfon.ru/original/1920x1200/8/f9/chasy-starina-strelki-hod.jpg',
                   startDate: data["startDate"],
                   endDate: data["startDate"],
                   id_user: data["id_user"],
@@ -181,7 +178,8 @@ class _InformationUsersScreen extends State<InformationUsersScreen> {
   Widget build(BuildContext context) {
     Widget _getTitleItemWidget(String label, double width) {
       return Container(
-        child: Text(label, style: TextStyle(fontWeight: FontWeight.bold)),
+        child: Text(label,
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
         width: width,
         height: 56,
         padding: EdgeInsets.only(left: 10),
@@ -212,7 +210,8 @@ class _InformationUsersScreen extends State<InformationUsersScreen> {
 
     Widget _generateFirstColumnRow(BuildContext context, int index) {
       return Container(
-        child: Text(listUser[index].name, style: TextStyle(fontSize: 16)),
+        child: Text(listUser[index].name,
+            style: TextStyle(fontSize: 16, color: Colors.white)),
         width: 100,
         height: 52,
         padding: EdgeInsets.only(left: 10),
@@ -226,9 +225,7 @@ class _InformationUsersScreen extends State<InformationUsersScreen> {
           Container(
             child: Text(
               '${getUerWorkTimeDifference(listUser[index].startDate, listUser[index].endDate)[0]} ',
-              style: TextStyle(
-                fontSize: 16,
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.white),
             ),
             width: 100,
             height: 52,
@@ -238,9 +235,7 @@ class _InformationUsersScreen extends State<InformationUsersScreen> {
           Container(
             child: Text(
               '${getUerWorkTimeDifference(listUser[index].startDate, listUser[index].endDate)[1]} ',
-              style: TextStyle(
-                fontSize: 16,
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.white),
             ),
             width: 100,
             height: 52,
@@ -249,17 +244,10 @@ class _InformationUsersScreen extends State<InformationUsersScreen> {
           ),
           Container(
             padding: EdgeInsets.only(left: 14),
-            child: listUser[index].workTime <= 60
-                ? Text(
-                    '${listUser[index].workTime} минут ',
-                    style: TextStyle(fontSize: 16),
-                  )
-                : Text(
-                    '${(listUser[index].workTime / 60).toStringAsFixed(1)} часов ',
-                    style: TextStyle(
-                      fontSize: 16,
-                    ),
-                  ),
+            child: Text(
+              '${printDurationTime(Duration(minutes: listUser[index].workTime))} минут ',
+              style: TextStyle(fontSize: 16, color: Colors.white),
+            ),
           ),
           Container(
             child: ElevatedButton(
@@ -267,6 +255,7 @@ class _InformationUsersScreen extends State<InformationUsersScreen> {
                 showDialog(
                   context: context,
                   builder: (context) => new AlertDialog(
+                    backgroundColor: color_main_black,
                     title: new Text(''),
                     content: Column(
                       children: [
@@ -318,9 +307,7 @@ class _InformationUsersScreen extends State<InformationUsersScreen> {
           Container(
             child: Text(
               '${getUerWorkTimeDifference(listUser[index].startDate, listUser[index].endDate)[0]} ',
-              style: TextStyle(
-                fontSize: 16,
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.white),
             ),
             width: 100,
             height: 52,
@@ -330,9 +317,7 @@ class _InformationUsersScreen extends State<InformationUsersScreen> {
           Container(
             child: Text(
               '${getUerWorkTimeDifference(listUser[index].startDate, listUser[index].endDate)[1]} ',
-              style: TextStyle(
-                fontSize: 16,
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.white),
             ),
             width: 100,
             height: 52,
@@ -340,25 +325,15 @@ class _InformationUsersScreen extends State<InformationUsersScreen> {
             alignment: Alignment.centerLeft,
           ),
           Container(
-            padding: EdgeInsets.only(left: 14, right: 26),
-            child: listUser[index].workTime <= 60
-                ? Text(
-                    '${listUser[index].workTime} минут ',
-                    style: TextStyle(fontSize: 16),
-                  )
-                : Text(
-                    '${(listUser[index].workTime / 60).toStringAsFixed(1)} часов ',
-                    style: TextStyle(
-                      fontSize: 16,
-                    ),
-                  ),
-          ),
+              padding: EdgeInsets.only(left: 14, right: 26),
+              child: Text(
+                '${printDurationTime(Duration(minutes: listUser[index].workTime))} минут ',
+                style: TextStyle(fontSize: 16, color: Colors.white),
+              )),
           Container(
             child: Text(
               '${listUser[index].money} сом',
-              style: TextStyle(
-                fontSize: 16,
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.white),
             ),
             width: 100,
             height: 52,
@@ -371,22 +346,27 @@ class _InformationUsersScreen extends State<InformationUsersScreen> {
                 showDialog(
                   context: context,
                   builder: (context) => new AlertDialog(
+                    backgroundColor: color_main_black,
                     title: new Text(''),
                     content: Column(
                       children: [
                         Container(
-                          child: Image(
-                            image: NetworkImage(listUser[index].startUri),
-                            fit: BoxFit.fitWidth,
+                          child: InteractiveViewer(
+                            child: Image(
+                              image: NetworkImage(listUser[index].startUri),
+                              fit: BoxFit.fitWidth,
+                            ),
                           ),
                           height: MediaQuery.of(context).size.height / 2.8,
                           width: MediaQuery.of(context).size.width / 1,
                           padding: EdgeInsets.all(10),
                         ),
                         Container(
-                          child: Image(
-                            image: NetworkImage(listUser[index].endUri),
-                            fit: BoxFit.fitWidth,
+                          child: InteractiveViewer(
+                            child: Image(
+                              image: NetworkImage(listUser[index].endUri),
+                              fit: BoxFit.fitWidth,
+                            ),
                           ),
                           height: MediaQuery.of(context).size.height / 2.8,
                           width: MediaQuery.of(context).size.width / 1,
@@ -416,66 +396,50 @@ class _InformationUsersScreen extends State<InformationUsersScreen> {
     }
 
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: Text('Информация о сотрудники'),
-      ),
+      backgroundColor: color_main_black,
       body: SingleChildScrollView(
         child: Form(
           child: Container(
             padding: EdgeInsets.only(top: 20),
-            alignment: Alignment.topCenter,
-            height: MediaQuery.of(context).size.height,
             child: Column(
               children: [
                 if (!isVisible)
                   if (listUser.length != 0)
                     Container(
-                      padding: EdgeInsets.only(left: 14),
-                      alignment: Alignment.centerLeft,
-                      child: getTotalTime(listUser) <= 60
-                          ? Text(
-                              textAlign: TextAlign.center,
-                              '${listUser[0].name}: отработал ${getTotalTime(listUser)} минут:  ${getData(listUser[0].startDate)}',
-                              style: TextStyle(
-                                  fontSize: 17, fontWeight: FontWeight.bold),
-                            )
-                          : Text(
-                              textAlign: TextAlign.center,
-                              '${listUser[0].name}: ${(getTotalTime(listUser) / 60).toStringAsFixed(1)} часов: ${getData(listUser[0].startDate)}',
-                              style: TextStyle(
-                                  fontSize: 17, fontWeight: FontWeight.bold),
-                            ),
-                    ),
+                        padding: EdgeInsets.only(left: 14, top: 20),
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          textAlign: TextAlign.center,
+                          '${listUser[0].name}: отработал ${printDurationTime(Duration(minutes: getTotalTime(listUser)))} минут:  ${getData(listUser[0].startDate)}',
+                          style: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
+                        )),
                 if (isVisible)
                   if (listUser.length != 0)
                     Container(
-                      padding: EdgeInsets.only(left: 14),
+                      padding: EdgeInsets.only(left: 14, top: 20),
                       alignment: Alignment.centerLeft,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          getTotalTime(listUser) <= 60
-                              ? Text(
-                                  textAlign: TextAlign.center,
-                                  '${listUser[0].name}: отработал ${getTotalTime(listUser)} минут',
-                                  style: TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.bold),
-                                )
-                              : Text(
-                                  textAlign: TextAlign.center,
-                                  '${listUser[0].name}: ${(getTotalTime(listUser) / 60).toStringAsFixed(1)} часов',
-                                  style: TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.bold),
-                                ),
+                          Text(
+                            textAlign: TextAlign.center,
+                            '${listUser[0].name}: ${printDurationTime(Duration(minutes: getTotalTime(listUser)))} минут',
+                            style: TextStyle(
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
+                          ),
                           Padding(padding: EdgeInsets.only(top: 8)),
                           Text(
                             textAlign: TextAlign.center,
                             'Получил: ${getTotalMoney(listUser).toString()} сом: за ${getData(listUser[0].startDate)}',
                             style: TextStyle(
-                                fontSize: 17, fontWeight: FontWeight.bold),
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
                           ),
                         ],
                       ),
@@ -484,8 +448,10 @@ class _InformationUsersScreen extends State<InformationUsersScreen> {
                   if (listUser.length != 0)
                     Container(
                       padding: EdgeInsets.only(top: 20),
-                      height: MediaQuery.of(context).size.height / 1.6,
+                      height: MediaQuery.of(context).size.height / 1.3,
                       child: HorizontalDataTable(
+                        rightHandSideColBackgroundColor: color_main_black,
+                        leftHandSideColBackgroundColor: color_main_black,
                         leftHandSideColumnWidth: 100,
                         rightHandSideColumnWidth: 600,
                         isFixedHeader: true,
@@ -504,8 +470,10 @@ class _InformationUsersScreen extends State<InformationUsersScreen> {
                   if (listUser.length != 0)
                     Container(
                       padding: EdgeInsets.only(top: 20),
-                      height: MediaQuery.of(context).size.height / 1.6,
+                      height: MediaQuery.of(context).size.height / 1.3,
                       child: HorizontalDataTable(
+                        leftHandSideColBackgroundColor: color_main_black,
+                        rightHandSideColBackgroundColor: color_main_black,
                         leftHandSideColumnWidth: 100,
                         rightHandSideColumnWidth: 600,
                         isFixedHeader: true,
@@ -522,7 +490,8 @@ class _InformationUsersScreen extends State<InformationUsersScreen> {
                       ),
                     ),
                 Container(
-                  padding: EdgeInsets.only(left: 20, right: 20),
+                  padding:
+                      EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 20),
                   width: MediaQuery.of(context).size.width,
                   child: ElevatedButton(
                       onPressed: () {
@@ -534,7 +503,6 @@ class _InformationUsersScreen extends State<InformationUsersScreen> {
             ),
           ),
         ),
-        // ),
       ),
     );
   }

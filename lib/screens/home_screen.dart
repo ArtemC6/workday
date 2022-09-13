@@ -3,15 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
-import 'package:workday/screens/home_screen.dart';
 import 'package:workday/screens/administrator_screen.dart';
-import 'package:workday/screens/auth/signin_screen.dart';
 import 'package:workday/screens/employee_screen.dart';
 import 'package:intl/intl.dart';
 
-import '../data/fine_model.dart';
+import '../data/const.dart';
+import 'auth/signin_screen.dart';
+import 'auth/signup_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -19,11 +17,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
-  List<FineModel> listFine = [], listFineFull = [];
-  bool isPosition = true,
-      isPositionVisible = false,
-      isEmpty = false,
-      isVisible = true;
+  bool isVisible = true;
 
   late AnimationController firstController,
       secondController,
@@ -38,6 +32,8 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
       fifthAnimation;
 
   void sigNinFirebase() async {
+    FirebaseFirestore.instance.clearPersistence();
+
     await FirebaseFirestore.instance
         .collection('User')
         .doc(FirebaseAuth.instance.currentUser?.uid)
@@ -47,22 +43,20 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
         setState(() {
           isVisible = false;
         });
-        if (documentSnapshot['status'] == 'waiter') {
-          Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => EmployeeScreen()));
-        } else {
+        if (documentSnapshot['post'] == 'boss') {
           Navigator.of(context).pushReplacement(
               MaterialPageRoute(builder: (context) => AdministratorScreen()));
+        } else {
+          Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => EmployeeScreen()));
         }
       } else {
-        Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => SignInScreen()));
+        Navigator.pushReplacement(context, Scale_Transition(SignInScreen()));
       }
     });
 
     if (isVisible) {
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => SignInScreen()));
+      Navigator.pushReplacement(context, Scale_Transition(SignInScreen()));
     }
 
     FirebaseFirestore.instance
@@ -247,7 +241,7 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xff272727),
+      backgroundColor: color_main_black,
       body: Center(
         child: Container(
           height: 100,
