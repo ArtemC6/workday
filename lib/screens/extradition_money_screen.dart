@@ -24,7 +24,10 @@ class ExtraditionMoneyScreen extends StatefulWidget {
 }
 
 class _ExtraditionScreenScreenState extends State<ExtraditionMoneyScreen> {
-  List<UserModel> listUser = [], listUserWork = [], listUserMoney = [];
+  List<UserModel> listUser = [],
+      listUserWork = [],
+      listUserMoney = [],
+      listWorkFull = [];
   ButtonState stateTextWithIcon = ButtonState.idle;
   String _sum = '0.0', _percent = '0', _work_price = '0';
   bool isEmpty = false;
@@ -187,6 +190,20 @@ class _ExtraditionScreenScreenState extends State<ExtraditionMoneyScreen> {
         workTime: getUserWorkTime(data["startDate"], data["endDate"])));
     setState(() {});
 
+    listWorkFull.add(UserModel(
+        name: data["name"],
+        email: data["email"],
+        status: data["post"],
+        startUri: data["startUri"],
+        endUri: data["endUri"],
+        startDate: data["startDate"],
+        endDate: data["endDate"],
+        id_user: data["id_user"],
+        id_post: data["id_post"],
+        money: 0.0,
+        workTime: getUserWorkTime(data["startDate"], data["endDate"])));
+    setState(() {});
+
     var isExist =
         listUser.indexWhere((element) => element.id_user == (data['id_user']));
 
@@ -293,8 +310,8 @@ class _ExtraditionScreenScreenState extends State<ExtraditionMoneyScreen> {
             });
           });
         } else {
-          if (listUserWork.length != 0) {
-            calculation(getTotalTime(listUserWork, money), _datePeriod);
+          if (listWorkFull.length != 0) {
+            calculation(getTotalTime(listWorkFull, money), _datePeriod);
           }
         }
 
@@ -405,57 +422,72 @@ class _ExtraditionScreenScreenState extends State<ExtraditionMoneyScreen> {
     }
 
     Widget _generateRightHandSideColumnRow(BuildContext context, int index) {
-      return Row(
-        children: <Widget>[
-          Container(
-              padding: EdgeInsets.only(left: 10),
+      return InkWell(
+        onLongPress: () {
+          listWorkFull.clear();
+          setState(() {
+            listUser.removeAt(index);
+            listUser.forEach((elementMain) {
+              getTotalTime(listUserWork, money).forEach((element) {
+                if (elementMain.id_user == element.id_user ) {
+                  listWorkFull.add(element);
+                }
+              });
+            });
+          });
+        },
+        child: Row(
+          children: <Widget>[
+            Container(
+                padding: EdgeInsets.only(left: 10),
+                child: Text(
+                  '${printDurationTime(Duration(minutes: listUser[index].workTime))} минут ',
+                  style: TextStyle(fontSize: 15, color: Colors.white),
+                )),
+            Container(
+              padding: EdgeInsets.only(left: 44),
               child: Text(
-                '${printDurationTime(Duration(minutes: listUser[index].workTime))} минут ',
-                style: TextStyle(fontSize: 15, color: Colors.white),
-              )),
-          Container(
-            padding: EdgeInsets.only(left: 44),
-            child: Text(
-              "${getTotalTime(listUser, money)[index].money.toStringAsFixed(1)} сом",
-              style: TextStyle(color: Colors.white),
-            ),
-            width: 120,
-            height: 52,
-            alignment: Alignment.centerLeft,
-          ),
-          Container(
-            padding: EdgeInsets.only(left: 40),
-            child: Text(
-              "${getData(listUser[index].startDate)}",
-              style: TextStyle(color: Colors.white),
-            ),
-            width: 150,
-            height: 52,
-            // padding: EdgeInsets.only(left: 10),
-            alignment: Alignment.centerLeft,
-          ),
-          Container(
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => InformationUsersScreen(
-                              id_user: listUser[index].id_user,
-                              time: listUser[index].startDate,
-                            )));
-              },
-              child: Text(
-                'Подробней',
+                "${getTotalTime(listUser, money)[index].money.toStringAsFixed(1)} сом",
                 style: TextStyle(color: Colors.white),
               ),
+              width: 120,
+              height: 52,
+              alignment: Alignment.centerLeft,
             ),
-            width: 140,
-            height: 30,
-            padding: EdgeInsets.only(left: 10),
-          ),
-        ],
+            Container(
+              padding: EdgeInsets.only(left: 40),
+              child: Text(
+                "${getData(listUser[index].startDate)}",
+                style: TextStyle(color: Colors.white),
+              ),
+              width: 150,
+              height: 52,
+              // padding: EdgeInsets.only(left: 10),
+              alignment: Alignment.centerLeft,
+            ),
+            Container(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => UsersDetailedInformationScreen(
+                                id_user: listUser[index].id_user,
+                                time: listUser[index].startDate,
+                              )));
+                },
+                child: Text(
+                  'Подробней',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+              width: 140,
+              height: 30,
+              padding: EdgeInsets.only(left: 10),
+            ),
+          ],
+        ),
       );
     }
 

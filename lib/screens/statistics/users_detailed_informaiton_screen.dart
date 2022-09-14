@@ -3,43 +3,45 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:horizontal_data_table/horizontal_data_table.dart';
-import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../data/const.dart';
 import '../../data/user_model.dart';
+import '../employee_screen.dart';
 
-class InformationUsersScreen extends StatefulWidget {
-  var id_user, time;
+class UsersDetailedInformationScreen extends StatefulWidget {
+  var id_user, time, screens;
 
-  InformationUsersScreen(
-      {Key? key, @required this.id_user, @required this.time})
+  UsersDetailedInformationScreen(
+      {Key? key,
+      @required this.id_user,
+      @required this.time,
+      @required this.screens})
       : super(key: key);
 
   @override
-  State<InformationUsersScreen> createState() =>
-      _InformationUsersScreen(id_user, time);
+  State<UsersDetailedInformationScreen> createState() =>
+      _UsersDetailedInformationScreen(id_user, time, screens);
 }
 
-class _InformationUsersScreen extends State<InformationUsersScreen> {
-  var idUser, time;
+class _UsersDetailedInformationScreen
+    extends State<UsersDetailedInformationScreen> {
+  var idUser, time, screens;
 
-  _InformationUsersScreen(this.idUser, this.time);
+  _UsersDetailedInformationScreen(this.idUser, this.time, this.screens);
 
   List<UserModel> listUser = [];
   bool isVisible = false;
 
-  List<String> getUerWorkTimeDifference(
-      Timestamp startDate, Timestamp endDate) {
-    List<String> list = [];
-    final DateTime dateTimeStart = startDate.toDate();
-    final DateTime dateTimeEnd = endDate.toDate();
-
-    String formattedDateStater = DateFormat('kk:mm').format(dateTimeStart);
-    String formattedDateEnd = DateFormat('kk:mm').format(dateTimeEnd);
-    list.add(formattedDateStater);
-    list.add(formattedDateEnd);
-    return list;
+  void _showPhotoFull(String uri) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
+      return Scaffold(
+        backgroundColor: color_main_black,
+        body: Center(
+          child: InteractiveViewer(child: Image.network(uri)),
+        ),
+      );
+    }));
   }
 
   @override
@@ -257,27 +259,40 @@ class _InformationUsersScreen extends State<InformationUsersScreen> {
                   builder: (context) => new AlertDialog(
                     backgroundColor: color_main_black,
                     title: new Text(''),
-                    content: Column(
-                      children: [
-                        Container(
-                          child: Image(
-                            image: NetworkImage(listUser[index].startUri),
-                            fit: BoxFit.fitWidth,
+                    content: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              _showPhotoFull(listUser[index].startUri);
+                            },
+                            child: Container(
+                              child: Image(
+                                image: NetworkImage(listUser[index].startUri),
+                                fit: BoxFit.fitWidth,
+                              ),
+                              height: MediaQuery.of(context).size.height / 2.8,
+                              width: MediaQuery.of(context).size.width / 1,
+                              padding: EdgeInsets.all(10),
+                            ),
                           ),
-                          height: MediaQuery.of(context).size.height / 2.8,
-                          width: MediaQuery.of(context).size.width / 1,
-                          padding: EdgeInsets.all(10),
-                        ),
-                        Container(
-                          child: Image(
-                            image: NetworkImage(listUser[index].endUri),
-                            fit: BoxFit.fitWidth,
+                          InkWell(
+
+                            onTap: () {
+                              _showPhotoFull(listUser[index].endUri);
+                            },
+                            child: Container(
+                              child: Image(
+                                image: NetworkImage(listUser[index].endUri),
+                                fit: BoxFit.fitWidth,
+                              ),
+                              height: MediaQuery.of(context).size.height / 2.8,
+                              width: MediaQuery.of(context).size.width / 1,
+                              padding: EdgeInsets.all(10),
+                            ),
                           ),
-                          height: MediaQuery.of(context).size.height / 2.8,
-                          width: MediaQuery.of(context).size.width / 1,
-                          padding: EdgeInsets.all(10),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                     actions: <Widget>[
                       ElevatedButton(
@@ -348,31 +363,39 @@ class _InformationUsersScreen extends State<InformationUsersScreen> {
                   builder: (context) => new AlertDialog(
                     backgroundColor: color_main_black,
                     title: new Text(''),
-                    content: Column(
-                      children: [
-                        Container(
-                          child: InteractiveViewer(
-                            child: Image(
-                              image: NetworkImage(listUser[index].startUri),
-                              fit: BoxFit.fitWidth,
+                    content: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              _showPhotoFull(listUser[index].startUri);
+                            },
+                            child: Container(
+                              child: Image(
+                                image: NetworkImage(listUser[index].startUri),
+                                fit: BoxFit.fitWidth,
+                              ),
+                              height: MediaQuery.of(context).size.height / 2.8,
+                              width: MediaQuery.of(context).size.width / 1,
+                              padding: EdgeInsets.all(10),
                             ),
                           ),
-                          height: MediaQuery.of(context).size.height / 2.8,
-                          width: MediaQuery.of(context).size.width / 1,
-                          padding: EdgeInsets.all(10),
-                        ),
-                        Container(
-                          child: InteractiveViewer(
-                            child: Image(
-                              image: NetworkImage(listUser[index].endUri),
-                              fit: BoxFit.fitWidth,
+                          InkWell(
+                            onTap: () {
+                              _showPhotoFull(listUser[index].endUri);
+                            },
+                            child: Container(
+                              child: Image(
+                                image: NetworkImage(listUser[index].endUri),
+                                fit: BoxFit.fitWidth,
+                              ),
+                              height: MediaQuery.of(context).size.height / 2.8,
+                              width: MediaQuery.of(context).size.width / 1,
+                              padding: EdgeInsets.all(10),
                             ),
                           ),
-                          height: MediaQuery.of(context).size.height / 2.8,
-                          width: MediaQuery.of(context).size.width / 1,
-                          padding: EdgeInsets.all(10),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                     actions: <Widget>[
                       ElevatedButton(
@@ -395,22 +418,28 @@ class _InformationUsersScreen extends State<InformationUsersScreen> {
       );
     }
 
-    return Scaffold(
-      backgroundColor: color_main_black,
-      body: SingleChildScrollView(
-        child: Form(
+    return WillPopScope(
+      onWillPop: () async {
+        return await false;
+      },
+      child: Scaffold(
+        backgroundColor: color_main_black,
+        body: SingleChildScrollView(
           child: Container(
+            alignment: Alignment.center,
             padding: EdgeInsets.only(top: 20),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 if (!isVisible)
                   if (listUser.length != 0)
                     Container(
-                        padding: EdgeInsets.only(left: 14, top: 20),
+                        padding:
+                            EdgeInsets.only(left: 14, top: 20, right: 14),
                         alignment: Alignment.centerLeft,
                         child: Text(
                           textAlign: TextAlign.center,
-                          '${listUser[0].name}: отработал ${printDurationTime(Duration(minutes: getTotalTime(listUser)))} минут:  ${getData(listUser[0].startDate)}',
+                          '${listUser[0].name}: отработал(ла) ${printDurationTime(Duration(minutes: getTotalTime(listUser)))} минут:  ${getData(listUser[0].startDate)}',
                           style: TextStyle(
                               fontSize: 17,
                               fontWeight: FontWeight.bold,
@@ -490,12 +519,22 @@ class _InformationUsersScreen extends State<InformationUsersScreen> {
                       ),
                     ),
                 Container(
-                  padding:
-                      EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 20),
+                  padding: EdgeInsets.only(
+                      left: 20, right: 20, top: 20, bottom: 20),
                   width: MediaQuery.of(context).size.width,
                   child: ElevatedButton(
                       onPressed: () {
-                        Navigator.pop(context);
+                        if (screens == null) {
+                          Navigator.pop(context);
+                        } else {
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      EmployeeScreen(
+                                        positionBottomNavigation: 2,
+                                      )));
+                        }
                       },
                       child: Text('Вернуться')),
                 ),

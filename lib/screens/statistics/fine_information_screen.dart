@@ -172,31 +172,6 @@ class _FineScreens extends State<FineScreens> {
                     id_post: '',
                     change: 2));
               }
-
-              // listFine.add(FineModel(
-              //     name: data['name'],
-              //     post: data['post'],
-              //     lateness: timeStart.minute,
-              //     time: data['startDate'],
-              //     money_fine: 300,
-              //     id_user: data['id_user'],
-              //     id_post: '',
-              //     change: 2));
-
-              // print(data['endDate'] + '___');
-
-              // if(data['endDate' == '']) {
-
-              // if( == '']) {
-              //   print('object');
-              // }
-              // print(data['startDate']);
-              // print(data['endDate']);
-
-              // } else {
-              // print(data['startDate']);
-
-              // }
             }
           }
         });
@@ -506,7 +481,7 @@ class _FineScreens extends State<FineScreens> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => InformationUsersScreen(
+                        builder: (context) => UsersDetailedInformationScreen(
                               id_user: listFineFull[index].id_user,
                               time: listFineFull[index].time,
                             )));
@@ -571,7 +546,7 @@ class _FineScreens extends State<FineScreens> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => InformationUsersScreen(
+                        builder: (context) => UsersDetailedInformationScreen(
                               id_user: listFineComplete[index].id_user,
                               time: listFineComplete[index].time,
                             )));

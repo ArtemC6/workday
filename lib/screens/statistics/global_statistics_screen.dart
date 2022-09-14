@@ -16,14 +16,14 @@ import '../extradition_money_screen.dart';
 import 'user_information_screen.dart';
 import 'users_detailed_informaiton_screen.dart';
 
-class DetailedStatics extends StatefulWidget {
-  const DetailedStatics({Key? key}) : super(key: key);
+class GlobalStatics extends StatefulWidget {
+  const GlobalStatics({Key? key}) : super(key: key);
 
   @override
-  State<DetailedStatics> createState() => _DetailedStatics();
+  State<GlobalStatics> createState() => _GlobalStatics();
 }
 
-class _DetailedStatics extends State<DetailedStatics> {
+class _GlobalStatics extends State<GlobalStatics> {
   Widget _buildBottomSheetMoney(BuildContext context) {
     return SingleChildScrollView(
       child: Container(
@@ -203,7 +203,7 @@ class _DetailedStatics extends State<DetailedStatics> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => UserInformationPeriodScreen(
+                          builder: (context) => UserInformationScreen(
                                 post: 'barista',
                               )));
                 },
@@ -219,7 +219,7 @@ class _DetailedStatics extends State<DetailedStatics> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => UserInformationPeriodScreen(
+                          builder: (context) => UserInformationScreen(
                                 post: 'maid',
                               )));
                 },
@@ -235,7 +235,7 @@ class _DetailedStatics extends State<DetailedStatics> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => UserInformationPeriodScreen(
+                          builder: (context) => UserInformationScreen(
                                 post: 'concierge',
                               )));
                 },
@@ -251,7 +251,7 @@ class _DetailedStatics extends State<DetailedStatics> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => UserInformationPeriodScreen(
+                          builder: (context) => UserInformationScreen(
                                 post: 'admin',
                               )));
                 },
@@ -267,7 +267,7 @@ class _DetailedStatics extends State<DetailedStatics> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => UserInformationPeriodScreen(
+                          builder: (context) => UserInformationScreen(
                                 post: 'chef-cook',
                               )));
                 },
@@ -283,7 +283,7 @@ class _DetailedStatics extends State<DetailedStatics> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => UserInformationPeriodScreen(
+                          builder: (context) => UserInformationScreen(
                                 post: 'sous-chef',
                               )));
                 },
@@ -299,7 +299,7 @@ class _DetailedStatics extends State<DetailedStatics> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => UserInformationPeriodScreen(
+                          builder: (context) => UserInformationScreen(
                                 post: 'confectioner',
                               )));
                 },
@@ -315,7 +315,7 @@ class _DetailedStatics extends State<DetailedStatics> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => UserInformationPeriodScreen(
+                          builder: (context) => UserInformationScreen(
                                 post: 'cook',
                               )));
                 },
@@ -331,7 +331,7 @@ class _DetailedStatics extends State<DetailedStatics> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => UserInformationPeriodScreen(
+                          builder: (context) => UserInformationScreen(
                                 post: 'workers-cook',
                               )));
                 },
@@ -578,7 +578,7 @@ class _DetailedStatics extends State<DetailedStatics> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) =>
-                                          UserInformationPeriodScreen()));
+                                          UserInformationScreen()));
                             },
                             child: Text(
                                 'Получить информацию о всех сотрудниках',

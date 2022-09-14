@@ -1,15 +1,13 @@
-import 'package:flutter/gestures.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:avatar_glow/avatar_glow.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:workday/screens/auth/signin_screen.dart';
 
 import '../../data/const.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:avatar_glow/avatar_glow.dart';
-import 'package:animated_text_kit/animated_text_kit.dart';
-
 import '../home_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -23,21 +21,15 @@ class _SignUpScreen extends State<SignUpScreen> {
   String postUser = '', postUserName = '';
 
   @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
+  Widget build(BuildContext context) {
+    double _width = MediaQuery.of(context).size.width;
+    double _height = MediaQuery.of(context).size.height;
+
     setState(() {
-      print(postUser);
       if (postUser != null) {
         postUserName = getName(postUser);
       }
     });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    double _width = MediaQuery.of(context).size.width;
-    double _height = MediaQuery.of(context).size.height;
 
     showAlertDialogSettingUser(BuildContext context) {
       setState(() {
@@ -291,6 +283,7 @@ class _SignUpScreen extends State<SignUpScreen> {
                       'uid': FirebaseAuth.instance.currentUser!.uid,
                       'name': _name,
                       'email': _email,
+                      'password': _password,
                       'post': postUser,
                     };
 
@@ -358,7 +351,8 @@ class _SignUpScreen extends State<SignUpScreen> {
                   'uid': FirebaseAuth.instance.currentUser!.uid,
                   'name': _name,
                   'email': _email,
-                  'post': '',
+                  'password': _password,
+                  'post': postUser,
                 };
 
                 docUser.set(json);

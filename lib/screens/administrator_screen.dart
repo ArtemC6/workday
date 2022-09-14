@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:horizontal_data_table/horizontal_data_table.dart';
 import 'package:workday/screens/auth/signin_screen.dart';
 import 'package:intl/intl.dart';
@@ -168,81 +167,81 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
           });
         },
         controller: _refreshController,
-        child: Container(
-          color: color_main_black,
-          height: MediaQuery.of(context).size.height,
-          // padding: EdgeInsets.only(left: 10, right: 10),
-          child: Column(
-            children: [
-              Container(
-                padding: EdgeInsets.only(left: 10, top: 50),
-                alignment: Alignment.centerLeft,
-                child: Text('Сегодня работали ${listUser.length.toString()}',
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 17, color: Colors.white)),
-              ),
-              Container(
-                color: color_main_black,
-                height: MediaQuery.of(context).size.height / 2.6,
-                child: ListView.builder(
-                  itemCount: listUser.length,
-                    physics: BouncingScrollPhysics(),
-                    itemBuilder: (BuildContext context, int index) {
+        child: SingleChildScrollView(
+          child: Container(
+            color: color_main_black,
+            child: Column(
+              children: [
+                Container(
+                  padding: EdgeInsets.only(left: 10, top: 50),
+                  alignment: Alignment.centerLeft,
+                  child: Text('Сегодня работали ${listUser.length.toString()}',
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 17, color: Colors.white)),
+                ),
+                Container(
+                  color: color_main_black,
+                  height: MediaQuery.of(context).size.height / 2.6,
+                  child: ListView.builder(
+                    itemCount: listUser.length,
+                      physics: BouncingScrollPhysics(),
+                      itemBuilder: (BuildContext context, int index) {
 
-                      return InkWell(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => InformationUsersScreen(
-                                        id_user: listUser[index].id_user,
-                                      )));
-                        },
-                        child: ListTile(
-                          trailing: Icon(Icons.arrow_forward_ios, size: 18, color: Colors.white,),
-                          title: Text(
-                              "${listUser[index].name} закончил(ла) ${getData(listUser[index].endDate)}",
-                              style: TextStyle(fontSize: 17, color: Colors.white)),
-                        ),
-                      );
-                    }),
-              ),
-              Container(
-                padding: EdgeInsets.only(left: 10, top: 50),
-                alignment: Alignment.centerLeft,
-                child: Text(
-                    'Сегодня работают ${listUserWork.length.toString()}',
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 17, color: Colors.white)),
-              ),
-              Container(
-                color: color_main_black,
-                height: MediaQuery.of(context).size.height / 2.6,
-                child: ListView.builder(
-                    physics: BouncingScrollPhysics(),
-                    itemCount: listUserWork.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return InkWell(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => InformationUsersScreen(
-                                        id_user: listUserWork[index].id_user,
-                                        time: listUserWork[index].startDate,
-                                      )));
-                        },
-                        child: ListTile(
-                          trailing: Icon(Icons.arrow_forward_ios, size: 18, color: Colors.white,),
-                          title: Text(
-                              "${listUserWork[index].name} начал(ла) ${getData(listUserWork[index].startDate)}",
-                              style:
-                                  TextStyle(fontSize: 17, color: Colors.green)),
-                        ),
-                      );
-                    }),
-              ),
-            ],
+                        return InkWell(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => UsersDetailedInformationScreen(
+                                          id_user: listUser[index].id_user,
+                                        )));
+                          },
+                          child: ListTile(
+                            trailing: Icon(Icons.arrow_forward_ios, size: 18, color: Colors.white,),
+                            title: Text(
+                                "${listUser[index].name} закончил(ла) ${getData(listUser[index].endDate)}",
+                                style: TextStyle(fontSize: 17, color: Colors.white)),
+                          ),
+                        );
+                      }),
+                ),
+                Container(
+                  padding: EdgeInsets.only(left: 10, top: 50),
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                      'Сегодня работают ${listUserWork.length.toString()}',
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 17, color: Colors.white)),
+                ),
+                Container(
+                  color: color_main_black,
+                  height: MediaQuery.of(context).size.height / 2.6,
+                  child: ListView.builder(
+                      physics: BouncingScrollPhysics(),
+                      itemCount: listUserWork.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return InkWell(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => UsersDetailedInformationScreen(
+                                          id_user: listUserWork[index].id_user,
+                                          time: listUserWork[index].startDate,
+                                        )));
+                          },
+                          child: ListTile(
+                            trailing: Icon(Icons.arrow_forward_ios, size: 18, color: Colors.white,),
+                            title: Text(
+                                "${listUserWork[index].name} начал(ла) ${getData(listUserWork[index].startDate)}",
+                                style:
+                                    TextStyle(fontSize: 17, color: Colors.green)),
+                          ),
+                        );
+                      }),
+                ),
+              ],
+            ),
           ),
         ),
       );
@@ -258,7 +257,7 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
           child = AnalyticScreen();
           break;
         case 2:
-          child = DetailedStatics();
+          child = GlobalStatics();
           break;
         case 3:
           child = SettingsScreen();
@@ -272,6 +271,7 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
         return await false;
       },
       child: Scaffold(
+        backgroundColor: color_main_black,
         bottomNavigationBar: CurvedNavigationBar(
           key: _bottomNavigationKey,
           index: 0,
@@ -299,3 +299,4 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
     );
   }
 }
+

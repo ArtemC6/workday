@@ -295,6 +295,7 @@ class _AnalyticScreenState extends State<AnalyticScreen> {
     double _height = MediaQuery.of(context).size.height;
 
     return Scaffold(
+      backgroundColor: color_main_black,
       body: RefreshIndicator(
         onRefresh: () async {
           setState(() {
@@ -335,7 +336,7 @@ class _AnalyticScreenState extends State<AnalyticScreen> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        InformationUsersScreen(
+                                        UsersDetailedInformationScreen(
                                           id_user: listUser[index].id_user,
                                         )));
                           },

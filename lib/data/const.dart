@@ -35,7 +35,7 @@ String getName(String post) {
   } else if ('admin' == post) {
     position = 'Администратор';
   } else if ('workers-cook' == post) {
-    position = 'Кух-работники';
+    position = 'Кух-работник';
   }
   return position;
 }
@@ -120,4 +120,17 @@ class Scale_Transition extends PageRouteBuilder {
       );
     },
   );
+}
+
+List<String> getUerWorkTimeDifference(
+    Timestamp startDate, Timestamp endDate) {
+  List<String> list = [];
+  final DateTime dateTimeStart = startDate.toDate();
+  final DateTime dateTimeEnd = endDate.toDate();
+
+  String formattedDateStater = DateFormat('kk:mm').format(dateTimeStart);
+  String formattedDateEnd = DateFormat('kk:mm').format(dateTimeEnd);
+  list.add(formattedDateStater);
+  list.add(formattedDateEnd);
+  return list;
 }

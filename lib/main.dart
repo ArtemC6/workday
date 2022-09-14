@@ -16,6 +16,7 @@ import 'data/fine_model.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await FirebaseFirestore.instance.clearPersistence();
   runApp(const MyApp());
 }
 
@@ -34,7 +35,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => HomeScreen(),
         '/administrator': (context) => AdministratorScreen(),
         '/analytic': (context) => const AnalyticScreen(),
-        '/detailed': (context) => const DetailedStatics(),
+        '/detailed': (context) => const GlobalStatics(),
         '/signIn': (context) => SignInScreen(),
         '/signup': (context) => SignUpScreen(),
         '/waiter': (context) => EmployeeScreen(),

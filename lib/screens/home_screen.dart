@@ -32,8 +32,6 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
       fifthAnimation;
 
   void sigNinFirebase() async {
-    FirebaseFirestore.instance.clearPersistence();
-
     await FirebaseFirestore.instance
         .collection('User')
         .doc(FirebaseAuth.instance.currentUser?.uid)
@@ -74,7 +72,7 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
             dateTimeStart.year, dateTimeStart.month, dateTimeStart.day);
 
         var timeCurrentNOtHour =
-            new DateTime(currentDate.year, currentDate.month, currentDate.day);
+        new DateTime(currentDate.year, currentDate.month, currentDate.day);
 
         var timeCurrentHour = new DateTime(currentDate.year, currentDate.month,
             currentDate.day, currentDate.hour);
@@ -85,21 +83,21 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
         final dockUsers = await FirebaseFirestore.instance.collection('Work');
 
         DateTime dateOver_15 =
-            DateTime.parse("${DateFormat('yyyy-MM-dd').format(timeStart)} 15");
+        DateTime.parse("${DateFormat('yyyy-MM-dd').format(timeStart)} 15");
 
         DateTime dateOver_23 =
-            DateTime.parse("${DateFormat('yyyy-MM-dd').format(timeStart)} 23");
+        DateTime.parse("${DateFormat('yyyy-MM-dd').format(timeStart)} 23");
 
         if (data['endDate'] == '') {
           if (data['post'] != 'admin') {
             if (timeStart.hour >= 7 && timeStart.hour < 15) {
               if (timeCurrentNOtHour == timeStartNotHour) {
-                if (timeCurrentHour.hour > dateOver_15.hour) {
-                  // print('object');
+                // print('object');
 
+                if (timeCurrentHour.hour >= dateOver_15.hour) {
                   final json = {
                     'endUri':
-                        'https://i0.wp.com/cdn.onlinewebfonts.com/svg/img_521125.png',
+                    'https://media.baamboozle.com/uploads/images/59634/1591055175_32403',
                     'endDate': DateTime.parse(
                         "${DateFormat('yyyy-MM-dd').format(timeStart)} 15"),
                   };
@@ -109,7 +107,7 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
               } else {
                 final json = {
                   'endUri':
-                      'https://i0.wp.com/cdn.onlinewebfonts.com/svg/img_521125.png',
+                  'https://media.baamboozle.com/uploads/images/59634/1591055175_32403',
                   'endDate': DateTime.parse(
                       "${DateFormat('yyyy-MM-dd').format(timeStart)} 15"),
                 };
@@ -121,7 +119,7 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                 if (timeCurrentHour.hour >= dateOver_23.hour) {
                   final json = {
                     'endUri':
-                        'https://i0.wp.com/cdn.onlinewebfonts.com/svg/img_521125.png',
+                    'https://media.baamboozle.com/uploads/images/59634/1591055175_32403',
                     'endDate': DateTime.parse(
                         "${DateFormat('yyyy-MM-dd').format(timeStart)} 23"),
                   };
@@ -130,7 +128,7 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
               } else {
                 final json = {
                   'endUri':
-                      'https://i0.wp.com/cdn.onlinewebfonts.com/svg/img_521125.png',
+                  'https://media.baamboozle.com/uploads/images/59634/1591055175_32403',
                   'endDate': DateTime.parse(
                       "${DateFormat('yyyy-MM-dd').format(timeStart)} 23"),
                 };
@@ -164,17 +162,17 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
     secondController =
         AnimationController(vsync: this, duration: Duration(seconds: 3));
     secondAnimation =
-        Tween<double>(begin: -pi, end: pi).animate(secondController)
-          ..addListener(() {
-            setState(() {});
-          })
-          ..addStatusListener((status) {
-            if (status == AnimationStatus.completed) {
-              secondController.repeat();
-            } else if (status == AnimationStatus.dismissed) {
-              secondController.forward();
-            }
-          });
+    Tween<double>(begin: -pi, end: pi).animate(secondController)
+      ..addListener(() {
+        setState(() {});
+      })
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          secondController.repeat();
+        } else if (status == AnimationStatus.dismissed) {
+          secondController.forward();
+        }
+      });
 
     thirdController =
         AnimationController(vsync: this, duration: Duration(seconds: 2));
@@ -193,17 +191,17 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
     fourthController = AnimationController(
         vsync: this, duration: Duration(milliseconds: 1500));
     fourthAnimation =
-        Tween<double>(begin: -pi, end: pi).animate(fourthController)
-          ..addListener(() {
-            setState(() {});
-          })
-          ..addStatusListener((status) {
-            if (status == AnimationStatus.completed) {
-              fourthController.repeat();
-            } else if (status == AnimationStatus.dismissed) {
-              fourthController.forward();
-            }
-          });
+    Tween<double>(begin: -pi, end: pi).animate(fourthController)
+      ..addListener(() {
+        setState(() {});
+      })
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          fourthController.repeat();
+        } else if (status == AnimationStatus.dismissed) {
+          fourthController.forward();
+        }
+      });
 
     fifthController =
         AnimationController(vsync: this, duration: Duration(seconds: 1));
@@ -268,13 +266,11 @@ class MyPainter extends CustomPainter {
   final double fourthAngle;
   final double fifthAngle;
 
-  MyPainter(
-    this.firstAngle,
-    this.secondAngle,
-    this.thirdAngle,
-    this.fourthAngle,
-    this.fifthAngle,
-  );
+  MyPainter(this.firstAngle,
+      this.secondAngle,
+      this.thirdAngle,
+      this.fourthAngle,
+      this.fifthAngle,);
 
   @override
   void paint(Canvas canvas, Size size) {

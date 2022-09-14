@@ -63,8 +63,8 @@ dev_dependencies:
   progress_state_button: ^1.0.4
   syncfusion_flutter_charts: ^20.2.48
   expansion_tile_card: ^2.0.0
-  slider_button: ^2.0.0
   animator: ^3.2.0
+  flutter_staggered_animations: ^1.1.1
 
 
 

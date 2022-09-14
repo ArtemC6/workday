@@ -1,35 +1,43 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:workday/screens/auth/signin_screen.dart';
+import 'package:workday/screens/notification/notification_screen.dart';
 import 'package:workday/screens/settings/settings_screen.dart';
-import 'package:workday/screens/statistics/user_information_period_screen.dart';
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'package:slider_button/slider_button.dart';
+import 'package:workday/screens/statistics/user_information_screen.dart';
 
 import '../data/const.dart';
-import '../data/user_model.dart';
 import '../data/firedase_api.dart';
-import 'package:animated_text_kit/animated_text_kit.dart';
+import '../data/user_model.dart';
 
 class EmployeeScreen extends StatefulWidget {
-  const EmployeeScreen({Key? key}) : super(key: key);
+  var positionBottomNavigation;
+
+  EmployeeScreen({Key? key, @required this.positionBottomNavigation})
+      : super(key: key);
 
   @override
-  State<EmployeeScreen> createState() => _EmployeeScreenState();
+  State<EmployeeScreen> createState() =>
+      _EmployeeScreenState(positionBottomNavigation);
 }
 
 class _EmployeeScreenState extends State<EmployeeScreen> {
+  var positionBottomNavigation;
+
+  _EmployeeScreenState(this.positionBottomNavigation);
+
   final ImagePicker _picker = ImagePicker();
   static var countdownDuration = Duration();
+  GlobalKey<CurvedNavigationBarState> _bottomNavigationKey = GlobalKey();
 
   Duration duration = Duration();
   Timer? timer;
@@ -37,7 +45,6 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
       isVisible = false,
       isVisibleTime = false,
       isVisibleText = false;
-  String _name = '';
   int _page = 0;
   UploadTask? task;
   File? startFilePhoto, endFilePhoto;
@@ -75,31 +82,29 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
     });
   }
 
-  Widget buildTime() {
+  Widget buildTime(BuildContext context) {
     String twoDigits(int n) => n.toString().padLeft(2, '0');
     final hours = twoDigits(duration.inHours);
     final minutes = twoDigits(duration.inMinutes.remainder(60));
     final seconds = twoDigits(duration.inSeconds.remainder(60));
 
-    return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-      buildTimeCard(time: hours, header: 'Часов'),
-      SizedBox(
-        width: 16,
-      ),
-      buildTimeCard(time: minutes, header: 'Минут'),
-      SizedBox(
-        width: 16,
-      ),
-      buildTimeCard(time: seconds, header: 'Секунд'),
-    ]);
+    return Container(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+        buildTimeCard(time: hours, header: 'Часов'),
+        buildTimeCard(time: minutes, header: 'Минут'),
+        buildTimeCard(time: seconds, header: 'Секунд'),
+      ]),
+    );
   }
 
   Widget buildTimeCard({required String time, required String header}) =>
       Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        // mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            padding: EdgeInsets.all(10),
+            padding: EdgeInsets.all(16),
             decoration: BoxDecoration(
                 color: Colors.white, borderRadius: BorderRadius.circular(20)),
             child: Text(
@@ -111,7 +116,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
             ),
           ),
           SizedBox(
-            height: 24,
+            height: 26,
           ),
           Text(header, style: TextStyle(color: Colors.white)),
         ],
@@ -119,7 +124,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
 
   Future makeStartPhoto() async {
     final XFile? photo = await _picker.pickImage(
-        imageQuality: 9,
+        imageQuality: 10,
         source: ImageSource.camera,
         preferredCameraDevice: CameraDevice.front);
 
@@ -132,7 +137,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
 
   Future makeEndPhoto() async {
     final XFile? photo = await _picker.pickImage(
-        imageQuality: 9,
+        imageQuality: 10,
         source: ImageSource.camera,
         preferredCameraDevice: CameraDevice.front);
 
@@ -225,7 +230,6 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
           'endUri': '',
           'endDate': '',
           'money': 0.0,
-          'status': doc['post'],
           'post': doc['post'],
         };
 
@@ -236,17 +240,6 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
 
   void readUserFirebase() async {
     listUser.clear();
-    FirebaseFirestore.instance
-        .collection('User')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .get()
-        .then((DocumentSnapshot documentSnapshot) {
-      if (documentSnapshot.exists) {
-        setState(() {
-          _name = documentSnapshot['name'];
-        });
-      }
-    });
 
     await FirebaseFirestore.instance
         .collection('Work')
@@ -333,12 +326,24 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
   @override
   void initState() {
     super.initState();
-    // startCamera();
+    Future.delayed(const Duration(milliseconds: 100), () {
+      setState(() {
+        if (positionBottomNavigation != null) {
+          final CurvedNavigationBarState? navBarState =
+              _bottomNavigationKey.currentState;
+          navBarState?.setPage(positionBottomNavigation);
+        }
+      });
+    });
+
     readUserFirebase();
   }
 
   @override
   Widget build(BuildContext context) {
+    double _width = MediaQuery.of(context).size.width;
+    double _height = MediaQuery.of(context).size.height;
+
     Widget employeeMain() {
       return RefreshIndicator(
         edgeOffset: 20,
@@ -354,16 +359,16 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
         child: SingleChildScrollView(
           child: Container(
             color: color_main_black,
-            alignment: Alignment.center,
             height: MediaQuery.of(context).size.height,
-            padding: EdgeInsets.only(right: 30, left: 30),
+            padding: EdgeInsets.only(right: _width / 12, left: _width / 12),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Container(
-                  padding: EdgeInsets.only(bottom: 100),
-                  child: buildTime(),
+                  width: _width,
+                  padding: EdgeInsets.only(bottom: _height / 8),
+                  child: buildTime(context),
                 ),
                 if (!isVisible)
                   Container(
@@ -400,9 +405,24 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                           });
                         }
                       },
-                      child: Text(
-                        'Начать работу',
-                        style: TextStyle(color: Colors.black),
+                      child: AnimatedTextKit(
+                        displayFullTextOnTap: true,
+                        isRepeatingAnimation: true,
+                        repeatForever: true,
+                        stopPauseOnTap: true,
+                        animatedTexts: [
+                          ColorizeAnimatedText(
+                            'Начать работу',
+                            textStyle: TextStyle(fontSize: 17),
+                            colors: [
+                              Colors.black,
+                              Colors.black54,
+                              Colors.black87,
+                              Colors.black,
+                            ],
+                          ),
+                        ],
+                        onTap: () {},
                       ),
                     ),
                   ),
@@ -450,7 +470,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                   if (!isVisible)
                     if (isVisibleText)
                       Container(
-                        padding: EdgeInsets.only(top: 20),
+                        padding: EdgeInsets.only(top: 30),
                         alignment: Alignment.center,
                         child: AnimatedTextKit(
                           animatedTexts: [
@@ -459,7 +479,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                               'Пожалуйста начните работу...',
                               speed: Duration(milliseconds: 200),
                               textStyle: TextStyle(
-                                fontSize: 22,
+                                fontSize: 20,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
                               ),
@@ -496,10 +516,13 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
           child = employeeMain();
           break;
         case 1:
-          child = UserInformationPeriodScreen(
+          child = UserInformationScreen(
               uid: FirebaseAuth.instance.currentUser!.uid);
           break;
         case 2:
+          child = NotificationScreen();
+          break;
+        case 3:
           child = SettingsScreen();
           break;
       }
@@ -511,17 +534,17 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
         return await false;
       },
       child: Scaffold(
+        backgroundColor: color_main_black,
         bottomNavigationBar: CurvedNavigationBar(
-          // key: _bottomNavigationKey,
+          key: _bottomNavigationKey,
           index: 0,
           height: 60.0,
-
           items: <Widget>[
             Icon(Icons.access_time_outlined, size: 30),
             Icon(Icons.list, size: 30),
+            Icon(Icons.notifications_none, size: 30),
             Icon(Icons.perm_identity, size: 30),
           ],
-
           color: Colors.white,
           buttonBackgroundColor: Colors.white,
           backgroundColor: color_main_black,

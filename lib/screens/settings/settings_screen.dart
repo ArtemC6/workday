@@ -173,12 +173,6 @@ class _SettingsScreen extends State<SettingsScreen> {
         );
 
         DateTime currentDate = DateTime.now();
-        var currentTime = new DateTime(
-          currentDate.year,
-          currentDate.month,
-          currentDate.day,
-        );
-
         var currentTimeDay = new DateTime(
           currentDate.year,
           currentDate.month,
@@ -235,6 +229,7 @@ class _SettingsScreen extends State<SettingsScreen> {
     readFirebase();
   }
 
+
   @override
   Widget build(BuildContext context) {
     double _width = MediaQuery.of(context).size.width;
@@ -262,7 +257,7 @@ class _SettingsScreen extends State<SettingsScreen> {
                   Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                          builder: (BuildContext context) => EmployeeScreen(positionBottomNavigation: 2,)));
+                          builder: (BuildContext context) => EmployeeScreen(positionBottomNavigation: 3,)));
                 }
               });
             },

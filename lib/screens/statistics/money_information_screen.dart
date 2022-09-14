@@ -228,7 +228,7 @@ class _MoneyInformationScreen extends State<MoneyInformationScreen> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => InformationUsersScreen(
+                        builder: (context) => UsersDetailedInformationScreen(
                               id_user: listUserMoney[index].id_user,
                               time: listUserMoney[index].extraditionMoney,
                             )));

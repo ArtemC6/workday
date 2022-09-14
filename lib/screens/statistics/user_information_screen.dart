@@ -11,22 +11,22 @@ import '../../data/user_model.dart';
 import 'users_detailed_informaiton_screen.dart';
 
 
-class UserInformationPeriodScreen extends StatefulWidget {
+class UserInformationScreen extends StatefulWidget {
   var uid, post;
 
-  UserInformationPeriodScreen(
+  UserInformationScreen(
       {Key? key, @required this.uid, @required this.post})
       : super(key: key);
 
   @override
-  State<UserInformationPeriodScreen> createState() =>
-      _UserInformationPeriodScreen(uid, post);
+  State<UserInformationScreen> createState() =>
+      _UserInformationScreen(uid, post);
 }
 
-class _UserInformationPeriodScreen extends State<UserInformationPeriodScreen> {
+class _UserInformationScreen extends State<UserInformationScreen> {
   var uid, post;
 
-  _UserInformationPeriodScreen(this.uid, post);
+  _UserInformationScreen(this.uid, post);
 
   List<UserModel> listUser = [], listUserFull = [];
   bool isPositionVisible = false, isVisiblyProgress = false, isPosition = true;
@@ -317,7 +317,7 @@ class _UserInformationPeriodScreen extends State<UserInformationPeriodScreen> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => InformationUsersScreen(
+                        builder: (context) => UsersDetailedInformationScreen(
                               id_user: listUser[index].id_user,
                               time: listUser[index].startDate,
                             )));
