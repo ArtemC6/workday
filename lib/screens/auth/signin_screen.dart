@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:workday/screens/auth/signup_screen.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
-
 import '../../data/const.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:avatar_glow/avatar_glow.dart';
-
 import '../administrator_screen.dart';
 import '../employee_screen.dart';
 import '../home_screen.dart';
@@ -203,8 +201,8 @@ class _SignInScreen extends State<SignInScreen> {
                 componentTextField(
                     Icons.email_outlined, 'Email...', false, true, 'email'),
                 Padding(padding: EdgeInsets.only(top: 25)),
-                componentTextField(Icons.lock_outline, 'Password...', true,
-                    false, "password"),
+                componentTextField(
+                    Icons.lock_outline, 'Password...', true, false, "password"),
                 Padding(padding: EdgeInsets.only(top: 25)),
                 Container(
                   alignment: Alignment.centerRight,
@@ -230,8 +228,7 @@ class _SignInScreen extends State<SignInScreen> {
                       ),
                     ],
                     onTap: () {
-                      Navigator.push(
-                          context, Scale_Transition(SignUpScreen()));
+                      Navigator.push(context, Scale_Transition(SignUpScreen()));
                     },
                   ),
                 ),
@@ -275,7 +272,7 @@ class _SignInScreen extends State<SignInScreen> {
 
                 if (isVisibleSizedBox)
                   SizedBox(
-                    height: 150,
+                    height: 170,
                   ),
               ],
             ),
@@ -285,4 +282,3 @@ class _SignInScreen extends State<SignInScreen> {
     );
   }
 }
-

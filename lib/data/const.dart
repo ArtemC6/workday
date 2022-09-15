@@ -6,11 +6,6 @@ import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 final Color color_main_black = Color(0xff212428);
-final String name = '';
-
-
-
-
 
 String getName(String post) {
   String position = '';
@@ -45,13 +40,11 @@ String getDataPeriod(DateTime startDate) {
   return formattedDate;
 }
 
-
 String printDurationTime(Duration duration) {
   String twoDigits(int n) => n.toString().padLeft(2);
   String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
   return "${twoDigits(duration.inHours)} : $twoDigitMinutes";
 }
-
 
 String getData(Timestamp startDate) {
   final DateTime dateTimeStart = startDate.toDate();
@@ -69,7 +62,7 @@ int getUserWorkTime(Timestamp startDate, Timestamp endDate) {
   return dateTimeEnd.difference(dateTimeStart).inMinutes;
 }
 
- getUserWorkTimeDouble(Timestamp startDate, Timestamp endDate) {
+getUserWorkTimeDouble(Timestamp startDate, Timestamp endDate) {
   final DateTime dateTimeStart = startDate.toDate();
   final DateTime dateTimeEnd = endDate.toDate();
   return dateTimeEnd.difference(dateTimeStart).inMinutes;
@@ -105,25 +98,24 @@ class Scale_Transition extends PageRouteBuilder {
 
   Scale_Transition(this.page)
       : super(
-    pageBuilder: (context, animation, anotherAnimation) => page,
-    transitionDuration: Duration(milliseconds: 1200),
-    reverseTransitionDuration: Duration(milliseconds: 200),
-    transitionsBuilder: (context, animation, anotherAnimation, child) {
-      animation = CurvedAnimation(
-          curve: Curves.fastLinearToSlowEaseIn,
-          parent: animation,
-          reverseCurve: Curves.fastOutSlowIn);
-      return ScaleTransition(
-        alignment: Alignment.center,
-        scale: animation,
-        child: child,
-      );
-    },
-  );
+          pageBuilder: (context, animation, anotherAnimation) => page,
+          transitionDuration: Duration(milliseconds: 1200),
+          reverseTransitionDuration: Duration(milliseconds: 200),
+          transitionsBuilder: (context, animation, anotherAnimation, child) {
+            animation = CurvedAnimation(
+                curve: Curves.fastLinearToSlowEaseIn,
+                parent: animation,
+                reverseCurve: Curves.fastOutSlowIn);
+            return ScaleTransition(
+              alignment: Alignment.center,
+              scale: animation,
+              child: child,
+            );
+          },
+        );
 }
 
-List<String> getUerWorkTimeDifference(
-    Timestamp startDate, Timestamp endDate) {
+List<String> getUerWorkTimeDifference(Timestamp startDate, Timestamp endDate) {
   List<String> list = [];
   final DateTime dateTimeStart = startDate.toDate();
   final DateTime dateTimeEnd = endDate.toDate();

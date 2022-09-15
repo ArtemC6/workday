@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
@@ -14,7 +13,6 @@ import 'package:path/path.dart';
 import 'package:workday/screens/notification/notification_screen.dart';
 import 'package:workday/screens/settings/settings_screen.dart';
 import 'package:workday/screens/statistics/user_information_screen.dart';
-
 import '../data/const.dart';
 import '../data/firedase_api.dart';
 import '../data/user_model.dart';
@@ -89,9 +87,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
     final seconds = twoDigits(duration.inSeconds.remainder(60));
 
     return Container(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
+      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
         buildTimeCard(time: hours, header: 'Часов'),
         buildTimeCard(time: minutes, header: 'Минут'),
         buildTimeCard(time: seconds, header: 'Секунд'),

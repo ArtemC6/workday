@@ -3,13 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:horizontal_data_table/horizontal_data_table.dart';
 import 'package:workday/data/fine_model.dart';
-
 import '../../data/const.dart';
-import '../../data/money_model.dart';
-import '../../data/user_model.dart';
 import 'users_detailed_informaiton_screen.dart';
 
 class FineScreens extends StatefulWidget {
@@ -69,108 +65,101 @@ class _FineScreens extends State<FineScreens> {
             DateTime.parse("${DateFormat('yyyy-MM-dd').format(timeStart)} 15");
 
         setState(() {
-          if (timeStart.hour >= dateOver_7.hour && timeStart.hour < 15) {
-            if (timeStart.minute <= 5) {
-              if (timeStart.minute >= 1) {
+          if ('admin' != data['post']) {
+            if (timeStart.hour >= dateOver_7.hour && timeStart.hour < 15) {
+              if (timeStart.minute <= 5) {
+                if (timeStart.minute >= 1) {
+                  listFine.add(FineModel(
+                      name: data['name'],
+                      post: data['post'],
+                      lateness: timeStart.minute,
+                      time: data['startDate'],
+                      money_fine: 100,
+                      id_user: data['id_user'],
+                      id_post: '',
+                      change: 1));
+                }
+              } else if (timeStart.minute <= 15) {
                 listFine.add(FineModel(
                     name: data['name'],
                     post: data['post'],
                     lateness: timeStart.minute,
                     time: data['startDate'],
-                    money_fine: 100,
-                    id_user: data['id_user'],
-                    id_post: '',
-                    change: 1));
-              }
-            } else if (timeStart.minute <= 15) {
-              listFine.add(FineModel(
-                  name: data['name'],
-                  post: data['post'],
-                  lateness: timeStart.minute,
-                  time: data['startDate'],
-                  money_fine: 200,
-                  id_user: data['id_user'],
-                  id_post: '',
-                  change: 1));
-            } else {
-              if (data['endDate'] == "") {
-                listFine.add(FineModel(
-                    name: data['name'],
-                    post: data['post'],
-                    lateness: getDataTime(dateOver_7, DateTime.now()),
-                    time: data['startDate'],
-                    money_fine: 300,
+                    money_fine: 200,
                     id_user: data['id_user'],
                     id_post: '',
                     change: 1));
               } else {
-                listFine.add(FineModel(
-                    name: data['name'],
-                    post: data['post'],
-                    lateness: getDataTime(dateOver_7, timeStart),
-                    time: data['startDate'],
-                    money_fine: 300,
-                    id_user: data['id_user'],
-                    id_post: '',
-                    change: 1));
+                if (data['endDate'] == "") {
+                  listFine.add(FineModel(
+                      name: data['name'],
+                      post: data['post'],
+                      lateness: getDataTime(dateOver_7, DateTime.now()),
+                      time: data['startDate'],
+                      money_fine: 300,
+                      id_user: data['id_user'],
+                      id_post: '',
+                      change: 1));
+                } else {
+                  listFine.add(FineModel(
+                      name: data['name'],
+                      post: data['post'],
+                      lateness: getDataTime(dateOver_7, timeStart),
+                      time: data['startDate'],
+                      money_fine: 300,
+                      id_user: data['id_user'],
+                      id_post: '',
+                      change: 1));
+                }
               }
-              // listFine.add(FineModel(
-              //     name: data['name'],
-              //     post: data['post'],
-              //     lateness: timeStart.minute,
-              //     time: data['startDate'],
-              //     money_fine: 300,
-              //     id_user: data['id_user'],
-              //     id_post: '',
-              //     change: 1));
             }
-          }
 
-          // 15
-          if (timeStart.hour >= dateOver_15.hour && timeStart.hour < 23) {
-            if (timeStart.minute <= 5) {
-              if (timeStart.minute >= 1) {
+            // 15
+            if (timeStart.hour >= dateOver_15.hour && timeStart.hour < 23) {
+              if (timeStart.minute <= 5) {
+                if (timeStart.minute >= 1) {
+                  listFine.add(FineModel(
+                      name: data['name'],
+                      post: data['post'],
+                      lateness: timeStart.minute,
+                      time: data['startDate'],
+                      money_fine: 100,
+                      id_user: data['id_user'],
+                      id_post: '',
+                      change: 2));
+                }
+              } else if (timeStart.minute <= 15) {
                 listFine.add(FineModel(
                     name: data['name'],
                     post: data['post'],
                     lateness: timeStart.minute,
                     time: data['startDate'],
-                    money_fine: 100,
-                    id_user: data['id_user'],
-                    id_post: '',
-                    change: 2));
-              }
-            } else if (timeStart.minute <= 15) {
-              listFine.add(FineModel(
-                  name: data['name'],
-                  post: data['post'],
-                  lateness: timeStart.minute,
-                  time: data['startDate'],
-                  money_fine: 200,
-                  id_user: data['id_user'],
-                  id_post: '',
-                  change: 2));
-            } else {
-              if (data['endDate'] == "") {
-                listFine.add(FineModel(
-                    name: data['name'],
-                    post: data['post'],
-                    lateness: getDataTime(dateOver_15, DateTime.now()),
-                    time: data['startDate'],
-                    money_fine: 300,
+                    money_fine: 200,
                     id_user: data['id_user'],
                     id_post: '',
                     change: 2));
               } else {
-                listFine.add(FineModel(
-                    name: data['name'],
-                    post: data['post'],
-                    lateness: getDataTime(dateOver_15, timeStart),
-                    time: data['startDate'],
-                    money_fine: 300,
-                    id_user: data['id_user'],
-                    id_post: '',
-                    change: 2));
+                if (data['endDate'] == "") {
+                  listFine.add(FineModel(
+                      name: data['name'],
+                      post: data['post'],
+                      lateness: getDataTime(dateOver_15, DateTime.now()),
+                      time: data['startDate'],
+                      money_fine: 300,
+                      id_user: data['id_user'],
+                      id_post: '',
+                      change: 2));
+                } else {
+                  listFine.add(FineModel(
+                      name: data['name'],
+                      post: data['post'],
+                      lateness: getDataTime(dateOver_15, timeStart),
+                      time: data['startDate'],
+                      money_fine: 300,
+                      id_user: data['id_user'],
+                      id_post: '',
+                      change: 2));
+                }
               }
             }
           }
@@ -415,7 +404,7 @@ class _FineScreens extends State<FineScreens> {
         _getTitleItemWidget('Имя', 100),
         _getTitleItemWidget('Время', 100),
         _getTitleItemWidget('Штраф', 100),
-        _getTitleItemWidget('Дата', 100),
+        _getTitleItemWidget('Дата', 120),
         _getTitleItemWidget('Смена', 100),
         _getTitleItemWidget('Подробней', 100),
       ];
@@ -460,7 +449,7 @@ class _FineScreens extends State<FineScreens> {
               '${getData(listFineFull[index].time)}',
               style: TextStyle(fontSize: 16, color: Colors.white),
             ),
-            width: 100,
+            width: 120,
             height: 52,
             padding: EdgeInsets.only(left: 10),
             alignment: Alignment.centerLeft,
@@ -470,7 +459,7 @@ class _FineScreens extends State<FineScreens> {
               '${listFineFull[index].change.toString()}',
               style: TextStyle(fontSize: 16, color: Colors.white),
             ),
-            width: 100,
+            width: 80,
             height: 52,
             padding: EdgeInsets.only(left: 30),
             alignment: Alignment.centerLeft,

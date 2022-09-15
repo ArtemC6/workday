@@ -5,12 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:workday/screens/employee_screen.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-
 import '../../data/const.dart';
 import '../../data/user_model.dart';
 import '../administrator_screen.dart';
 import '../auth/signin_screen.dart';
-import 'package:intl/intl.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -374,6 +372,5 @@ class _SettingsScreen extends State<SettingsScreen> {
 class _SalesData {
   final String name;
   final double time;
-
   _SalesData(this.time, this.name);
 }

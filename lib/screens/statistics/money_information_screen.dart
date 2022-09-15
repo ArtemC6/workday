@@ -3,12 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:horizontal_data_table/horizontal_data_table.dart';
-
 import '../../data/const.dart';
 import '../../data/money_model.dart';
-import '../../data/user_model.dart';
 import 'users_detailed_informaiton_screen.dart';
 
 class MoneyInformationScreen extends StatefulWidget {
@@ -168,8 +165,8 @@ class _MoneyInformationScreen extends State<MoneyInformationScreen> {
       return [
         _getTitleItemWidget('Имя', 100),
         _getTitleItemWidget('Время', 100),
-        _getTitleItemWidget('Сумма', 100),
-        _getTitleItemWidget('Дата', 100),
+        _getTitleItemWidget('Сумма', 120),
+        _getTitleItemWidget('Дата', 120),
         _getTitleItemWidget('Подробней', 100),
       ];
     }
@@ -177,8 +174,8 @@ class _MoneyInformationScreen extends State<MoneyInformationScreen> {
     List<Widget> _getTitleWidgetFull() {
       return [
         _getTitleItemWidget('Имя', 100),
-        _getTitleItemWidget('Время', 100),
-        _getTitleItemWidget('Сумма', 100),
+        _getTitleItemWidget('Время', 110),
+        _getTitleItemWidget('Сумма', 120),
         _getTitleItemWidget('Дата', 100),
       ];
     }
@@ -198,28 +195,31 @@ class _MoneyInformationScreen extends State<MoneyInformationScreen> {
       return Row(
         children: <Widget>[
           Container(
-              padding: EdgeInsets.only(left: 14, right: 14),
+              padding: EdgeInsets.only(left: 14, right: 20),
               child: Text(
-                  '${printDurationTime(Duration(minutes: listUserMoney[index].workTime))} минут ',
+                  '${printDurationTime(Duration(minutes: listUserMoney[index].workTime))}',
                   style: TextStyle(fontSize: 16, color: Colors.white))),
           Container(
+            // color: Colors.green,
+
             child: Text(
               '${double.parse((listUserMoney[index].money).toStringAsFixed(1).toString())} сом ',
               style: TextStyle(fontSize: 16, color: Colors.white),
             ),
-            width: 100,
+            width: 130,
             height: 52,
-            padding: EdgeInsets.only(left: 20),
+            padding: EdgeInsets.only(left: 34),
             alignment: Alignment.centerLeft,
           ),
           Container(
+            // color: Colors.green,
             child: Text(
               '${getData(listUserMoney[index].extraditionMoney)}',
               style: TextStyle(fontSize: 16, color: Colors.white),
             ),
-            width: 100,
+            width: 130,
             height: 52,
-            padding: EdgeInsets.only(left: 20),
+            padding: EdgeInsets.only(left: 30),
             alignment: Alignment.centerLeft,
           ),
           Container(
@@ -250,16 +250,16 @@ class _MoneyInformationScreen extends State<MoneyInformationScreen> {
           Container(
               padding: EdgeInsets.only(left: 14, right: 14),
               child: Text(
-                  '${printDurationTime(Duration(minutes: listUserMoneyFull[index].workTime))} минут ',
+                  '${printDurationTime(Duration(minutes: listUserMoneyFull[index].workTime))}',
                   style: TextStyle(fontSize: 16, color: Colors.white))),
           Container(
             child: Text(
               '${double.parse((listUserMoneyFull[index].money).toStringAsFixed(1).toString())} сом ',
               style: TextStyle(fontSize: 16, color: Colors.white),
             ),
-            width: 100,
+            width: 150,
             height: 52,
-            padding: EdgeInsets.only(left: 20),
+            padding: EdgeInsets.only(left: 40),
             alignment: Alignment.centerLeft,
           ),
           Container(
@@ -267,9 +267,9 @@ class _MoneyInformationScreen extends State<MoneyInformationScreen> {
               '${getData(listUserMoneyFull[index].extraditionMoney)}',
               style: TextStyle(fontSize: 16, color: Colors.white),
             ),
-            width: 100,
+            width: 120,
             height: 52,
-            padding: EdgeInsets.only(left: 20),
+            padding: EdgeInsets.only(left: 30),
             alignment: Alignment.centerLeft,
           ),
         ],

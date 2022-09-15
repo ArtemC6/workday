@@ -9,7 +9,6 @@ import 'package:intl/intl.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:workday/screens/settings/settings_screen.dart';
 import 'package:workday/screens/statistics/users_detailed_informaiton_screen.dart';
-
 import '../data/const.dart';
 import '../data/user_model.dart';
 import 'analytics_today_screen.dart';
@@ -18,10 +17,12 @@ import 'statistics/global_statistics_screen.dart';
 class AdministratorScreen extends StatefulWidget {
   var positionBottomNavigation;
 
-  AdministratorScreen({Key? key, @required this.positionBottomNavigation}) : super(key: key);
+  AdministratorScreen({Key? key, @required this.positionBottomNavigation})
+      : super(key: key);
 
   @override
-  State<AdministratorScreen> createState() => _AdministratorScreenState(positionBottomNavigation);
+  State<AdministratorScreen> createState() =>
+      _AdministratorScreenState(positionBottomNavigation);
 }
 
 class _AdministratorScreenState extends State<AdministratorScreen> {
@@ -105,7 +106,6 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
 
         if (timeStart == currentTime) {
           if (data['endDate'] != '') {
-
             print(data['name']);
             setState(() {
               var isExist = listUser.indexWhere(
@@ -157,7 +157,6 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
   Widget build(BuildContext context) {
     Widget administratorMain() {
       return SmartRefresher(
-
         onRefresh: () async {
           setState(() {
             Navigator.pushReplacement(
@@ -176,31 +175,38 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
                   padding: EdgeInsets.only(left: 10, top: 50),
                   alignment: Alignment.centerLeft,
                   child: Text('Сегодня работали ${listUser.length.toString()}',
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 17, color: Colors.white)),
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 17,
+                          color: Colors.white)),
                 ),
                 Container(
                   color: color_main_black,
                   height: MediaQuery.of(context).size.height / 2.6,
                   child: ListView.builder(
-                    itemCount: listUser.length,
+                      itemCount: listUser.length,
                       physics: BouncingScrollPhysics(),
                       itemBuilder: (BuildContext context, int index) {
-
                         return InkWell(
                           onTap: () {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => UsersDetailedInformationScreen(
+                                    builder: (context) =>
+                                        UsersDetailedInformationScreen(
                                           id_user: listUser[index].id_user,
                                         )));
                           },
                           child: ListTile(
-                            trailing: Icon(Icons.arrow_forward_ios, size: 18, color: Colors.white,),
+                            trailing: Icon(
+                              Icons.arrow_forward_ios,
+                              size: 18,
+                              color: Colors.white,
+                            ),
                             title: Text(
                                 "${listUser[index].name} закончил(ла) ${getData(listUser[index].endDate)}",
-                                style: TextStyle(fontSize: 17, color: Colors.white)),
+                                style: TextStyle(
+                                    fontSize: 17, color: Colors.white)),
                           ),
                         );
                       }),
@@ -210,8 +216,10 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
                   alignment: Alignment.centerLeft,
                   child: Text(
                       'Сегодня работают ${listUserWork.length.toString()}',
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 17, color: Colors.white)),
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 17,
+                          color: Colors.white)),
                 ),
                 Container(
                   color: color_main_black,
@@ -225,17 +233,22 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => UsersDetailedInformationScreen(
+                                    builder: (context) =>
+                                        UsersDetailedInformationScreen(
                                           id_user: listUserWork[index].id_user,
                                           time: listUserWork[index].startDate,
                                         )));
                           },
                           child: ListTile(
-                            trailing: Icon(Icons.arrow_forward_ios, size: 18, color: Colors.white,),
+                            trailing: Icon(
+                              Icons.arrow_forward_ios,
+                              size: 18,
+                              color: Colors.white,
+                            ),
                             title: Text(
                                 "${listUserWork[index].name} начал(ла) ${getData(listUserWork[index].startDate)}",
-                                style:
-                                    TextStyle(fontSize: 17, color: Colors.green)),
+                                style: TextStyle(
+                                    fontSize: 17, color: Colors.green)),
                           ),
                         );
                       }),
@@ -299,4 +312,3 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
     );
   }
 }
-

@@ -1,15 +1,14 @@
-import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:workday/screens/administrator_screen.dart';
 import 'package:workday/screens/extradition_money_screen.dart';
 
 import '../data/const.dart';
 import '../data/user_model.dart';
 import 'statistics/users_detailed_informaiton_screen.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 class AnalyticScreen extends StatefulWidget {
   const AnalyticScreen({Key? key}) : super(key: key);
@@ -137,7 +136,8 @@ class _AnalyticScreenState extends State<AnalyticScreen> {
                   await Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (BuildContext context) => ExtraditionMoneyScreen(
+                          builder: (BuildContext context) =>
+                              ExtraditionMoneyScreen(
                                 status: 'barista',
                               )));
                 },
@@ -153,7 +153,8 @@ class _AnalyticScreenState extends State<AnalyticScreen> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (BuildContext context) => ExtraditionMoneyScreen(
+                          builder: (BuildContext context) =>
+                              ExtraditionMoneyScreen(
                                 status: 'maid',
                               )));
                 },
@@ -170,7 +171,8 @@ class _AnalyticScreenState extends State<AnalyticScreen> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (BuildContext context) => ExtraditionMoneyScreen(
+                          builder: (BuildContext context) =>
+                              ExtraditionMoneyScreen(
                                 status: 'concierge',
                               )));
                 },
@@ -187,7 +189,8 @@ class _AnalyticScreenState extends State<AnalyticScreen> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (BuildContext context) => ExtraditionMoneyScreen(
+                          builder: (BuildContext context) =>
+                              ExtraditionMoneyScreen(
                                 status: 'admin',
                               )));
                 },
@@ -204,7 +207,8 @@ class _AnalyticScreenState extends State<AnalyticScreen> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (BuildContext context) => ExtraditionMoneyScreen(
+                          builder: (BuildContext context) =>
+                              ExtraditionMoneyScreen(
                                 status: 'chef-cook',
                               )));
                 },
@@ -221,7 +225,8 @@ class _AnalyticScreenState extends State<AnalyticScreen> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (BuildContext context) => ExtraditionMoneyScreen(
+                          builder: (BuildContext context) =>
+                              ExtraditionMoneyScreen(
                                 status: 'sous-chef',
                               )));
                 },
@@ -238,7 +243,8 @@ class _AnalyticScreenState extends State<AnalyticScreen> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (BuildContext context) => ExtraditionMoneyScreen(
+                          builder: (BuildContext context) =>
+                              ExtraditionMoneyScreen(
                                 status: 'confectioner',
                               )));
                 },
@@ -254,7 +260,8 @@ class _AnalyticScreenState extends State<AnalyticScreen> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (BuildContext context) => ExtraditionMoneyScreen(
+                          builder: (BuildContext context) =>
+                              ExtraditionMoneyScreen(
                                 status: 'cook',
                               )));
                 },
@@ -270,7 +277,8 @@ class _AnalyticScreenState extends State<AnalyticScreen> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (BuildContext context) => ExtraditionMoneyScreen(
+                          builder: (BuildContext context) =>
+                              ExtraditionMoneyScreen(
                                 status: 'workers-cook',
                               )));
                 },

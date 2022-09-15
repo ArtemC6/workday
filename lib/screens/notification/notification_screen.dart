@@ -1,11 +1,7 @@
-import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:workday/screens/statistics/user_information_screen.dart';
-
 import '../../data/const.dart';
 import '../../data/user_model.dart';
 import '../employee_screen.dart';

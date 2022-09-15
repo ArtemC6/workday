@@ -9,7 +9,6 @@ import 'package:workday/screens/auth/signin_screen.dart';
 import 'package:progress_state_button/iconed_button.dart';
 import 'package:progress_state_button/progress_button.dart';
 import 'package:workday/screens/statistics/users_detailed_informaiton_screen.dart';
-
 import '../data/const.dart';
 import '../data/user_model.dart';
 
@@ -429,7 +428,7 @@ class _ExtraditionScreenScreenState extends State<ExtraditionMoneyScreen> {
             listUser.removeAt(index);
             listUser.forEach((elementMain) {
               getTotalTime(listUserWork, money).forEach((element) {
-                if (elementMain.id_user == element.id_user ) {
+                if (elementMain.id_user == element.id_user) {
                   listWorkFull.add(element);
                 }
               });

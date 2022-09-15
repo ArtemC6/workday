@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:horizontal_data_table/horizontal_data_table.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../data/const.dart';
 import '../../data/user_model.dart';
 import '../employee_screen.dart';
@@ -80,7 +79,7 @@ class _UsersDetailedInformationScreen
                   status: data["post"],
                   startUri: data["startUri"],
                   endUri:
-                      'https://img1.badfon.ru/original/1920x1200/8/f9/chasy-starina-strelki-hod.jpg',
+                      'https://media.baamboozle.com/uploads/images/59634/1591055175_32403',
                   startDate: data["startDate"],
                   endDate: data["startDate"],
                   id_user: data["id_user"],
@@ -194,7 +193,7 @@ class _UsersDetailedInformationScreen
         _getTitleItemWidget('Имя', 100),
         _getTitleItemWidget('С', 100),
         _getTitleItemWidget('До', 100),
-        _getTitleItemWidget('Время', 100),
+        _getTitleItemWidget('Время', 120),
         _getTitleItemWidget('Фото', 100),
       ];
     }
@@ -202,10 +201,10 @@ class _UsersDetailedInformationScreen
     List<Widget> _getTitleWidgetAnalytics() {
       return [
         _getTitleItemWidget('Имя', 100),
-        _getTitleItemWidget('С', 100),
+        _getTitleItemWidget('С', 94),
         _getTitleItemWidget('До', 100),
-        _getTitleItemWidget('Время', 100),
-        _getTitleItemWidget('Сумма', 120),
+        _getTitleItemWidget('Время', 110),
+        _getTitleItemWidget('Сумма', 140),
         _getTitleItemWidget('Фото', 100),
       ];
     }
@@ -247,7 +246,7 @@ class _UsersDetailedInformationScreen
           Container(
             padding: EdgeInsets.only(left: 14),
             child: Text(
-              '${printDurationTime(Duration(minutes: listUser[index].workTime))} минут ',
+              '${printDurationTime(Duration(minutes: listUser[index].workTime))}',
               style: TextStyle(fontSize: 16, color: Colors.white),
             ),
           ),
@@ -277,7 +276,6 @@ class _UsersDetailedInformationScreen
                             ),
                           ),
                           InkWell(
-
                             onTap: () {
                               _showPhotoFull(listUser[index].endUri);
                             },
@@ -324,7 +322,7 @@ class _UsersDetailedInformationScreen
               '${getUerWorkTimeDifference(listUser[index].startDate, listUser[index].endDate)[0]} ',
               style: TextStyle(fontSize: 16, color: Colors.white),
             ),
-            width: 100,
+            width: 90,
             height: 52,
             padding: EdgeInsets.only(left: 10),
             alignment: Alignment.centerLeft,
@@ -334,15 +332,16 @@ class _UsersDetailedInformationScreen
               '${getUerWorkTimeDifference(listUser[index].startDate, listUser[index].endDate)[1]} ',
               style: TextStyle(fontSize: 16, color: Colors.white),
             ),
-            width: 100,
+            width: 90,
             height: 52,
             padding: EdgeInsets.only(left: 10),
             alignment: Alignment.centerLeft,
           ),
           Container(
-              padding: EdgeInsets.only(left: 14, right: 26),
+              width: 90,
+              padding: EdgeInsets.only(left: 20),
               child: Text(
-                '${printDurationTime(Duration(minutes: listUser[index].workTime))} минут ',
+                '${printDurationTime(Duration(minutes: listUser[index].workTime))}',
                 style: TextStyle(fontSize: 16, color: Colors.white),
               )),
           Container(
@@ -350,9 +349,9 @@ class _UsersDetailedInformationScreen
               '${listUser[index].money} сом',
               style: TextStyle(fontSize: 16, color: Colors.white),
             ),
-            width: 100,
+            width: 124,
             height: 52,
-            padding: EdgeInsets.only(left: 20),
+            padding: EdgeInsets.only(left: 30),
             alignment: Alignment.centerLeft,
           ),
           Container(
@@ -434,8 +433,7 @@ class _UsersDetailedInformationScreen
                 if (!isVisible)
                   if (listUser.length != 0)
                     Container(
-                        padding:
-                            EdgeInsets.only(left: 14, top: 20, right: 14),
+                        padding: EdgeInsets.only(left: 14, top: 20, right: 14),
                         alignment: Alignment.centerLeft,
                         child: Text(
                           textAlign: TextAlign.center,
@@ -519,8 +517,8 @@ class _UsersDetailedInformationScreen
                       ),
                     ),
                 Container(
-                  padding: EdgeInsets.only(
-                      left: 20, right: 20, top: 20, bottom: 20),
+                  padding:
+                      EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 20),
                   width: MediaQuery.of(context).size.width,
                   child: ElevatedButton(
                       onPressed: () {

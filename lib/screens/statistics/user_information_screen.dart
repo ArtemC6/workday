@@ -3,19 +3,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:horizontal_data_table/horizontal_data_table.dart';
-
 import '../../data/const.dart';
 import '../../data/user_model.dart';
 import 'users_detailed_informaiton_screen.dart';
 
-
 class UserInformationScreen extends StatefulWidget {
   var uid, post;
 
-  UserInformationScreen(
-      {Key? key, @required this.uid, @required this.post})
+  UserInformationScreen({Key? key, @required this.uid, @required this.post})
       : super(key: key);
 
   @override
@@ -255,8 +251,8 @@ class _UserInformationScreen extends State<UserInformationScreen> {
       return [
         _getTitleItemWidget('Имя', 100),
         _getTitleItemWidget('Время', 100),
-        _getTitleItemWidget('Сумма', 100),
-        _getTitleItemWidget('Дата', 100),
+        _getTitleItemWidget('Сумма', 120),
+        _getTitleItemWidget('Дата', 110),
         _getTitleItemWidget('Подробней', 100),
       ];
     }
@@ -265,7 +261,7 @@ class _UserInformationScreen extends State<UserInformationScreen> {
       return [
         _getTitleItemWidget('Имя', 100),
         _getTitleItemWidget('Время', 100),
-        _getTitleItemWidget('Сумма', 100),
+        _getTitleItemWidget('Сумма', 130),
         _getTitleItemWidget('Дата', 100),
       ];
     }
@@ -287,7 +283,7 @@ class _UserInformationScreen extends State<UserInformationScreen> {
           Container(
               padding: EdgeInsets.only(left: 14, right: 14),
               child: Text(
-                '${printDurationTime(Duration(minutes: listUser[index].workTime))} минут ',
+                '${printDurationTime(Duration(minutes: listUser[index].workTime))}',
                 style: TextStyle(fontSize: 16, color: Colors.white),
               )),
           Container(
@@ -295,9 +291,9 @@ class _UserInformationScreen extends State<UserInformationScreen> {
               '${double.parse((listUser[index].money).toStringAsFixed(1).toString())} сом ',
               style: TextStyle(fontSize: 16, color: Colors.white),
             ),
-            width: 100,
+            width: 140,
             height: 52,
-            padding: EdgeInsets.only(left: 20),
+            padding: EdgeInsets.only(left: 40),
             alignment: Alignment.centerLeft,
           ),
           Container(
@@ -305,9 +301,9 @@ class _UserInformationScreen extends State<UserInformationScreen> {
               '${getData(listUser[index].startDate)}',
               style: TextStyle(fontSize: 16, color: Colors.white),
             ),
-            width: 100,
+            width: 120,
             height: 52,
-            padding: EdgeInsets.only(left: 20),
+            padding: EdgeInsets.only(left: 30),
             alignment: Alignment.centerLeft,
           ),
           Container(
@@ -329,7 +325,7 @@ class _UserInformationScreen extends State<UserInformationScreen> {
             ),
             width: 140,
             height: 30,
-            padding: EdgeInsets.only(left: 30),
+            padding: EdgeInsets.only(left: 40),
           ),
         ],
       );
@@ -342,7 +338,7 @@ class _UserInformationScreen extends State<UserInformationScreen> {
           Container(
               padding: EdgeInsets.only(left: 14, right: 14),
               child: Text(
-                '${printDurationTime(Duration(minutes: listUserFull[index].workTime))} минут ',
+                '${printDurationTime(Duration(minutes: listUserFull[index].workTime))}',
                 style: TextStyle(fontSize: 16, color: Colors.white),
               )),
           Container(
@@ -350,9 +346,9 @@ class _UserInformationScreen extends State<UserInformationScreen> {
               '${double.parse((listUserFull[index].money).toStringAsFixed(1).toString())} сом ',
               style: TextStyle(fontSize: 16, color: Colors.white),
             ),
-            width: 100,
+            width: 130,
             height: 52,
-            padding: EdgeInsets.only(left: 20),
+            padding: EdgeInsets.only(left: 40),
             alignment: Alignment.centerLeft,
           ),
           Container(
@@ -360,9 +356,9 @@ class _UserInformationScreen extends State<UserInformationScreen> {
               '${getData(listUserFull[index].startDate)}',
               style: TextStyle(fontSize: 16, color: Colors.white),
             ),
-            width: 100,
+            width: 130,
             height: 52,
-            padding: EdgeInsets.only(left: 20),
+            padding: EdgeInsets.only(left: 40),
             alignment: Alignment.centerLeft,
           ),
         ],
