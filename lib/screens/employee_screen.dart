@@ -42,7 +42,8 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
   bool countDown = true,
       isVisible = false,
       isVisibleTime = false,
-      isVisibleText = false;
+      isVisibleText = false,
+      isAdmin = false;
   int _page = 0;
   UploadTask? task;
   File? startFilePhoto, endFilePhoto;
@@ -238,6 +239,20 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
     listUser.clear();
 
     await FirebaseFirestore.instance
+        .collection('User')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get()
+        .then((DocumentSnapshot documentSnapshot) async {
+      if (documentSnapshot.exists) {
+        setState(() {
+          if (documentSnapshot['post'] == 'admin') {
+            isAdmin = true;
+          }
+        });
+      }
+    });
+
+    await FirebaseFirestore.instance
         .collection('Work')
         .get()
         .then((QuerySnapshot querySnapshot) {
@@ -266,6 +281,53 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
 
         if (data['id_user'] == FirebaseAuth.instance.currentUser?.uid) {
           if (timeStart == currentTime) {
+            if (data['post'] != 'admin') {
+              if (data['endDate'] != '') {
+                setState(() {
+                  var isExist = listUser.indexWhere(
+                      (element) => element.id_user == (data['id_user']));
+
+                  if (isExist < 0) {
+                    listUser.add(UserModel(
+                        name: data["name"],
+                        email: data["email"],
+                        status: data["post"],
+                        startUri: data["startUri"],
+                        endUri: data["endUri"],
+                        startDate: data["startDate"],
+                        endDate: data["endDate"],
+                        id_user: data["id_user"],
+                        id_post: data["id_post"],
+                        money: 0.0,
+                        workTime: getUserWorkTime(
+                            data["startDate"], data["endDate"])));
+                  } else {
+                    listUser[isExist].workTime +=
+                        getUserWorkTime(data['startDate'], data['endDate']);
+                  }
+                });
+              }
+
+              if (data['endDate'] == '') {
+                setState(() {
+                  isVisible = true;
+                });
+
+                countdownDuration = Duration(
+                    seconds: int.parse(DateTime.now()
+                        .difference(dateTimeStart)
+                        .inSeconds
+                        .toString()));
+
+                reset();
+                startTimer();
+              }
+            }
+          }
+        }
+
+        if (data['id_user'] == FirebaseAuth.instance.currentUser?.uid) {
+          if (data['post'] == 'admin') {
             if (data['endDate'] != '') {
               setState(() {
                 var isExist = listUser.indexWhere(
@@ -313,8 +375,10 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
 
     if (listUser.length != 0) {
       if (!isVisible) {
-        countdownDuration = Duration(minutes: listUser[0].workTime);
-        reset();
+        if (!isAdmin) {
+          countdownDuration = Duration(minutes: listUser[0].workTime);
+          reset();
+        }
       }
     }
   }
@@ -374,10 +438,12 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                           backgroundColor: Colors.white),
                       onPressed: () async {
                         DateTime now = DateTime.now();
+
                         int formattedDate =
                             int.parse(DateFormat('kk').format(now));
-                        if (formattedDate >= 07 && formattedDate <= 23) {
-                          isVisibleTime = false;
+
+                        if (formattedDate >= 07 && formattedDate < 23 ||
+                            isAdmin) {
                           await makeStartPhoto();
                           showAlertDialogMy(context);
 
@@ -432,7 +498,8 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                           DateTime now = DateTime.now();
                           int formattedDate =
                               int.parse(DateFormat('kk').format(now));
-                          if (formattedDate >= 07 && formattedDate <= 23) {
+                          if (formattedDate >= 07 && formattedDate < 23 ||
+                              isAdmin) {
                             await makeEndPhoto();
                             showAlertDialogMy(context);
 

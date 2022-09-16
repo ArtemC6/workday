@@ -419,7 +419,15 @@ class _UsersDetailedInformationScreen
 
     return WillPopScope(
       onWillPop: () async {
-        return await false;
+        if (screens != null) {
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (BuildContext context) => EmployeeScreen(
+                        positionBottomNavigation: 2,
+                      )));
+        }
+        return await true;
       },
       child: Scaffold(
         backgroundColor: color_main_black,

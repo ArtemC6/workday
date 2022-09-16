@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:workday/screens/auth/signin_screen.dart';
 import '../../data/const.dart';
 import '../home_screen.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class SignUpScreen extends StatefulWidget {
   @override
@@ -15,9 +16,23 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreen extends State<SignUpScreen> {
-  String _email = "", _password = "", _name = "";
+  String _email = "", _password = "", _name = "", _token = '';
   bool _isHidden = true, isVisibleSizedBox = false;
   String postUser = '', postUserName = '';
+
+  void getToken() async {
+    await FirebaseMessaging.instance.getToken().then((token) {
+      setState(() {
+        _token = token!;
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getToken();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -268,31 +283,33 @@ class _SignUpScreen extends State<SignUpScreen> {
                 splashColor: Colors.transparent,
                 highlightColor: Colors.transparent,
                 onTap: () {
-                  showAlertDialogMy(context);
+                  if (postUser != '') {
+                    showAlertDialogMy(context);
+                    FirebaseAuth.instance
+                        .createUserWithEmailAndPassword(
+                            email: _email, password: _password)
+                        .then((value) async {
+                      final docUser = await FirebaseFirestore.instance
+                          .collection('User')
+                          .doc(FirebaseAuth.instance.currentUser!.uid);
 
-                  FirebaseAuth.instance
-                      .createUserWithEmailAndPassword(
-                          email: _email, password: _password)
-                      .then((value) async {
-                    final docUser = await FirebaseFirestore.instance
-                        .collection('User')
-                        .doc(FirebaseAuth.instance.currentUser!.uid);
+                      final json = {
+                        'uid': FirebaseAuth.instance.currentUser!.uid,
+                        'name': _name,
+                        'email': _email,
+                        'password': _password,
+                        'post': postUser,
+                        'token': _token,
+                      };
 
-                    final json = {
-                      'uid': FirebaseAuth.instance.currentUser!.uid,
-                      'name': _name,
-                      'email': _email,
-                      'password': _password,
-                      'post': postUser,
-                    };
+                      docUser.set(json);
 
-                    docUser.set(json);
-
-                    Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(builder: (context) => HomeScreen()));
-                  }).onError((error, stackTrace) {
-                    Navigator.pop(context);
-                  });
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(
+                          builder: (context) => HomeScreen()));
+                    }).onError((error, stackTrace) {
+                      Navigator.pop(context);
+                    });
+                  }
                 },
                 child: AvatarGlow(
                   glowColor: Colors.blueAccent,
@@ -335,33 +352,36 @@ class _SignUpScreen extends State<SignUpScreen> {
         ),
         child: TextField(
           onSubmitted: (value) {
-            setState(() {
-              isVisibleSizedBox = false;
-              showAlertDialogMy(context);
-              FirebaseAuth.instance
-                  .createUserWithEmailAndPassword(
-                      email: _email, password: _password)
-                  .then((value) async {
-                final docUser = await FirebaseFirestore.instance
-                    .collection('User')
-                    .doc(FirebaseAuth.instance.currentUser!.uid);
+            if (postUser != '') {
+              setState(() {
+                isVisibleSizedBox = false;
+                showAlertDialogMy(context);
+                FirebaseAuth.instance
+                    .createUserWithEmailAndPassword(
+                        email: _email, password: _password)
+                    .then((value) async {
+                  final docUser = await FirebaseFirestore.instance
+                      .collection('User')
+                      .doc(FirebaseAuth.instance.currentUser!.uid);
 
-                final json = {
-                  'uid': FirebaseAuth.instance.currentUser!.uid,
-                  'name': _name,
-                  'email': _email,
-                  'password': _password,
-                  'post': postUser,
-                };
+                  final json = {
+                    'uid': FirebaseAuth.instance.currentUser!.uid,
+                    'name': _name,
+                    'email': _email,
+                    'password': _password,
+                    'post': postUser,
+                    'token': _token,
+                  };
 
-                docUser.set(json);
+                  docUser.set(json);
 
-                Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => HomeScreen()));
-              }).onError((error, stackTrace) {
-                Navigator.pop(context);
+                  Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(builder: (context) => HomeScreen()));
+                }).onError((error, stackTrace) {
+                  Navigator.pop(context);
+                });
               });
-            });
+            }
           },
           onTap: () {
             setState(() {

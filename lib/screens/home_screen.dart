@@ -90,8 +90,6 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
           if (data['post'] != 'admin') {
             if (timeStart.hour >= 7 && timeStart.hour < 15) {
               if (timeCurrentNOtHour == timeStartNotHour) {
-                // print('object');
-
                 if (timeCurrentHour.hour >= dateOver_15.hour) {
                   final json = {
                     'endUri':

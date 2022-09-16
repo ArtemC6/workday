@@ -188,7 +188,6 @@ class _SignInScreen extends State<SignInScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Padding(padding: EdgeInsets.only(top: 200)),
                 Text(
                   'Войти',
                   style: TextStyle(
