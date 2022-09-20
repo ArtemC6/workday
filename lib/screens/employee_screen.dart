@@ -97,28 +97,6 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
         buildTimeCard(time: seconds, header: 'Секунд'),
       ]),
     );
-
-    // return Container(
-    //   alignment: Alignment.center,
-    //   // padding: EdgeInsets.only(bottom: _height / 6),
-    //   child: FlipClock.simple(
-    //     // height: _height / 12,
-    //     // width: _width / 10,
-    //     // startTime: DateTime(DateTime.now().hour),
-    //     startTime: DateTime(hours, ),
-    //     digitColor: Colors.black,
-    //     backgroundColor: Colors.white,
-    //     // digitSize: _width / 6,
-    //     flipDirection: FlipDirection.down,
-    //     // timeLeft: Duration(minutes: 10, seconds: 10, hours: 10),
-    //
-    //     // timeLeft: duration ?? Duration(seconds: 0),
-    //     // digitSize: _width / 6,
-    //
-    //     spacing: EdgeInsets.symmetric(horizontal: 3),
-    //     borderRadius: const BorderRadius.all(Radius.circular(10.0)),
-    //   ),
-    // );
   }
 
   Widget buildTimeCard({required String time, required String header}) =>
@@ -272,7 +250,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
         setState(() {
           if (documentSnapshot['post'] == 'admin') {
             isAdmin = true;
-          } else if (documentSnapshot['post' == 'concierge']) {
+          } else if (documentSnapshot['post'] == 'concierge') {
             isConcierge = true;
           }
         });
@@ -301,10 +279,6 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
           currentDate.month,
           currentDate.day,
         );
-
-        setState(() {
-          isVisibleText = true;
-        });
 
         if (data['id_user'] == FirebaseAuth.instance.currentUser?.uid) {
           if (timeStart == currentTime) {
@@ -460,6 +434,11 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
   @override
   void initState() {
     super.initState();
+    setState(() {
+      if (nowDateTime.hour >= 07 && nowDateTime.hour < 23) {
+        isVisibleText = true;
+      }
+    });
     Future.delayed(const Duration(milliseconds: 100), () {
       setState(() {
         if (positionBottomNavigation != null) {
@@ -511,54 +490,58 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                           backgroundColor: Colors.white),
                       onPressed: () async {
                         // 07:23
-                        if (nowDateTime.hour >= 07 &&
-                            nowDateTime.hour < 23 &&
-                            !isConcierge) {
-                          await makeStartPhoto();
-                          showAlertDialogMy(context);
 
-                          setState(() {
-                            isVisible = !isVisible;
-                            isVisibleTimeEmployee = false;
-                          });
+                        if (!isConcierge) {
+                          if (nowDateTime.hour >= 07 && nowDateTime.hour < 23) {
+                            await makeStartPhoto();
+                            showAlertDialogMy(context);
 
-                          await startWorking();
+                            setState(() {
+                              isVisible = !isVisible;
+                              isVisibleTimeEmployee = false;
+                            });
 
-                          setState(() {
-                            Navigator.pushReplacement(
-                                context,
-                                new MaterialPageRoute(
-                                    builder: (context) =>
-                                        new EmployeeScreen()));
-                          });
-                        } else {
-                          setState(() {
-                            isVisibleTimeEmployee = true;
-                          });
+                            await startWorking();
+
+                            setState(() {
+                              Navigator.pushReplacement(
+                                  context,
+                                  new MaterialPageRoute(
+                                      builder: (context) =>
+                                          new EmployeeScreen()));
+                            });
+                          } else {
+                            setState(() {
+                              isVisibleTimeEmployee = true;
+                            });
+                          }
                         }
 
-                        if (nowDateTime.hour >= 09 && isConcierge) {
-                          await makeStartPhoto();
-                          showAlertDialogMy(context);
+                        if (isConcierge) {
+                          // if (nowDateTime.hour >= 09) {
+                          if (true) {
+                            await makeStartPhoto();
+                            showAlertDialogMy(context);
 
-                          setState(() {
-                            isVisible = !isVisible;
-                            isVisibleTimeConcierge = false;
-                          });
+                            setState(() {
+                              isVisible = !isVisible;
+                              isVisibleTimeConcierge = false;
+                            });
 
-                          await startWorking();
+                            await startWorking();
 
-                          setState(() {
-                            Navigator.pushReplacement(
-                                context,
-                                new MaterialPageRoute(
-                                    builder: (context) =>
-                                        new EmployeeScreen()));
-                          });
-                        } else {
-                          setState(() {
-                            isVisibleTimeConcierge = true;
-                          });
+                            setState(() {
+                              Navigator.pushReplacement(
+                                  context,
+                                  new MaterialPageRoute(
+                                      builder: (context) =>
+                                          new EmployeeScreen()));
+                            });
+                          } else {
+                            setState(() {
+                              isVisibleTimeConcierge = true;
+                            });
+                          }
                         }
                       },
                       child: AnimatedTextKit(
