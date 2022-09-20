@@ -55,86 +55,168 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
       Navigator.pushReplacement(context, Scale_Transition(SignInScreen()));
     }
 
-    FirebaseFirestore.instance
-        .collection('Work')
-        .get()
-        .then((QuerySnapshot querySnapshot) {
-      querySnapshot.docs.forEach((document) async {
-        Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-
-        final Timestamp timestampStart = data['startDate'] as Timestamp;
-        final DateTime dateTimeStart = timestampStart.toDate();
-        DateTime currentDate = DateTime.now();
-
-        var timeStartNotHour = new DateTime(
-            dateTimeStart.year, dateTimeStart.month, dateTimeStart.day);
-
-        var timeCurrentNOtHour =
-            new DateTime(currentDate.year, currentDate.month, currentDate.day);
-
-        var timeCurrentHour = new DateTime(currentDate.year, currentDate.month,
-            currentDate.day, currentDate.hour);
-
-        var timeStart = new DateTime(dateTimeStart.year, dateTimeStart.month,
-            dateTimeStart.day, dateTimeStart.hour);
-
-        final dockUsers = await FirebaseFirestore.instance.collection('Work');
-
-        DateTime dateOver_15 =
-            DateTime.parse("${DateFormat('yyyy-MM-dd').format(timeStart)} 15");
-
-        DateTime dateOver_23 =
-            DateTime.parse("${DateFormat('yyyy-MM-dd').format(timeStart)} 23");
-
-        if (data['endDate'] == '') {
-          if (data['post'] != 'admin') {
-            if (timeStart.hour >= 7 && timeStart.hour < 15) {
-              if (timeCurrentNOtHour == timeStartNotHour) {
-                if (timeCurrentHour.hour >= dateOver_15.hour) {
-                  final json = {
-                    'endUri':
-                        'https://media.baamboozle.com/uploads/images/59634/1591055175_32403',
-                    'endDate': DateTime.parse(
-                        "${DateFormat('yyyy-MM-dd').format(timeStart)} 15"),
-                  };
-
-                  dockUsers.doc(document.id).update(json);
-                }
-              } else {
-                final json = {
-                  'endUri':
-                      'https://media.baamboozle.com/uploads/images/59634/1591055175_32403',
-                  'endDate': DateTime.parse(
-                      "${DateFormat('yyyy-MM-dd').format(timeStart)} 15"),
-                };
-                dockUsers.doc(document.id).update(json);
-              }
-            }
-            if (timeStart.hour >= 15 && timeStart.hour <= 23) {
-              if (timeCurrentNOtHour == timeStartNotHour) {
-                if (timeCurrentHour.hour >= dateOver_23.hour) {
-                  final json = {
-                    'endUri':
-                        'https://media.baamboozle.com/uploads/images/59634/1591055175_32403',
-                    'endDate': DateTime.parse(
-                        "${DateFormat('yyyy-MM-dd').format(timeStart)} 23"),
-                  };
-                  dockUsers.doc(document.id).update(json);
-                }
-              } else {
-                final json = {
-                  'endUri':
-                      'https://media.baamboozle.com/uploads/images/59634/1591055175_32403',
-                  'endDate': DateTime.parse(
-                      "${DateFormat('yyyy-MM-dd').format(timeStart)} 23"),
-                };
-                dockUsers.doc(document.id).update(json);
-              }
-            }
-          }
-        }
-      });
-    });
+    // FirebaseFirestore.instance
+    //     .collection('Work')
+    //     .get()
+    //     .then((QuerySnapshot querySnapshot) {
+    //   querySnapshot.docs.forEach((document) async {
+    //     Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+    //
+    //     final Timestamp timestampStart = data['startDate'] as Timestamp;
+    //     final DateTime dateTimeStart = timestampStart.toDate();
+    //     DateTime currentDate = DateTime.now();
+    //
+    //     var timeStartNotHour = new DateTime(
+    //         dateTimeStart.year, dateTimeStart.month, dateTimeStart.day);
+    //
+    //     var timeCurrentNOtHour =
+    //         new DateTime(currentDate.year, currentDate.month, currentDate.day);
+    //
+    //     var timeCurrentHour = new DateTime(currentDate.year, currentDate.month,
+    //         currentDate.day, currentDate.hour);
+    //
+    //     var timeStart = new DateTime(dateTimeStart.year, dateTimeStart.month,
+    //         dateTimeStart.day, dateTimeStart.hour);
+    //
+    //     final dockUsers = await FirebaseFirestore.instance.collection('Work');
+    //
+    //     // dockUsers.doc(document.id).update({'money': 0.0});
+    //
+    //     DateTime dateOver_09 =
+    //         DateTime.parse("${DateFormat('yyyy-MM-dd').format(timeStart)} 09");
+    //
+    //     DateTime dateOver_15 =
+    //         DateTime.parse("${DateFormat('yyyy-MM-dd').format(timeStart)} 15");
+    //
+    //     DateTime dateOver_17 =
+    //         DateTime.parse("${DateFormat('yyyy-MM-dd').format(timeStart)} 17");
+    //
+    //     DateTime dateOver_23 =
+    //         DateTime.parse("${DateFormat('yyyy-MM-dd').format(timeStart)} 23");
+    //
+    //     // 07:23
+    //     if (data['endDate'] == '') {
+    //       if (data['post'] != 'admin' || data['post'] != 'concierge') {
+    //         if (timeStart.hour >= 7 && timeStart.hour < 15) {
+    //           if (timeCurrentNOtHour == timeStartNotHour) {
+    //             if (timeCurrentHour.hour >= dateOver_15.hour) {
+    //               final json = {
+    //                 'endUri':
+    //                     'https://media.baamboozle.com/uploads/images/59634/1591055175_32403',
+    //                 'endDate': DateTime.parse(
+    //                     "${DateFormat('yyyy-MM-dd').format(timeStart)} 15"),
+    //               };
+    //
+    //               dockUsers.doc(document.id).update(json);
+    //             }
+    //           } else {
+    //             final json = {
+    //               'endUri':
+    //                   'https://media.baamboozle.com/uploads/images/59634/1591055175_32403',
+    //               'endDate': DateTime.parse(
+    //                   "${DateFormat('yyyy-MM-dd').format(timeStart)} 15"),
+    //             };
+    //             dockUsers.doc(document.id).update(json);
+    //           }
+    //         }
+    //         if (timeStart.hour >= 15 && timeStart.hour <= 23) {
+    //           if (timeCurrentNOtHour == timeStartNotHour) {
+    //             if (timeCurrentHour.hour >= dateOver_23.hour) {
+    //               final json = {
+    //                 'endUri':
+    //                     'https://media.baamboozle.com/uploads/images/59634/1591055175_32403',
+    //                 'endDate': DateTime.parse(
+    //                     "${DateFormat('yyyy-MM-dd').format(timeStart)} 23"),
+    //               };
+    //               dockUsers.doc(document.id).update(json);
+    //             }
+    //           } else {
+    //             final json = {
+    //               'endUri':
+    //                   'https://media.baamboozle.com/uploads/images/59634/1591055175_32403',
+    //               'endDate': DateTime.parse(
+    //                   "${DateFormat('yyyy-MM-dd').format(timeStart)} 23"),
+    //             };
+    //             dockUsers.doc(document.id).update(json);
+    //           }
+    //         }
+    //       }
+    //
+    //       // admin
+    //       if (data['post'] == 'admin') {
+    //         if (timeStart.hour >= 8 && timeStart.hour <= 17) {
+    //           if (timeCurrentNOtHour == timeStartNotHour) {
+    //             if (timeCurrentHour.hour >= dateOver_17.hour) {
+    //               final json = {
+    //                 'endUri':
+    //                     'https://media.baamboozle.com/uploads/images/59634/1591055175_32403',
+    //                 'endDate': DateTime.parse(
+    //                     "${DateFormat('yyyy-MM-dd').format(timeStart)} 17"),
+    //               };
+    //
+    //               dockUsers.doc(document.id).update(json);
+    //             }
+    //           } else {
+    //             final json = {
+    //               'endUri':
+    //                   'https://media.baamboozle.com/uploads/images/59634/1591055175_32403',
+    //               'endDate': DateTime.parse(
+    //                   "${DateFormat('yyyy-MM-dd').format(timeStart)} 17"),
+    //             };
+    //             dockUsers.doc(document.id).update(json);
+    //           }
+    //         }
+    //       }
+    //
+    //       if (data['post'] == 'concierge') {
+    //         if (timeStart.hour >= 9 && timeStart.hour < 17) {
+    //           if (timeCurrentNOtHour == timeStartNotHour) {
+    //             if (timeCurrentHour.hour >= dateOver_17.hour) {
+    //               final json = {
+    //                 'endUri':
+    //                     'https://media.baamboozle.com/uploads/images/59634/1591055175_32403',
+    //                 'endDate': DateTime.parse(
+    //                     "${DateFormat('yyyy-MM-dd').format(timeStart)} 17"),
+    //               };
+    //
+    //               dockUsers.doc(document.id).update(json);
+    //             }
+    //           } else {
+    //             final json = {
+    //               'endUri':
+    //                   'https://media.baamboozle.com/uploads/images/59634/1591055175_32403',
+    //               'endDate': DateTime.parse(
+    //                   "${DateFormat('yyyy-MM-dd').format(timeStart)} 17"),
+    //             };
+    //             dockUsers.doc(document.id).update(json);
+    //           }
+    //         }
+    //
+    //         if (timeStart.hour >= 21 && timeStart.hour <= 9) {
+    //           if (timeCurrentNOtHour == timeStartNotHour) {
+    //             if (timeCurrentHour.hour >= dateOver_09.hour) {
+    //               final json = {
+    //                 'endUri':
+    //                     'https://media.baamboozle.com/uploads/images/59634/1591055175_32403',
+    //                 'endDate': DateTime.parse(
+    //                     "${DateFormat('yyyy-MM-dd').format(timeStart)} 09"),
+    //               };
+    //               dockUsers.doc(document.id).update(json);
+    //             }
+    //           } else {
+    //             final json = {
+    //               'endUri':
+    //                   'https://media.baamboozle.com/uploads/images/59634/1591055175_32403',
+    //               'endDate': DateTime.parse(
+    //                   "${DateFormat('yyyy-MM-dd').format(timeStart)} 09"),
+    //             };
+    //             dockUsers.doc(document.id).update(json);
+    //           }
+    //         }
+    //       }
+    //     }
+    //   });
+    // });
   }
 
   @override

@@ -9,25 +9,27 @@ import '../../data/user_model.dart';
 import '../employee_screen.dart';
 
 class UsersDetailedInformationScreen extends StatefulWidget {
-  var id_user, time, screens;
+  var id_user, timeStart, timeEnd, screens;
 
   UsersDetailedInformationScreen(
       {Key? key,
       @required this.id_user,
-      @required this.time,
+      @required this.timeStart,
+      @required this.timeEnd,
       @required this.screens})
       : super(key: key);
 
   @override
   State<UsersDetailedInformationScreen> createState() =>
-      _UsersDetailedInformationScreen(id_user, time, screens);
+      _UsersDetailedInformationScreen(id_user, timeStart, timeEnd, screens);
 }
 
 class _UsersDetailedInformationScreen
     extends State<UsersDetailedInformationScreen> {
-  var idUser, time, screens;
+  var idUser, _timeStart, _timeEnd, screens;
 
-  _UsersDetailedInformationScreen(this.idUser, this.time, this.screens);
+  _UsersDetailedInformationScreen(
+      this.idUser, this._timeStart, this._timeEnd, this.screens);
 
   List<UserModel> listUser = [];
   bool isVisible = false;
@@ -89,12 +91,10 @@ class _UsersDetailedInformationScreen
               setState(() {});
             }
           }
-        }
 
-        if (idUser == data['id_user']) {
           if (timeStart == currentTime) {
             if (data['endDate'] != '') {
-              if (time == null) {
+              if (_timeStart == null) {
                 setState(() {
                   isVisible = false;
                 });
@@ -116,12 +116,12 @@ class _UsersDetailedInformationScreen
             }
           }
 
-          if (time != null) {
+          if (_timeStart != null && _timeEnd == null) {
             setState(() {
               isVisible = true;
             });
 
-            final DateTime dateTimeStartCame = time.toDate();
+            final DateTime dateTimeStartCame = _timeStart.toDate();
             var timeStartCame = new DateTime(
               dateTimeStartCame.year,
               dateTimeStartCame.month,
@@ -129,6 +129,33 @@ class _UsersDetailedInformationScreen
             );
 
             if (timeStart == timeStartCame) {
+              listUser.add(UserModel(
+                  name: data["name"],
+                  email: data["email"],
+                  status: data["post"],
+                  startUri: data["startUri"],
+                  endUri: data["endUri"],
+                  startDate: data["startDate"],
+                  endDate: data["endDate"],
+                  id_user: data["id_user"],
+                  id_post: data["id_post"],
+                  money: data['money'],
+                  workTime:
+                      getUserWorkTime(data["startDate"], data["endDate"])));
+              setState(() {});
+            }
+          }
+
+          if (_timeStart != null && _timeEnd != null) {
+            setState(() {
+              isVisible = true;
+            });
+
+            _timeStart = _timeStart.subtract(Duration(seconds: 1));
+            _timeEnd = _timeEnd.add(Duration(days: 1));
+            _timeEnd = _timeEnd.subtract(Duration(seconds: 1));
+
+            if (timeStart.isAfter(_timeStart) && timeStart.isBefore(_timeEnd)) {
               listUser.add(UserModel(
                   name: data["name"],
                   email: data["email"],
@@ -427,6 +454,7 @@ class _UsersDetailedInformationScreen
                         positionBottomNavigation: 2,
                       )));
         }
+
         return await true;
       },
       child: Scaffold(
@@ -487,7 +515,7 @@ class _UsersDetailedInformationScreen
                       child: HorizontalDataTable(
                         rightHandSideColBackgroundColor: color_main_black,
                         leftHandSideColBackgroundColor: color_main_black,
-                        leftHandSideColumnWidth: 100,
+                        leftHandSideColumnWidth: 110,
                         rightHandSideColumnWidth: 600,
                         isFixedHeader: true,
                         headerWidgets: _getTitleWidget(),
@@ -509,7 +537,7 @@ class _UsersDetailedInformationScreen
                       child: HorizontalDataTable(
                         leftHandSideColBackgroundColor: color_main_black,
                         rightHandSideColBackgroundColor: color_main_black,
-                        leftHandSideColumnWidth: 100,
+                        leftHandSideColumnWidth: 110,
                         rightHandSideColumnWidth: 600,
                         isFixedHeader: true,
                         headerWidgets: _getTitleWidgetAnalytics(),

@@ -26,6 +26,8 @@ class _SettingsScreen extends State<SettingsScreen> {
   var timeBarista = 0.0,
       timeAdministrator = 0.0,
       timeMaid = 0.0,
+      timeConcierge = 0.0,
+      timeCookWork = 0.0,
       timeCook = 0.0;
 
   showAlertDialogSettingUser(BuildContext context) {
@@ -199,6 +201,18 @@ class _SettingsScreen extends State<SettingsScreen> {
             } else if (data['post'] == 'maid') {
               timeMaid +=
                   getUserWorkTimeDouble(data["startDate"], data['endDate']);
+            } else if (data['post'] == 'concierge') {
+              timeConcierge +=
+                  getUserWorkTimeDouble(data["startDate"], data['endDate']);
+            } else if (data['post'] == 'chef-cook') {
+              timeCookWork +=
+                  getUserWorkTimeDouble(data["startDate"], data['endDate']);
+            } else if (data['post'] == 'sous-chef') {
+              timeCookWork +=
+                  getUserWorkTimeDouble(data["startDate"], data['endDate']);
+            } else if (data['post'] == 'confectioner') {
+              timeCookWork +=
+                  getUserWorkTimeDouble(data["startDate"], data['endDate']);
             }
           });
         }
@@ -209,6 +223,8 @@ class _SettingsScreen extends State<SettingsScreen> {
     dataUser.add(_SalesData(timeCook, 'Повора'));
     dataUser.add(_SalesData(timeAdministrator, 'Администраторы'));
     dataUser.add(_SalesData(timeMaid, 'Горничные'));
+    dataUser.add(_SalesData(timeConcierge, 'Коньсьерж'));
+    dataUser.add(_SalesData(timeCookWork, 'Кух-работники'));
 
     dataUser.forEach((element) {
       print(element.time);
@@ -226,7 +242,6 @@ class _SettingsScreen extends State<SettingsScreen> {
     super.initState();
     readFirebase();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -255,7 +270,9 @@ class _SettingsScreen extends State<SettingsScreen> {
                   Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                          builder: (BuildContext context) => EmployeeScreen(positionBottomNavigation: 3,)));
+                          builder: (BuildContext context) => EmployeeScreen(
+                                positionBottomNavigation: 3,
+                              )));
                 }
               });
             },
@@ -292,7 +309,8 @@ class _SettingsScreen extends State<SettingsScreen> {
                               legend: Legend(
                                   overflowMode: LegendItemOverflowMode.wrap,
                                   width: '100%',
-                                  textStyle: TextStyle(color: Colors.white),
+                                  textStyle: TextStyle(
+                                      color: Colors.white, fontSize: 11),
                                   orientation: LegendItemOrientation.horizontal,
                                   isVisible: true,
                                   position: LegendPosition.bottom),
@@ -308,7 +326,7 @@ class _SettingsScreen extends State<SettingsScreen> {
                                         (printDurationTime(Duration(
                                                 minutes: sales.time.toInt())))
                                             .toString(),
-                                    radius: '80%',
+                                    radius: '76%',
                                     dataLabelSettings: DataLabelSettings(
                                       isVisible: true,
                                       margin: EdgeInsets.zero,
@@ -328,22 +346,22 @@ class _SettingsScreen extends State<SettingsScreen> {
                         padding: EdgeInsets.only(
                             top: 30, left: _width / 18, right: _width / 18),
                         width: double.infinity,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white),
+                        child: TextButton(
+                          // style: ElevatedButton.styleFrom(
+                          //     backgroundColor: Colors.white),
                           onPressed: () {
                             showAlertDialogSettingUser(context);
                           },
                           child: Text(
                             'Настройки',
-                            style: TextStyle(color: Colors.black),
+                            style: TextStyle(color: Colors.blueAccent),
                           ),
                         ),
                       ),
                       Container(
                         width: double.infinity,
                         padding: EdgeInsets.only(
-                            left: _width / 18, right: _width / 18),
+                            left: _width / 18, right: _width / 18,top: 10),
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.white),
@@ -372,5 +390,6 @@ class _SettingsScreen extends State<SettingsScreen> {
 class _SalesData {
   final String name;
   final double time;
+
   _SalesData(this.time, this.name);
 }

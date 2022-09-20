@@ -27,8 +27,4 @@ class UserModel {
       required this.money,
       required this.id_user,
       required this.id_post});
-
-
-
-
 }

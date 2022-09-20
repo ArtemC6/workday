@@ -200,18 +200,162 @@ class _SignUpScreen extends State<SignUpScreen> {
                     Text(
                       'Зарегистироваться',
                       style: TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.blueAccent,
-                      ),
+                          fontSize: 25,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.blueAccent,
+                          letterSpacing: 1),
                     ),
                     SizedBox(),
-                    componentTextField(Icons.account_circle_outlined, 'Name...',
-                        false, false, "name"),
-                    componentTextField(
-                        Icons.email_outlined, 'Email...', false, true, 'email'),
-                    componentTextField(Icons.lock_outline, 'Password...', true,
-                        false, "password"),
+                    Container(
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: color_main_black,
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: TextField(
+                        onTap: () {
+                          setState(() {
+                            isVisibleSizedBox = true;
+                          });
+                        },
+                        style: TextStyle(color: Colors.white.withOpacity(.7)),
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(
+                            Icons.account_circle_sharp,
+                            color: Colors.white.withOpacity(.7),
+                          ),
+                          border: InputBorder.none,
+                          hintMaxLines: 1,
+                          hintText: 'Name...',
+                          hintStyle: TextStyle(
+                            fontSize: 14,
+                            color: Colors.white.withOpacity(.5),
+                          ),
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            _name = value;
+                          });
+                        },
+                      ),
+                    ),
+                    Container(
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: color_main_black,
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: TextField(
+                        onTap: () {
+                          setState(() {
+                            isVisibleSizedBox = true;
+                          });
+                        },
+                        style: TextStyle(color: Colors.white.withOpacity(.7)),
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(
+                            Icons.email_outlined,
+                            color: Colors.white.withOpacity(.7),
+                          ),
+                          border: InputBorder.none,
+                          hintMaxLines: 1,
+                          hintText: 'Email...',
+                          hintStyle: TextStyle(
+                            fontSize: 14,
+                            color: Colors.white.withOpacity(.5),
+                          ),
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            _email = value;
+                          });
+                        },
+                      ),
+                    ),
+                    Container(
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: color_main_black,
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: TextField(
+                        onSubmitted: (value) {
+                          if (postUser != '') {
+                            setState(() {
+                              isVisibleSizedBox = false;
+                              showAlertDialogMy(context);
+                              FirebaseAuth.instance
+                                  .createUserWithEmailAndPassword(
+                                      email: _email, password: _password)
+                                  .then((value) async {
+                                final docUser = await FirebaseFirestore.instance
+                                    .collection('User')
+                                    .doc(
+                                        FirebaseAuth.instance.currentUser!.uid);
+
+                                final json = {
+                                  'uid': FirebaseAuth.instance.currentUser!.uid,
+                                  'name': _name,
+                                  'email': _email,
+                                  'password': _password,
+                                  'post': postUser,
+                                  'token': _token,
+                                };
+
+                                docUser.set(json);
+
+                                Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute(
+                                        builder: (context) => HomeScreen()));
+                              }).onError((error, stackTrace) {
+                                Navigator.pop(context);
+                              });
+                            });
+                          }
+                        },
+                        onTap: () {
+                          setState(() {
+                            isVisibleSizedBox = true;
+                          });
+                        },
+                        style: TextStyle(color: Colors.white.withOpacity(.7)),
+                        obscureText: _isHidden,
+                        decoration: InputDecoration(
+                          suffixIcon: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _isHidden = !_isHidden;
+                              });
+                            },
+                            child: _isHidden
+                                ? Icon(
+                                    Icons.remove_red_eye_sharp,
+                                    color: Colors.white24,
+                                  )
+                                : Icon(
+                                    Icons.remove_red_eye,
+                                    color: Colors.blueAccent,
+                                  ),
+                          ),
+                          prefixIcon: Icon(
+                            Icons.lock_open_outlined,
+                            color: Colors.white.withOpacity(.7),
+                          ),
+                          border: InputBorder.none,
+                          hintMaxLines: 1,
+                          hintText: 'Password...',
+                          hintStyle: TextStyle(
+                            fontSize: 14,
+                            color: Colors.white.withOpacity(.5),
+                          ),
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            _password = value;
+                          });
+                        },
+                      ),
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
@@ -233,6 +377,7 @@ class _SignUpScreen extends State<SignUpScreen> {
                                   Colors.purple,
                                   Colors.pink,
                                   Colors.indigo,
+                                  Colors.redAccent,
                                   Colors.deepPurpleAccent,
                                   Colors.purpleAccent,
                                   Colors.deepPurpleAccent,
@@ -261,6 +406,7 @@ class _SignUpScreen extends State<SignUpScreen> {
                                   Colors.purple,
                                   Colors.pink,
                                   Colors.indigo,
+                                  Colors.redAccent,
                                   Colors.deepPurpleAccent,
                                   Colors.purpleAccent,
                                   Colors.deepPurpleAccent,

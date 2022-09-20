@@ -40,7 +40,7 @@ class _NotificationScreen extends State<NotificationScreen> {
         var currentTimeDay = new DateTime(
           currentDate.year,
           currentDate.month,
-          currentDate.day - 33,
+          currentDate.day - 60,
         );
 
         DateTime start = currentTimeDay;
@@ -137,8 +137,8 @@ class _NotificationScreen extends State<NotificationScreen> {
                         padding: EdgeInsets.only(
                           top: _height / 28,
                           bottom: _height / 5.5,
-                          left: _width / 10,
-                          right: _width / 10,
+                          left: _width / 14,
+                          right: _width / 14,
                         ),
                         itemCount: listUserWork.length,
                         itemBuilder: (BuildContext context, int index) {
@@ -153,39 +153,125 @@ class _NotificationScreen extends State<NotificationScreen> {
                                 duration: Duration(milliseconds: 3500),
                                 child: InkWell(
                                   onTap: () {
+
                                     Navigator.pushReplacement(
                                         context,
                                         MaterialPageRoute(
                                             builder: (BuildContext context) =>
-                                                UsersDetailedInformationScreen(
-                                                  id_user: listUserWork[index]
-                                                      .id_user,
-                                                  time: listUserWork[index]
-                                                      .startDate,
-                                                  screens: 'notification',
+                                                EmployeeScreen(
+                                                positionBottomNavigation: 1,
                                                 )));
                                   },
                                   child: Container(
+                                    height: _height / 5.5,
+                                    width: _width / 1,
                                     padding:
                                         EdgeInsets.only(top: 12, bottom: 12),
                                     child: Card(
+                                      color: Colors.white24,
                                       shape: RoundedRectangleBorder(
-                                        side: BorderSide(color: Colors.white),
-                                        borderRadius: BorderRadius.circular(24),
+                                        borderRadius: BorderRadius.circular(10),
                                       ),
                                       child: Container(
-                                        padding: EdgeInsets.all(34),
-                                        child: Column(
+                                        margin: EdgeInsets.only(
+                                            left: 18, top: 20, right: 10),
+                                        child: (Column(
                                           children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    Container(
+                                                      child: Image.asset(
+                                                        'images/ic_green_dot.png',
+                                                        height: 8,
+                                                        width: 8,
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                      padding: EdgeInsets.only(
+                                                          left: 10),
+                                                      child: Text(
+                                                        ' Вы получили',
+                                                        style: TextStyle(
+                                                            color: Colors.green,
+                                                            fontSize: 15),
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                                Container(
+                                                  margin: EdgeInsets.only(
+                                                      right: 10, bottom: 6),
+                                                  child: Icon(
+                                                    Icons.navigate_next_rounded,
+                                                    color: Colors.white,
+                                                  ),
+                                                  // child: ,
+                                                  height: 10,
+                                                  width: 10,
+                                                ),
+                                              ],
+                                            ),
                                             Container(
-                                              child: Text(
-                                                ' Вы получили ${listUserWork[index].money} за ${getData(listUserWork[index].startDate)}',
-                                                style: TextStyle(
-                                                    color: Colors.green),
+                                              padding: EdgeInsets.only(top: 14),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.end,
+                                                children: [
+                                                  Container(
+                                                    padding: EdgeInsets.only(
+                                                        top: 12),
+                                                    child: Text(
+                                                      ' ${getData(listUserWork[index].startDate)}',
+                                                      style: TextStyle(
+                                                          color:
+                                                              Colors.white38),
+                                                    ),
+                                                  ),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Container(
+                                                        child: Text(
+                                                          '\$${listUserWork[index].money}',
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.white,
+                                                              fontSize: 17,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        ),
+                                                      ),
+                                                      Container(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                left: 6),
+                                                        child: Image.asset(
+                                                          'images/Ic_green_performed.png',
+                                                          height: 15,
+                                                          width: 15,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
                                               ),
                                             )
                                           ],
-                                        ),
+                                        )),
                                       ),
                                     ),
                                   ),

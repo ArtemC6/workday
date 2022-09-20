@@ -7,6 +7,7 @@ import 'package:horizontal_data_table/horizontal_data_table.dart';
 import '../../data/const.dart';
 import '../../data/user_model.dart';
 import 'users_detailed_informaiton_screen.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class UserInformationScreen extends StatefulWidget {
   var uid, post;
@@ -22,7 +23,7 @@ class UserInformationScreen extends StatefulWidget {
 class _UserInformationScreen extends State<UserInformationScreen> {
   var uid, post;
 
-  _UserInformationScreen(this.uid, post);
+  _UserInformationScreen(this.uid, this.post);
 
   List<UserModel> listUser = [], listUserFull = [];
   bool isPositionVisible = false, isVisiblyProgress = false, isPosition = true;
@@ -220,12 +221,11 @@ class _UserInformationScreen extends State<UserInformationScreen> {
 
     void _showDataTimeRange() async {
       final DateTimeRange? result = await showDateRangePicker(
-        context: context,
-        firstDate: DateTime(2022, 1, 1),
-        lastDate: DateTime(2030, 12, 31),
-        currentDate: DateTime.now(),
-        saveText: 'Выбрать',
-      );
+          context: context,
+          firstDate: DateTime(2022, 1, 1),
+          lastDate: DateTime(2030, 12, 31),
+          currentDate: DateTime.now(),
+          saveText: 'Выбрать');
 
       if (result != null) {
         setState(() {
@@ -315,7 +315,7 @@ class _UserInformationScreen extends State<UserInformationScreen> {
                     MaterialPageRoute(
                         builder: (context) => UsersDetailedInformationScreen(
                               id_user: listUser[index].id_user,
-                              time: listUser[index].startDate,
+                          timeStart: listUser[index].startDate,
                             )));
               },
               child: Text(
@@ -409,7 +409,7 @@ class _UserInformationScreen extends State<UserInformationScreen> {
                   child: HorizontalDataTable(
                     leftHandSideColBackgroundColor: color_main_black,
                     rightHandSideColBackgroundColor: color_main_black,
-                    leftHandSideColumnWidth: 100,
+                    leftHandSideColumnWidth: 110,
                     rightHandSideColumnWidth: 600,
                     isFixedHeader: true,
                     headerWidgets: _getTitleWidget(),
@@ -436,7 +436,7 @@ class _UserInformationScreen extends State<UserInformationScreen> {
                       child: HorizontalDataTable(
                         leftHandSideColBackgroundColor: color_main_black,
                         rightHandSideColBackgroundColor: color_main_black,
-                        leftHandSideColumnWidth: 100,
+                        leftHandSideColumnWidth: 110,
                         rightHandSideColumnWidth: 600,
                         isFixedHeader: true,
                         headerWidgets: _getTitleWidgetFull(),

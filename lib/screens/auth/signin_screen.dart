@@ -45,124 +45,6 @@ class _SignInScreen extends State<SignInScreen> {
     }
   }
 
-  Widget componentTextField(IconData icon, String hintText, bool isPassword,
-      bool isEmail, String changed) {
-    if (isPassword) {
-      return Container(
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: color_main_black,
-          borderRadius: BorderRadius.circular(15),
-        ),
-        child: TextField(
-          onSubmitted: (value) {
-            setState(() {
-              isVisibleSizedBox = false;
-
-              showAlertDialogMy(context);
-              FirebaseAuth.instance
-                  .signInWithEmailAndPassword(
-                      email: _email, password: _password)
-                  .then((value) => {
-                        Navigator.of(context).pushReplacement(MaterialPageRoute(
-                            builder: (context) => HomeScreen()))
-                      })
-                  .catchError((e) => Navigator.pop(context));
-            });
-          },
-          onTap: () {
-            setState(() {
-              isVisibleSizedBox = true;
-            });
-          },
-          style: TextStyle(color: Colors.white.withOpacity(.7)),
-          obscureText: _isHidden,
-          keyboardType:
-              isEmail ? TextInputType.emailAddress : TextInputType.text,
-          decoration: InputDecoration(
-            suffixIcon: GestureDetector(
-              onTap: () {
-                setState(() {
-                  _isHidden = !_isHidden;
-                });
-              },
-              child: _isHidden
-                  ? Icon(
-                      Icons.remove_red_eye_sharp,
-                      color: Colors.white24,
-                    )
-                  : Icon(
-                      Icons.remove_red_eye,
-                      color: Colors.blueAccent,
-                    ),
-            ),
-            prefixIcon: Icon(
-              icon,
-              color: Colors.white.withOpacity(.7),
-            ),
-            border: InputBorder.none,
-            hintMaxLines: 1,
-            hintText: hintText,
-            hintStyle: TextStyle(
-              fontSize: 14,
-              color: Colors.white.withOpacity(.5),
-            ),
-          ),
-          onChanged: (value) {
-            setState(() {
-              if (changed == 'email') {
-                _email = value;
-              }
-              if (changed == 'password') {
-                _password = value;
-              }
-            });
-          },
-        ),
-      );
-    }
-
-    return Container(
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: color_main_black,
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: TextField(
-        onTap: () {
-          setState(() {
-            isVisibleSizedBox = true;
-          });
-        },
-        style: TextStyle(color: Colors.white.withOpacity(.7)),
-        keyboardType: isEmail ? TextInputType.emailAddress : TextInputType.text,
-        decoration: InputDecoration(
-          prefixIcon: Icon(
-            icon,
-            color: Colors.white.withOpacity(.7),
-          ),
-          border: InputBorder.none,
-          hintMaxLines: 1,
-          hintText: hintText,
-          hintStyle: TextStyle(
-            fontSize: 14,
-            color: Colors.white.withOpacity(.5),
-          ),
-        ),
-        onChanged: (value) {
-          setState(() {
-            if (changed == 'email') {
-              _email = value;
-            }
-            if (changed == 'password') {
-              _password = value;
-            }
-          });
-        },
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     double _width = MediaQuery.of(context).size.width;
@@ -191,18 +73,128 @@ class _SignInScreen extends State<SignInScreen> {
                 Text(
                   'Войти',
                   style: TextStyle(
-                    fontSize: 25,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.blueAccent,
+                      fontSize: 25,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.blueAccent,
+                      letterSpacing: 1),
+                ),
+                Container(
+                  margin: EdgeInsets.only(top: 40),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: color_main_black,
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: TextField(
+                    onSubmitted: (value) {
+                      setState(() {
+                        isVisibleSizedBox = false;
+
+                        showAlertDialogMy(context);
+                        FirebaseAuth.instance
+                            .signInWithEmailAndPassword(
+                                email: _email, password: _password)
+                            .then((value) => {
+                                  Navigator.of(context).pushReplacement(
+                                      MaterialPageRoute(
+                                          builder: (context) => HomeScreen()))
+                                })
+                            .catchError((e) => Navigator.pop(context));
+                      });
+                    },
+                    onTap: () {
+                      setState(() {
+                        isVisibleSizedBox = true;
+                      });
+                    },
+                    style: TextStyle(color: Colors.white.withOpacity(.7)),
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(
+                        Icons.email_outlined,
+                        color: Colors.white.withOpacity(.7),
+                      ),
+                      border: InputBorder.none,
+                      hintMaxLines: 1,
+                      hintText: 'Email...',
+                      hintStyle: TextStyle(
+                        fontSize: 14,
+                        color: Colors.white.withOpacity(.5),
+                      ),
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        _email = value;
+                      });
+                    },
                   ),
                 ),
-                Padding(padding: EdgeInsets.only(top: 50)),
-                componentTextField(
-                    Icons.email_outlined, 'Email...', false, true, 'email'),
-                Padding(padding: EdgeInsets.only(top: 25)),
-                componentTextField(
-                    Icons.lock_outline, 'Password...', true, false, "password"),
-                Padding(padding: EdgeInsets.only(top: 25)),
+                Container(
+                  margin: EdgeInsets.only(top: 20, bottom: 20),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: color_main_black,
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: TextField(
+                    onSubmitted: (value) {
+                      setState(() {
+                        isVisibleSizedBox = false;
+
+                        showAlertDialogMy(context);
+                        FirebaseAuth.instance
+                            .signInWithEmailAndPassword(
+                                email: _email, password: _password)
+                            .then((value) => {
+                                  Navigator.of(context).pushReplacement(
+                                      MaterialPageRoute(
+                                          builder: (context) => HomeScreen()))
+                                })
+                            .catchError((e) => Navigator.pop(context));
+                      });
+                    },
+                    onTap: () {
+                      setState(() {
+                        isVisibleSizedBox = true;
+                      });
+                    },
+                    style: TextStyle(color: Colors.white.withOpacity(.7)),
+                    obscureText: _isHidden,
+                    decoration: InputDecoration(
+                      suffixIcon: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _isHidden = !_isHidden;
+                          });
+                        },
+                        child: _isHidden
+                            ? Icon(
+                                Icons.remove_red_eye_sharp,
+                                color: Colors.white24,
+                              )
+                            : Icon(
+                                Icons.remove_red_eye,
+                                color: Colors.blueAccent,
+                              ),
+                      ),
+                      prefixIcon: Icon(
+                        Icons.lock_open_outlined,
+                        color: Colors.white.withOpacity(.7),
+                      ),
+                      border: InputBorder.none,
+                      hintMaxLines: 1,
+                      hintText: 'Password...',
+                      hintStyle: TextStyle(
+                        fontSize: 14,
+                        color: Colors.white.withOpacity(.5),
+                      ),
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        _password = value;
+                      });
+                    },
+                  ),
+                ),
                 Container(
                   alignment: Alignment.centerRight,
                   child: AnimatedTextKit(
@@ -219,6 +211,7 @@ class _SignInScreen extends State<SignInScreen> {
                           Colors.purple,
                           Colors.pink,
                           Colors.indigo,
+                          Colors.redAccent,
                           Colors.deepPurpleAccent,
                           Colors.purpleAccent,
                           Colors.deepPurpleAccent,
@@ -268,7 +261,6 @@ class _SignInScreen extends State<SignInScreen> {
                     ),
                   ),
                 ),
-
                 if (isVisibleSizedBox)
                   SizedBox(
                     height: 170,

@@ -36,14 +36,17 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
   final ImagePicker _picker = ImagePicker();
   static var countdownDuration = Duration();
   GlobalKey<CurvedNavigationBarState> _bottomNavigationKey = GlobalKey();
-
+  final DateTime nowDateTime = DateTime.now();
   Duration duration = Duration();
+
   Timer? timer;
   bool countDown = true,
       isVisible = false,
-      isVisibleTime = false,
+      isVisibleTimeEmployee = false,
+      isVisibleTimeConcierge = false,
       isVisibleText = false,
-      isAdmin = false;
+      isAdmin = false,
+      isConcierge = false;
   int _page = 0;
   UploadTask? task;
   File? startFilePhoto, endFilePhoto;
@@ -94,6 +97,28 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
         buildTimeCard(time: seconds, header: 'Секунд'),
       ]),
     );
+
+    // return Container(
+    //   alignment: Alignment.center,
+    //   // padding: EdgeInsets.only(bottom: _height / 6),
+    //   child: FlipClock.simple(
+    //     // height: _height / 12,
+    //     // width: _width / 10,
+    //     // startTime: DateTime(DateTime.now().hour),
+    //     startTime: DateTime(hours, ),
+    //     digitColor: Colors.black,
+    //     backgroundColor: Colors.white,
+    //     // digitSize: _width / 6,
+    //     flipDirection: FlipDirection.down,
+    //     // timeLeft: Duration(minutes: 10, seconds: 10, hours: 10),
+    //
+    //     // timeLeft: duration ?? Duration(seconds: 0),
+    //     // digitSize: _width / 6,
+    //
+    //     spacing: EdgeInsets.symmetric(horizontal: 3),
+    //     borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+    //   ),
+    // );
   }
 
   Widget buildTimeCard({required String time, required String header}) =>
@@ -247,6 +272,8 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
         setState(() {
           if (documentSnapshot['post'] == 'admin') {
             isAdmin = true;
+          } else if (documentSnapshot['post' == 'concierge']) {
+            isConcierge = true;
           }
         });
       }
@@ -281,7 +308,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
 
         if (data['id_user'] == FirebaseAuth.instance.currentUser?.uid) {
           if (timeStart == currentTime) {
-            if (data['post'] != 'admin') {
+            if (data['post'] != 'admin' || data['post'] != 'concierge') {
               if (data['endDate'] != '') {
                 setState(() {
                   var isExist = listUser.indexWhere(
@@ -328,6 +355,53 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
 
         if (data['id_user'] == FirebaseAuth.instance.currentUser?.uid) {
           if (data['post'] == 'admin') {
+            if (timeStart == currentTime) {
+              if (data['endDate'] != '') {
+                setState(() {
+                  var isExist = listUser.indexWhere(
+                      (element) => element.id_user == (data['id_user']));
+
+                  if (isExist < 0) {
+                    listUser.add(UserModel(
+                        name: data["name"],
+                        email: data["email"],
+                        status: data["post"],
+                        startUri: data["startUri"],
+                        endUri: data["endUri"],
+                        startDate: data["startDate"],
+                        endDate: data["endDate"],
+                        id_user: data["id_user"],
+                        id_post: data["id_post"],
+                        money: 0.0,
+                        workTime: getUserWorkTime(
+                            data["startDate"], data["endDate"])));
+                  } else {
+                    listUser[isExist].workTime +=
+                        getUserWorkTime(data['startDate'], data['endDate']);
+                  }
+                });
+              }
+
+              if (data['endDate'] == '') {
+                setState(() {
+                  isVisible = true;
+                });
+
+                countdownDuration = Duration(
+                    seconds: int.parse(DateTime.now()
+                        .difference(dateTimeStart)
+                        .inSeconds
+                        .toString()));
+
+                reset();
+                startTimer();
+              }
+            }
+          }
+        }
+
+        if (data['id_user'] == FirebaseAuth.instance.currentUser?.uid) {
+          if (data['post'] == 'concierge') {
             if (data['endDate'] != '') {
               setState(() {
                 var isExist = listUser.indexWhere(
@@ -375,10 +449,10 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
 
     if (listUser.length != 0) {
       if (!isVisible) {
-        if (!isAdmin) {
-          countdownDuration = Duration(minutes: listUser[0].workTime);
-          reset();
-        }
+        // if (!isAdmin) {
+        countdownDuration = Duration(minutes: listUser[0].workTime);
+        reset();
+        // }
       }
     }
   }
@@ -420,13 +494,12 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
           child: Container(
             color: color_main_black,
             height: MediaQuery.of(context).size.height,
-            padding: EdgeInsets.only(right: _width / 12, left: _width / 12),
+            padding: EdgeInsets.only(right: _width / 14, left: _width / 14),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Container(
-                  width: _width,
                   padding: EdgeInsets.only(bottom: _height / 8),
                   child: buildTime(context),
                 ),
@@ -437,19 +510,16 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white),
                       onPressed: () async {
-                        DateTime now = DateTime.now();
-
-                        int formattedDate =
-                            int.parse(DateFormat('kk').format(now));
-
-                        if (formattedDate >= 07 && formattedDate < 23 ||
-                            isAdmin) {
+                        // 07:23
+                        if (nowDateTime.hour >= 07 &&
+                            nowDateTime.hour < 23 &&
+                            !isConcierge) {
                           await makeStartPhoto();
                           showAlertDialogMy(context);
 
                           setState(() {
                             isVisible = !isVisible;
-                            isVisibleTime = false;
+                            isVisibleTimeEmployee = false;
                           });
 
                           await startWorking();
@@ -463,7 +533,31 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                           });
                         } else {
                           setState(() {
-                            isVisibleTime = true;
+                            isVisibleTimeEmployee = true;
+                          });
+                        }
+
+                        if (nowDateTime.hour >= 09 && isConcierge) {
+                          await makeStartPhoto();
+                          showAlertDialogMy(context);
+
+                          setState(() {
+                            isVisible = !isVisible;
+                            isVisibleTimeConcierge = false;
+                          });
+
+                          await startWorking();
+
+                          setState(() {
+                            Navigator.pushReplacement(
+                                context,
+                                new MaterialPageRoute(
+                                    builder: (context) =>
+                                        new EmployeeScreen()));
+                          });
+                        } else {
+                          setState(() {
+                            isVisibleTimeConcierge = true;
                           });
                         }
                       },
@@ -495,17 +589,15 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                         style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white),
                         onPressed: () async {
-                          DateTime now = DateTime.now();
-                          int formattedDate =
-                              int.parse(DateFormat('kk').format(now));
-                          if (formattedDate >= 07 && formattedDate < 23 ||
-                              isAdmin) {
+                          if (nowDateTime.hour >= 07 &&
+                              nowDateTime.hour < 23 &&
+                              !isConcierge) {
                             await makeEndPhoto();
                             showAlertDialogMy(context);
 
                             setState(() {
                               isVisible = !isVisible;
-                              isVisibleTime = false;
+                              isVisibleTimeEmployee = false;
                             });
 
                             _onStop();
@@ -520,7 +612,27 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                             });
                           } else {
                             setState(() {
-                              isVisibleTime = true;
+                              isVisibleTimeEmployee = true;
+                            });
+                          }
+
+                          if (isConcierge) {
+                            await makeEndPhoto();
+                            showAlertDialogMy(context);
+
+                            setState(() {
+                              isVisible = !isVisible;
+                            });
+
+                            _onStop();
+                            await endWorking();
+
+                            setState(() {
+                              Navigator.pushReplacement(
+                                  context,
+                                  new MaterialPageRoute(
+                                      builder: (context) =>
+                                          new EmployeeScreen()));
                             });
                           }
                         },
@@ -529,7 +641,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                           style: TextStyle(color: Colors.black),
                         ),
                       )),
-                if (!isVisibleTime)
+                if (!isVisibleTimeEmployee)
                   if (!isVisible)
                     if (isVisibleText)
                       Container(
@@ -554,11 +666,22 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                           stopPauseOnTap: false,
                         ),
                       ),
-                if (isVisibleTime)
+                if (isVisibleTimeEmployee)
                   Container(
                     padding: EdgeInsets.only(top: 30, bottom: 20),
                     child: Text(
                       'Работу можно начать с 07: до 23:',
+                      style: TextStyle(
+                          fontSize: 19,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white),
+                    ),
+                  ),
+                if (isVisibleTimeConcierge)
+                  Container(
+                    padding: EdgeInsets.only(top: 30, bottom: 20),
+                    child: Text(
+                      'Работу можно начать с 09',
                       style: TextStyle(
                           fontSize: 19,
                           fontWeight: FontWeight.bold,

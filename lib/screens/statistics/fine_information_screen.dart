@@ -20,8 +20,6 @@ class FineScreens extends StatefulWidget {
 class _FineScreens extends State<FineScreens> {
   var post;
 
-  Duration timeLeft = Duration(minutes: 200);
-
   _FineScreens(this.post);
 
   List<FineModel> listFine = [],
@@ -67,95 +65,149 @@ class _FineScreens extends State<FineScreens> {
         setState(() {
           if ('admin' != data['post']) {
             if (timeStart.hour >= dateOver_7.hour && timeStart.hour < 15) {
-              if (timeStart.minute <= 5) {
+              if (timeStart.minute <= 10) {
                 if (timeStart.minute >= 1) {
                   listFine.add(FineModel(
                       name: data['name'],
                       post: data['post'],
                       lateness: timeStart.minute,
                       time: data['startDate'],
-                      money_fine: 100,
+                      money_fine: 50,
                       id_user: data['id_user'],
                       id_post: '',
                       change: 1));
                 }
-              } else if (timeStart.minute <= 15) {
+              } else if (timeStart.minute <= 20) {
                 listFine.add(FineModel(
                     name: data['name'],
                     post: data['post'],
                     lateness: timeStart.minute,
                     time: data['startDate'],
-                    money_fine: 200,
+                    money_fine: 150,
                     id_user: data['id_user'],
                     id_post: '',
                     change: 1));
-              } else {
-                if (data['endDate'] == "") {
-                  listFine.add(FineModel(
-                      name: data['name'],
-                      post: data['post'],
-                      lateness: getDataTime(dateOver_7, DateTime.now()),
-                      time: data['startDate'],
-                      money_fine: 300,
-                      id_user: data['id_user'],
-                      id_post: '',
-                      change: 1));
-                } else {
+              } else if (timeStart.minute <= 30) {
+                listFine.add(FineModel(
+                    name: data['name'],
+                    post: data['post'],
+                    lateness: timeStart.minute,
+                    time: data['startDate'],
+                    money_fine: 250,
+                    id_user: data['id_user'],
+                    id_post: '',
+                    change: 1));
+              } else if (timeStart.minute <= 45) {
+                listFine.add(FineModel(
+                    name: data['name'],
+                    post: data['post'],
+                    lateness: timeStart.minute,
+                    time: data['startDate'],
+                    money_fine: 400,
+                    id_user: data['id_user'],
+                    id_post: '',
+                    change: 1));
+              } else if (timeStart.minute <= 60) {
+                listFine.add(FineModel(
+                    name: data['name'],
+                    post: data['post'],
+                    lateness: timeStart.minute,
+                    time: data['startDate'],
+                    money_fine: 500,
+                    id_user: data['id_user'],
+                    id_post: '',
+                    change: 1));
+              }
+
+              if (getDataTime(dateOver_7, timeStart) > 60) {
+                if (data['endDate'] != "") {
                   listFine.add(FineModel(
                       name: data['name'],
                       post: data['post'],
                       lateness: getDataTime(dateOver_7, timeStart),
                       time: data['startDate'],
-                      money_fine: 300,
+                      money_fine: 600,
                       id_user: data['id_user'],
                       id_post: '',
                       change: 1));
+                } else {
+                  // listFine.add(FineModel(
+                  //     name: data['name'],
+                  //     post: data['post'],
+                  //     lateness: getDataTime(dateOver_7, DateTime.now()),
+                  //     time: data['startDate'],
+                  //     money_fine: 600,
+                  //     id_user: data['id_user'],
+                  //     id_post: '',
+                  //     change: 1));
                 }
               }
             }
 
             // 15
             if (timeStart.hour >= dateOver_15.hour && timeStart.hour < 23) {
-              if (timeStart.minute <= 5) {
+              if (timeStart.minute <= 10) {
                 if (timeStart.minute >= 1) {
                   listFine.add(FineModel(
                       name: data['name'],
                       post: data['post'],
                       lateness: timeStart.minute,
                       time: data['startDate'],
-                      money_fine: 100,
+                      money_fine: 50,
                       id_user: data['id_user'],
                       id_post: '',
                       change: 2));
                 }
-              } else if (timeStart.minute <= 15) {
+              } else if (timeStart.minute <= 20) {
                 listFine.add(FineModel(
                     name: data['name'],
                     post: data['post'],
                     lateness: timeStart.minute,
                     time: data['startDate'],
-                    money_fine: 200,
+                    money_fine: 150,
                     id_user: data['id_user'],
                     id_post: '',
                     change: 2));
-              } else {
-                if (data['endDate'] == "") {
-                  listFine.add(FineModel(
-                      name: data['name'],
-                      post: data['post'],
-                      lateness: getDataTime(dateOver_15, DateTime.now()),
-                      time: data['startDate'],
-                      money_fine: 300,
-                      id_user: data['id_user'],
-                      id_post: '',
-                      change: 2));
-                } else {
+              } else if (timeStart.minute <= 30) {
+                listFine.add(FineModel(
+                    name: data['name'],
+                    post: data['post'],
+                    lateness: timeStart.minute,
+                    time: data['startDate'],
+                    money_fine: 250,
+                    id_user: data['id_user'],
+                    id_post: '',
+                    change: 2));
+              } else if (timeStart.minute <= 45) {
+                listFine.add(FineModel(
+                    name: data['name'],
+                    post: data['post'],
+                    lateness: timeStart.minute,
+                    time: data['startDate'],
+                    money_fine: 400,
+                    id_user: data['id_user'],
+                    id_post: '',
+                    change: 2));
+              } else if (timeStart.minute <= 60) {
+                listFine.add(FineModel(
+                    name: data['name'],
+                    post: data['post'],
+                    lateness: timeStart.minute,
+                    time: data['startDate'],
+                    money_fine: 500,
+                    id_user: data['id_user'],
+                    id_post: '',
+                    change: 2));
+              }
+
+              if (getDataTime(dateOver_15, timeStart) > 60) {
+                if (data['endDate'] != "") {
                   listFine.add(FineModel(
                       name: data['name'],
                       post: data['post'],
                       lateness: getDataTime(dateOver_15, timeStart),
                       time: data['startDate'],
-                      money_fine: 300,
+                      money_fine: 600,
                       id_user: data['id_user'],
                       id_post: '',
                       change: 2));
@@ -472,7 +524,7 @@ class _FineScreens extends State<FineScreens> {
                     MaterialPageRoute(
                         builder: (context) => UsersDetailedInformationScreen(
                               id_user: listFineFull[index].id_user,
-                              time: listFineFull[index].time,
+                          timeStart: listFineFull[index].time,
                             )));
               },
               child: Text('Подробней'),
@@ -537,7 +589,7 @@ class _FineScreens extends State<FineScreens> {
                     MaterialPageRoute(
                         builder: (context) => UsersDetailedInformationScreen(
                               id_user: listFineComplete[index].id_user,
-                              time: listFineComplete[index].time,
+                          timeStart: listFineComplete[index].time,
                             )));
               },
               child: Text('Подробней'),
@@ -595,7 +647,7 @@ class _FineScreens extends State<FineScreens> {
                   child: HorizontalDataTable(
                     leftHandSideColBackgroundColor: color_main_black,
                     rightHandSideColBackgroundColor: color_main_black,
-                    leftHandSideColumnWidth: 100,
+                    leftHandSideColumnWidth: 110,
                     rightHandSideColumnWidth: 600,
                     isFixedHeader: true,
                     headerWidgets: _getTitleWidget(),
@@ -622,7 +674,7 @@ class _FineScreens extends State<FineScreens> {
                       child: HorizontalDataTable(
                         leftHandSideColBackgroundColor: color_main_black,
                         rightHandSideColBackgroundColor: color_main_black,
-                        leftHandSideColumnWidth: 100,
+                        leftHandSideColumnWidth: 110,
                         rightHandSideColumnWidth: 600,
                         isFixedHeader: true,
                         headerWidgets: _getTitleWidget(),

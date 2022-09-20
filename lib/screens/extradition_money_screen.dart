@@ -127,9 +127,6 @@ class _ExtraditionScreenScreenState extends State<ExtraditionMoneyScreen> {
         end = end.subtract(Duration(seconds: 1));
 
         if (timeStart.isAfter(start) && timeStart.isBefore(end)) {
-          print('${start} ___');
-          print('${end} ___');
-
           final dockUsers =
               await FirebaseFirestore.instance.collection('Money');
           dockUsers.doc(document.id).delete();
@@ -399,10 +396,10 @@ class _ExtraditionScreenScreenState extends State<ExtraditionMoneyScreen> {
 
     List<Widget> _getTitleWidget() {
       return [
-        _getTitleItemWidget('Имя', 110),
-        _getTitleItemWidget('Время', 110),
-        _getTitleItemWidget('Сумма', 100),
-        _getTitleItemWidget('Дата', 100),
+        _getTitleItemWidget('Имя', 120),
+        _getTitleItemWidget('Время', 120),
+        _getTitleItemWidget('Сумма', 120),
+        _getTitleItemWidget('Дата', 110),
         _getTitleItemWidget('Подробней', 100),
       ];
     }
@@ -468,12 +465,14 @@ class _ExtraditionScreenScreenState extends State<ExtraditionMoneyScreen> {
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
                 onPressed: () {
+
                   Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) => UsersDetailedInformationScreen(
                                 id_user: listUser[index].id_user,
-                                time: listUser[index].startDate,
+                                timeStart: _datePeriod!.start,
+                                timeEnd: _datePeriod!.end,
                               )));
                 },
                 child: Text(
@@ -506,7 +505,7 @@ class _ExtraditionScreenScreenState extends State<ExtraditionMoneyScreen> {
                 child: HorizontalDataTable(
                   rightHandSideColBackgroundColor: color_main_black,
                   leftHandSideColBackgroundColor: color_main_black,
-                  leftHandSideColumnWidth: 90,
+                  leftHandSideColumnWidth: 100,
                   rightHandSideColumnWidth: 600,
                   isFixedHeader: true,
                   headerWidgets: _getTitleWidget(),

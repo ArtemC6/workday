@@ -200,7 +200,7 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
                           child: ListTile(
                             trailing: Icon(
                               Icons.arrow_forward_ios,
-                              size: 18,
+                              size: 16,
                               color: Colors.white,
                             ),
                             title: Text(
@@ -236,19 +236,19 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
                                     builder: (context) =>
                                         UsersDetailedInformationScreen(
                                           id_user: listUserWork[index].id_user,
-                                          time: listUserWork[index].startDate,
+                                          timeStart: listUserWork[index].startDate,
                                         )));
                           },
                           child: ListTile(
                             trailing: Icon(
                               Icons.arrow_forward_ios,
-                              size: 18,
+                              size: 16,
                               color: Colors.white,
                             ),
                             title: Text(
                                 "${listUserWork[index].name} начал(ла) ${getData(listUserWork[index].startDate)}",
                                 style: TextStyle(
-                                    fontSize: 17, color: Colors.green)),
+                                    fontSize: 16, color: Colors.green)),
                           ),
                         );
                       }),

@@ -230,7 +230,7 @@ class _MoneyInformationScreen extends State<MoneyInformationScreen> {
                     MaterialPageRoute(
                         builder: (context) => UsersDetailedInformationScreen(
                               id_user: listUserMoney[index].id_user,
-                              time: listUserMoney[index].extraditionMoney,
+                          timeStart: listUserMoney[index].extraditionMoney,
                             )));
               },
               child: Text('Подробней'),
@@ -320,7 +320,7 @@ class _MoneyInformationScreen extends State<MoneyInformationScreen> {
                   child: HorizontalDataTable(
                     rightHandSideColBackgroundColor: color_main_black,
                     leftHandSideColBackgroundColor: color_main_black,
-                    leftHandSideColumnWidth: 100,
+                    leftHandSideColumnWidth: 110,
                     rightHandSideColumnWidth: 600,
                     isFixedHeader: true,
                     headerWidgets: _getTitleWidget(),
@@ -347,7 +347,7 @@ class _MoneyInformationScreen extends State<MoneyInformationScreen> {
                       child: HorizontalDataTable(
                         rightHandSideColBackgroundColor: color_main_black,
                         leftHandSideColBackgroundColor: color_main_black,
-                        leftHandSideColumnWidth: 100,
+                        leftHandSideColumnWidth: 110,
                         rightHandSideColumnWidth: 600,
                         isFixedHeader: true,
                         headerWidgets: _getTitleWidgetFull(),

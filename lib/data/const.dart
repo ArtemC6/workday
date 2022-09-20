@@ -5,7 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-final Color color_main_black = Color(0xff212428);
+const color_main_black = Color(0xff212428);
+const color_notification = Color(0xff36340);
 
 String getName(String post) {
   String position = '';
