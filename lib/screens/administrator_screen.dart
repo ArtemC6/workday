@@ -2,8 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:horizontal_data_table/horizontal_data_table.dart';
 import 'package:workday/screens/auth/signin_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
@@ -36,9 +34,6 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
   var positionBottomNavigation;
 
   int _page = 0;
-
-  RefreshController _refreshController =
-      RefreshController(initialRefresh: false);
 
   String getData(Timestamp startDate) {
     final DateTime dateTimeStart = startDate.toDate();
@@ -156,7 +151,7 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
   @override
   Widget build(BuildContext context) {
     Widget administratorMain() {
-      return SmartRefresher(
+      return RefreshIndicator(
         onRefresh: () async {
           setState(() {
             Navigator.pushReplacement(
@@ -165,9 +160,9 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
                     builder: (BuildContext context) => AdministratorScreen()));
           });
         },
-        controller: _refreshController,
         child: SingleChildScrollView(
           child: Container(
+            height: MediaQuery.of(context).size.height,
             color: color_main_black,
             child: Column(
               children: [
@@ -212,7 +207,9 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
                       }),
                 ),
                 Container(
-                  padding: EdgeInsets.only(left: 10, top: 50),
+                  margin: EdgeInsets.only(top: 10,
+                    left: 10,
+                  ),
                   alignment: Alignment.centerLeft,
                   child: Text(
                       'Сегодня работают ${listUserWork.length.toString()}',
@@ -236,7 +233,8 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
                                     builder: (context) =>
                                         UsersDetailedInformationScreen(
                                           id_user: listUserWork[index].id_user,
-                                          timeStart: listUserWork[index].startDate,
+                                          timeStart:
+                                              listUserWork[index].startDate,
                                         )));
                           },
                           child: ListTile(

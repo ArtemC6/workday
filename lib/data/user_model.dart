@@ -13,8 +13,6 @@ class UserModel {
   String id_user;
   String id_post;
 
-
-
   UserModel(
       {required this.name,
       required this.email,

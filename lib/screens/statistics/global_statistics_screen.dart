@@ -525,7 +525,7 @@ class _GlobalStatics extends State<GlobalStatics> {
                         width: MediaQuery.of(context).size.width,
                         child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white),
+                              primary: Colors.white,),
                             onPressed: () {
                               Navigator.push(
                                   context,
@@ -543,7 +543,7 @@ class _GlobalStatics extends State<GlobalStatics> {
                         width: MediaQuery.of(context).size.width,
                         child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white),
+                              primary: Colors.white,),
                             onPressed: () {
                               showCupertinoModalBottomSheet(
                                 topRadius: Radius.circular(30),
@@ -563,7 +563,7 @@ class _GlobalStatics extends State<GlobalStatics> {
                         width: MediaQuery.of(context).size.width,
                         child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white),
+                              primary: Colors.white,),
                             onPressed: () {
                               Navigator.push(
                                   context,
@@ -579,7 +579,7 @@ class _GlobalStatics extends State<GlobalStatics> {
                         width: MediaQuery.of(context).size.width,
                         child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white),
+                              primary: Colors.white,),
                             onPressed: () {
                               showCupertinoModalBottomSheet(
                                 topRadius: Radius.circular(30),
@@ -598,7 +598,7 @@ class _GlobalStatics extends State<GlobalStatics> {
                         width: MediaQuery.of(context).size.width,
                         child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white),
+                              primary: Colors.white,),
                             onPressed: () {
                               Navigator.push(
                                   context,
@@ -612,7 +612,7 @@ class _GlobalStatics extends State<GlobalStatics> {
                         width: MediaQuery.of(context).size.width,
                         child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white),
+                              primary: Colors.white,),
                             onPressed: () {
                               showCupertinoModalBottomSheet(
                                 topRadius: Radius.circular(30),

@@ -367,8 +367,8 @@ class _AnalyticScreenState extends State<AnalyticScreen> {
                   padding: EdgeInsets.only(left: 20, right: 20, top: 10),
                   width: double.infinity,
                   child: ElevatedButton(
-                    style:
-                        ElevatedButton.styleFrom(backgroundColor: Colors.white),
+                    style: ElevatedButton.styleFrom(
+                        primary: Colors.white,),
                     onPressed: () async {
                       showCupertinoModalBottomSheet(
                         topRadius: Radius.circular(30),

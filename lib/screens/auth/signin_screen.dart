@@ -26,7 +26,7 @@ class _SignInScreen extends State<SignInScreen> {
     if (FirebaseAuth.instance.currentUser?.uid != null) {
       FirebaseFirestore.instance
           .collection('User')
-          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .doc(FirebaseAuth.instance.currentUser?.uid)
           .get()
           .then((DocumentSnapshot documentSnapshot) {
         if (documentSnapshot.exists) {

@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:horizontal_data_table/horizontal_data_table.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../data/const.dart';
 import '../../data/user_model.dart';
 import '../employee_screen.dart';
@@ -11,12 +10,11 @@ import '../employee_screen.dart';
 class UsersDetailedInformationScreen extends StatefulWidget {
   var id_user, timeStart, timeEnd, screens;
 
-  UsersDetailedInformationScreen(
-      {Key? key,
-      @required this.id_user,
-      @required this.timeStart,
-      @required this.timeEnd,
-      @required this.screens})
+  UsersDetailedInformationScreen({Key? key,
+    @required this.id_user,
+    @required this.timeStart,
+    @required this.timeEnd,
+    @required this.screens})
       : super(key: key);
 
   @override
@@ -28,8 +26,8 @@ class _UsersDetailedInformationScreen
     extends State<UsersDetailedInformationScreen> {
   var idUser, _timeStart, _timeEnd, screens;
 
-  _UsersDetailedInformationScreen(
-      this.idUser, this._timeStart, this._timeEnd, this.screens);
+  _UsersDetailedInformationScreen(this.idUser, this._timeStart, this._timeEnd,
+      this.screens);
 
   List<UserModel> listUser = [];
   bool isVisible = false;
@@ -81,7 +79,7 @@ class _UsersDetailedInformationScreen
                   status: data["post"],
                   startUri: data["startUri"],
                   endUri:
-                      'https://media.baamboozle.com/uploads/images/59634/1591055175_32403',
+                  'https://media.baamboozle.com/uploads/images/59634/1591055175_32403',
                   startDate: data["startDate"],
                   endDate: data["startDate"],
                   id_user: data["id_user"],
@@ -110,7 +108,7 @@ class _UsersDetailedInformationScreen
                     id_post: data["id_post"],
                     money: 0.0,
                     workTime:
-                        getUserWorkTime(data["startDate"], data["endDate"])));
+                    getUserWorkTime(data["startDate"], data["endDate"])));
                 setState(() {});
               }
             }
@@ -141,7 +139,7 @@ class _UsersDetailedInformationScreen
                   id_post: data["id_post"],
                   money: data['money'],
                   workTime:
-                      getUserWorkTime(data["startDate"], data["endDate"])));
+                  getUserWorkTime(data["startDate"], data["endDate"])));
               setState(() {});
             }
           }
@@ -168,7 +166,7 @@ class _UsersDetailedInformationScreen
                   id_post: data["id_post"],
                   money: data['money'],
                   workTime:
-                      getUserWorkTime(data["startDate"], data["endDate"])));
+                  getUserWorkTime(data["startDate"], data["endDate"])));
               setState(() {});
             }
           }
@@ -195,11 +193,6 @@ class _UsersDetailedInformationScreen
     });
 
     return number;
-  }
-
-  getValue() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('key_price');
   }
 
   @override
@@ -252,7 +245,8 @@ class _UsersDetailedInformationScreen
         children: <Widget>[
           Container(
             child: Text(
-              '${getUerWorkTimeDifference(listUser[index].startDate, listUser[index].endDate)[0]} ',
+              '${getUerWorkTimeDifference(
+                  listUser[index].startDate, listUser[index].endDate)[0]} ',
               style: TextStyle(fontSize: 16, color: Colors.white),
             ),
             width: 100,
@@ -262,7 +256,8 @@ class _UsersDetailedInformationScreen
           ),
           Container(
             child: Text(
-              '${getUerWorkTimeDifference(listUser[index].startDate, listUser[index].endDate)[1]} ',
+              '${getUerWorkTimeDifference(
+                  listUser[index].startDate, listUser[index].endDate)[1]} ',
               style: TextStyle(fontSize: 16, color: Colors.white),
             ),
             width: 100,
@@ -273,7 +268,8 @@ class _UsersDetailedInformationScreen
           Container(
             padding: EdgeInsets.only(left: 14),
             child: Text(
-              '${printDurationTime(Duration(minutes: listUser[index].workTime))}',
+              '${printDurationTime(
+                  Duration(minutes: listUser[index].workTime))}',
               style: TextStyle(fontSize: 16, color: Colors.white),
             ),
           ),
@@ -282,7 +278,8 @@ class _UsersDetailedInformationScreen
               onPressed: () {
                 showDialog(
                   context: context,
-                  builder: (context) => new AlertDialog(
+                  builder: (context) =>
+                  new AlertDialog(
                     backgroundColor: color_main_black,
                     title: new Text(''),
                     content: SingleChildScrollView(
@@ -297,8 +294,14 @@ class _UsersDetailedInformationScreen
                                 image: NetworkImage(listUser[index].startUri),
                                 fit: BoxFit.fitWidth,
                               ),
-                              height: MediaQuery.of(context).size.height / 2.8,
-                              width: MediaQuery.of(context).size.width / 1,
+                              height: MediaQuery
+                                  .of(context)
+                                  .size
+                                  .height / 2.8,
+                              width: MediaQuery
+                                  .of(context)
+                                  .size
+                                  .width / 1,
                               padding: EdgeInsets.all(10),
                             ),
                           ),
@@ -311,8 +314,14 @@ class _UsersDetailedInformationScreen
                                 image: NetworkImage(listUser[index].endUri),
                                 fit: BoxFit.fitWidth,
                               ),
-                              height: MediaQuery.of(context).size.height / 2.8,
-                              width: MediaQuery.of(context).size.width / 1,
+                              height: MediaQuery
+                                  .of(context)
+                                  .size
+                                  .height / 2.8,
+                              width: MediaQuery
+                                  .of(context)
+                                  .size
+                                  .width / 1,
                               padding: EdgeInsets.all(10),
                             ),
                           ),
@@ -340,13 +349,14 @@ class _UsersDetailedInformationScreen
       );
     }
 
-    Widget _generateRightHandSideColumnRowAnalytics(
-        BuildContext context, int index) {
+    Widget _generateRightHandSideColumnRowAnalytics(BuildContext context,
+        int index) {
       return Row(
         children: <Widget>[
           Container(
             child: Text(
-              '${getUerWorkTimeDifference(listUser[index].startDate, listUser[index].endDate)[0]} ',
+              '${getUerWorkTimeDifference(
+                  listUser[index].startDate, listUser[index].endDate)[0]} ',
               style: TextStyle(fontSize: 16, color: Colors.white),
             ),
             width: 90,
@@ -356,7 +366,8 @@ class _UsersDetailedInformationScreen
           ),
           Container(
             child: Text(
-              '${getUerWorkTimeDifference(listUser[index].startDate, listUser[index].endDate)[1]} ',
+              '${getUerWorkTimeDifference(
+                  listUser[index].startDate, listUser[index].endDate)[1]} ',
               style: TextStyle(fontSize: 16, color: Colors.white),
             ),
             width: 90,
@@ -368,7 +379,8 @@ class _UsersDetailedInformationScreen
               width: 90,
               padding: EdgeInsets.only(left: 20),
               child: Text(
-                '${printDurationTime(Duration(minutes: listUser[index].workTime))}',
+                '${printDurationTime(
+                    Duration(minutes: listUser[index].workTime))}',
                 style: TextStyle(fontSize: 16, color: Colors.white),
               )),
           Container(
@@ -386,7 +398,8 @@ class _UsersDetailedInformationScreen
               onPressed: () {
                 showDialog(
                   context: context,
-                  builder: (context) => new AlertDialog(
+                  builder: (context) =>
+                  new AlertDialog(
                     backgroundColor: color_main_black,
                     title: new Text(''),
                     content: SingleChildScrollView(
@@ -401,8 +414,14 @@ class _UsersDetailedInformationScreen
                                 image: NetworkImage(listUser[index].startUri),
                                 fit: BoxFit.fitWidth,
                               ),
-                              height: MediaQuery.of(context).size.height / 2.8,
-                              width: MediaQuery.of(context).size.width / 1,
+                              height: MediaQuery
+                                  .of(context)
+                                  .size
+                                  .height / 2.8,
+                              width: MediaQuery
+                                  .of(context)
+                                  .size
+                                  .width / 1,
                               padding: EdgeInsets.all(10),
                             ),
                           ),
@@ -415,8 +434,14 @@ class _UsersDetailedInformationScreen
                                 image: NetworkImage(listUser[index].endUri),
                                 fit: BoxFit.fitWidth,
                               ),
-                              height: MediaQuery.of(context).size.height / 2.8,
-                              width: MediaQuery.of(context).size.width / 1,
+                              height: MediaQuery
+                                  .of(context)
+                                  .size
+                                  .height / 2.8,
+                              width: MediaQuery
+                                  .of(context)
+                                  .size
+                                  .width / 1,
                               padding: EdgeInsets.all(10),
                             ),
                           ),
@@ -450,7 +475,8 @@ class _UsersDetailedInformationScreen
           Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                  builder: (BuildContext context) => EmployeeScreen(
+                  builder: (BuildContext context) =>
+                      EmployeeScreen(
                         positionBottomNavigation: 2,
                       )));
         }
@@ -472,8 +498,12 @@ class _UsersDetailedInformationScreen
                         padding: EdgeInsets.only(left: 14, top: 20, right: 14),
                         alignment: Alignment.centerLeft,
                         child: Text(
+                          '${listUser[0]
+                              .name}: отработал(ла) ${printDurationTime(
+                              Duration(minutes: getTotalTime(
+                                  listUser)))} минут:  ${getData(
+                              listUser[0].startDate)}',
                           textAlign: TextAlign.center,
-                          '${listUser[0].name}: отработал(ла) ${printDurationTime(Duration(minutes: getTotalTime(listUser)))} минут:  ${getData(listUser[0].startDate)}',
                           style: TextStyle(
                               fontSize: 17,
                               fontWeight: FontWeight.bold,
@@ -488,8 +518,10 @@ class _UsersDetailedInformationScreen
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
+                            '${listUser[0].name}: ${printDurationTime(Duration(
+                                minutes: getTotalTime(listUser)))} минут',
                             textAlign: TextAlign.center,
-                            '${listUser[0].name}: ${printDurationTime(Duration(minutes: getTotalTime(listUser)))} минут',
+
                             style: TextStyle(
                                 fontSize: 17,
                                 fontWeight: FontWeight.bold,
@@ -497,8 +529,11 @@ class _UsersDetailedInformationScreen
                           ),
                           Padding(padding: EdgeInsets.only(top: 8)),
                           Text(
+                            'Получил: ${getTotalMoney(listUser)
+                                .toString()} сом: за ${getData(
+                                listUser[0].startDate)}',
                             textAlign: TextAlign.center,
-                            'Получил: ${getTotalMoney(listUser).toString()} сом: за ${getData(listUser[0].startDate)}',
+
                             style: TextStyle(
                                 fontSize: 17,
                                 fontWeight: FontWeight.bold,
@@ -511,7 +546,10 @@ class _UsersDetailedInformationScreen
                   if (listUser.length != 0)
                     Container(
                       padding: EdgeInsets.only(top: 20),
-                      height: MediaQuery.of(context).size.height / 1.3,
+                      height: MediaQuery
+                          .of(context)
+                          .size
+                          .height / 1.3,
                       child: HorizontalDataTable(
                         rightHandSideColBackgroundColor: color_main_black,
                         leftHandSideColBackgroundColor: color_main_black,
@@ -533,7 +571,10 @@ class _UsersDetailedInformationScreen
                   if (listUser.length != 0)
                     Container(
                       padding: EdgeInsets.only(top: 20),
-                      height: MediaQuery.of(context).size.height / 1.3,
+                      height: MediaQuery
+                          .of(context)
+                          .size
+                          .height / 1.3,
                       child: HorizontalDataTable(
                         leftHandSideColBackgroundColor: color_main_black,
                         rightHandSideColBackgroundColor: color_main_black,
@@ -543,7 +584,7 @@ class _UsersDetailedInformationScreen
                         headerWidgets: _getTitleWidgetAnalytics(),
                         leftSideItemBuilder: _generateFirstColumnRow,
                         rightSideItemBuilder:
-                            _generateRightHandSideColumnRowAnalytics,
+                        _generateRightHandSideColumnRowAnalytics,
                         itemCount: listUser.length,
                         rowSeparatorWidget: const Divider(
                           color: Colors.black54,
@@ -554,8 +595,11 @@ class _UsersDetailedInformationScreen
                     ),
                 Container(
                   padding:
-                      EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 20),
-                  width: MediaQuery.of(context).size.width,
+                  EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 20),
+                  width: MediaQuery
+                      .of(context)
+                      .size
+                      .width,
                   child: ElevatedButton(
                       onPressed: () {
                         if (screens == null) {

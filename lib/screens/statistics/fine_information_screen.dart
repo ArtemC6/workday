@@ -32,7 +32,7 @@ class _FineScreens extends State<FineScreens> {
       isEmpty = true,
       isVisiblyProgress = false;
 
-  DateTimeRange? _datePeriod;
+  late DateTimeRange _datePeriod;
 
   String getDataPeriod(DateTime startDate) {
     String formattedDate = DateFormat('yyyy-MM-dd').format(startDate);
@@ -345,8 +345,8 @@ class _FineScreens extends State<FineScreens> {
           dateTimeStart.day,
         );
 
-        DateTime start = _datePeriod!.start;
-        DateTime end = _datePeriod!.end;
+        DateTime start = _datePeriod.start;
+        DateTime end = _datePeriod.end;
 
         start = start.subtract(Duration(seconds: 1));
         end = end.add(Duration(days: 1));
@@ -615,7 +615,7 @@ class _FineScreens extends State<FineScreens> {
                 Container(
                   padding: EdgeInsets.only(top: 20),
                   child: Text(
-                    ' С ${getDataPeriod(_datePeriod!.start)} до ${getDataPeriod(_datePeriod!.end)}',
+                    ' С ${getDataPeriod(_datePeriod.start)} до ${getDataPeriod(_datePeriod.end)}',
                     style: TextStyle(
                         fontSize: 19,
                         fontWeight: FontWeight.bold,

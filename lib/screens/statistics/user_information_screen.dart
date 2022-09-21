@@ -7,7 +7,6 @@ import 'package:horizontal_data_table/horizontal_data_table.dart';
 import '../../data/const.dart';
 import '../../data/user_model.dart';
 import 'users_detailed_informaiton_screen.dart';
-import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class UserInformationScreen extends StatefulWidget {
   var uid, post;
@@ -23,11 +22,11 @@ class UserInformationScreen extends StatefulWidget {
 class _UserInformationScreen extends State<UserInformationScreen> {
   var uid, post;
 
-  _UserInformationScreen(this.uid, this.post);
+ _UserInformationScreen(this.uid, this.post);
 
   List<UserModel> listUser = [], listUserFull = [];
   bool isPositionVisible = false, isVisiblyProgress = false, isPosition = true;
-  DateTimeRange? _datePeriod;
+  late DateTimeRange _datePeriod;
   var timeMain = 0;
 
   String getDataPeriod(DateTime startDate) {
@@ -55,8 +54,8 @@ class _UserInformationScreen extends State<UserInformationScreen> {
           dateTimeStart.day,
         );
 
-        DateTime start = _datePeriod!.start;
-        DateTime end = _datePeriod!.end;
+        DateTime start = _datePeriod.start;
+        DateTime end = _datePeriod.end;
 
         start = start.subtract(Duration(seconds: 1));
         end = end.add(Duration(days: 1));
@@ -308,7 +307,8 @@ class _UserInformationScreen extends State<UserInformationScreen> {
           ),
           Container(
             child: ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
+              style: ElevatedButton.styleFrom(
+                primary: Colors.white,),
               onPressed: () {
                 Navigator.push(
                     context,
@@ -377,7 +377,7 @@ class _UserInformationScreen extends State<UserInformationScreen> {
                 Container(
                   padding: EdgeInsets.only(top: 20),
                   child: Text(
-                    ' С ${getDataPeriod(_datePeriod!.start)} до ${getDataPeriod(_datePeriod!.end)}',
+                    ' С ${getDataPeriod(_datePeriod.start)} до ${getDataPeriod(_datePeriod.end)}',
                     style: TextStyle(
                         fontSize: 19,
                         fontWeight: FontWeight.bold,
@@ -463,7 +463,7 @@ class _UserInformationScreen extends State<UserInformationScreen> {
                         width: MediaQuery.of(context).size.width,
                         child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white),
+                              primary: Colors.white,),
                             onPressed: () {
                               setState(() async {
                                 _showDataTimeRange();
@@ -480,7 +480,7 @@ class _UserInformationScreen extends State<UserInformationScreen> {
                         width: MediaQuery.of(context).size.width,
                         child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white),
+                              primary: Colors.white,),
                             onPressed: () {
                               setState(() async {
                                 _showDataTimeRange();
@@ -497,7 +497,7 @@ class _UserInformationScreen extends State<UserInformationScreen> {
                         width: MediaQuery.of(context).size.width,
                         child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white),
+                              primary: Colors.white,),
                             onPressed: () {
                               Navigator.pop(context);
                             },

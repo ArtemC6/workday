@@ -32,11 +32,11 @@ class _ExtraditionScreenScreenState extends State<ExtraditionMoneyScreen> {
   bool isEmpty = false;
   String status = '', statusName = '';
   double money = 0.0;
-  DateTimeRange? _datePeriod;
+  late DateTimeRange _datePeriod;
 
   _ExtraditionScreenScreenState(this.status);
 
-  void calculation(List<UserModel> listWork, DateTimeRange? datePeriod) async {
+  void calculation(List<UserModel> listWork, DateTimeRange datePeriod) async {
     listUserMoney.clear();
     final dockUsers = FirebaseFirestore.instance.collection('Work');
     listWork.forEach((element) {
@@ -64,8 +64,8 @@ class _ExtraditionScreenScreenState extends State<ExtraditionMoneyScreen> {
           dateTimeStart.day,
         );
 
-        DateTime start = _datePeriod!.start;
-        DateTime end = _datePeriod!.end;
+        DateTime start = _datePeriod.start;
+        DateTime end = _datePeriod.end;
 
         start = start.subtract(Duration(seconds: 1));
         end = end.add(Duration(days: 1));
@@ -119,8 +119,8 @@ class _ExtraditionScreenScreenState extends State<ExtraditionMoneyScreen> {
           dateTimeStart.day,
         );
 
-        DateTime start = _datePeriod!.start;
-        DateTime end = _datePeriod!.end;
+        DateTime start = _datePeriod.start;
+        DateTime end = _datePeriod.end;
 
         start = start.subtract(Duration(seconds: 1));
         end = end.add(Duration(days: 1));
@@ -249,8 +249,8 @@ class _ExtraditionScreenScreenState extends State<ExtraditionMoneyScreen> {
           dateTimeStart.day,
         );
 
-        DateTime start = _datePeriod!.start;
-        DateTime end = _datePeriod!.end;
+        DateTime start = _datePeriod.start;
+        DateTime end = _datePeriod.end;
 
         start = start.subtract(Duration(seconds: 1));
         end = end.add(Duration(days: 1));
@@ -463,7 +463,8 @@ class _ExtraditionScreenScreenState extends State<ExtraditionMoneyScreen> {
             ),
             Container(
               child: ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.white,),
                 onPressed: () {
 
                   Navigator.push(
@@ -471,8 +472,8 @@ class _ExtraditionScreenScreenState extends State<ExtraditionMoneyScreen> {
                       MaterialPageRoute(
                           builder: (context) => UsersDetailedInformationScreen(
                                 id_user: listUser[index].id_user,
-                                timeStart: _datePeriod!.start,
-                                timeEnd: _datePeriod!.end,
+                                timeStart: _datePeriod.start,
+                                timeEnd: _datePeriod.end,
                               )));
                 },
                 child: Text(
@@ -523,7 +524,7 @@ class _ExtraditionScreenScreenState extends State<ExtraditionMoneyScreen> {
                 Container(
                   padding: EdgeInsets.only(top: 20, bottom: 10),
                   child: Text(
-                    ' С ${getDataPeriod(_datePeriod!.start)} до ${getDataPeriod(_datePeriod!.end)}',
+                    ' С ${getDataPeriod(_datePeriod.start)} до ${getDataPeriod(_datePeriod.end)}',
                     style: TextStyle(
                         fontSize: 19,
                         fontWeight: FontWeight.bold,
@@ -536,7 +537,7 @@ class _ExtraditionScreenScreenState extends State<ExtraditionMoneyScreen> {
                 width: MediaQuery.of(context).size.width,
                 child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blueAccent),
+                      primary: Colors.blueAccent,),
                     onPressed: () {
                       _showDataTimeRange();
                     },

@@ -23,7 +23,7 @@ void main() async {
   await Firebase.initializeApp();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   await FirebaseFirestore.instance.clearPersistence();
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -40,8 +40,8 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => HomeScreen(),
         '/administrator': (context) => AdministratorScreen(),
-        '/analytic': (context) => const AnalyticScreen(),
-        '/detailed': (context) => const GlobalStatics(),
+        '/analytic': (context) => AnalyticScreen(),
+        '/detailed': (context) => GlobalStatics(),
         '/signIn': (context) => SignInScreen(),
         '/signup': (context) => SignUpScreen(),
         '/waiter': (context) => EmployeeScreen(),

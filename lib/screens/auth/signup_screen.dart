@@ -291,10 +291,10 @@ class _SignUpScreen extends State<SignUpScreen> {
                                 final docUser = await FirebaseFirestore.instance
                                     .collection('User')
                                     .doc(
-                                        FirebaseAuth.instance.currentUser!.uid);
+                                        FirebaseAuth.instance.currentUser?.uid);
 
                                 final json = {
-                                  'uid': FirebaseAuth.instance.currentUser!.uid,
+                                  'uid': FirebaseAuth.instance.currentUser?.uid,
                                   'name': _name,
                                   'email': _email,
                                   'password': _password,
@@ -437,10 +437,10 @@ class _SignUpScreen extends State<SignUpScreen> {
                         .then((value) async {
                       final docUser = await FirebaseFirestore.instance
                           .collection('User')
-                          .doc(FirebaseAuth.instance.currentUser!.uid);
+                          .doc(FirebaseAuth.instance.currentUser?.uid);
 
                       final json = {
-                        'uid': FirebaseAuth.instance.currentUser!.uid,
+                        'uid': FirebaseAuth.instance.currentUser?.uid,
                         'name': _name,
                         'email': _email,
                         'password': _password,
@@ -508,10 +508,10 @@ class _SignUpScreen extends State<SignUpScreen> {
                     .then((value) async {
                   final docUser = await FirebaseFirestore.instance
                       .collection('User')
-                      .doc(FirebaseAuth.instance.currentUser!.uid);
+                      .doc(FirebaseAuth.instance.currentUser?.uid);
 
                   final json = {
-                    'uid': FirebaseAuth.instance.currentUser!.uid,
+                    'uid': FirebaseAuth.instance.currentUser?.uid,
                     'name': _name,
                     'email': _email,
                     'password': _password,

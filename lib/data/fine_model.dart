@@ -12,11 +12,11 @@ class FineModel {
 
   FineModel(
       {required this.name,
-        required this.lateness,
-        required this.post,
-        required this.time,
-        required this.change,
-        required this.money_fine,
-        required this.id_user,
-        required this.id_post});
+      required this.lateness,
+      required this.post,
+      required this.time,
+      required this.change,
+      required this.money_fine,
+      required this.id_user,
+      required this.id_post});
 }

@@ -8,7 +8,6 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 import 'package:workday/screens/notification/notification_screen.dart';
 import 'package:workday/screens/settings/settings_screen.dart';
@@ -39,7 +38,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
   final DateTime nowDateTime = DateTime.now();
   Duration duration = Duration();
 
-  Timer? timer;
+  late Timer timer;
   bool countDown = true,
       isVisible = false,
       isVisibleTimeEmployee = false,
@@ -48,14 +47,14 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
       isAdmin = false,
       isConcierge = false;
   int _page = 0;
-  UploadTask? task;
-  File? startFilePhoto, endFilePhoto;
+  late UploadTask task;
+  late File startFilePhoto, endFilePhoto;
   List<UserModel> listUser = [];
 
   Future<bool> _onStop() async {
-    final isRunning = timer == null ? false : timer!.isActive;
+    final isRunning = timer == null ? false : timer.isActive;
     if (isRunning) {
-      timer!.cancel();
+      timer.cancel();
     }
     return true;
   }
@@ -77,7 +76,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
     setState(() {
       final seconds = duration.inSeconds + addSeconds;
       if (seconds < 0) {
-        timer?.cancel();
+        timer.cancel();
       } else {
         duration = Duration(seconds: seconds);
       }
@@ -151,20 +150,20 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
   Future endWorking() async {
     if (endFilePhoto == null) return;
 
-    final fileName = basename(endFilePhoto!.path);
+    final fileName = basename(endFilePhoto.path);
     final destination = 'files/$fileName';
 
-    task = FirebaseApi.uploadFile(destination, endFilePhoto!);
+    task = FirebaseApi.uploadFile(destination, endFilePhoto)!;
     setState(() {});
 
     if (task == null) return;
 
-    final snapshot = await task!.whenComplete(() {});
+    final snapshot = await task.whenComplete(() {});
     final urlDownload = await snapshot.ref.getDownloadURL();
 
     await FirebaseFirestore.instance
         .collection('User')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .doc(FirebaseAuth.instance.currentUser?.uid)
         .get()
         .then((DocumentSnapshot documentSnapshot) async {
       if (documentSnapshot.exists) {
@@ -197,20 +196,20 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
   Future startWorking() async {
     if (startFilePhoto == null) return;
 
-    final fileName = basename(startFilePhoto!.path);
+    final fileName = basename(startFilePhoto.path);
     final destination = 'files/$fileName';
 
-    task = FirebaseApi.uploadFile(destination, startFilePhoto!);
+    task = FirebaseApi.uploadFile(destination, startFilePhoto)!;
     setState(() {});
 
     if (task == null) return;
 
-    final snapshot = await task!.whenComplete(() {});
+    final snapshot = await task.whenComplete(() {});
     final urlDownload = await snapshot.ref.getDownloadURL();
 
     await FirebaseFirestore.instance
         .collection('User')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .doc(FirebaseAuth.instance.currentUser?.uid)
         .get()
         .then((DocumentSnapshot documentSnapshot) async {
       if (documentSnapshot.exists) {
@@ -243,7 +242,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
 
     await FirebaseFirestore.instance
         .collection('User')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .doc(FirebaseAuth.instance.currentUser?.uid)
         .get()
         .then((DocumentSnapshot documentSnapshot) async {
       if (documentSnapshot.exists) {
@@ -487,7 +486,8 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                     width: double.infinity,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white),
+                        primary: Colors.white,
+                      ),
                       onPressed: () async {
                         // 07:23
 
@@ -518,8 +518,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                         }
 
                         if (isConcierge) {
-                          // if (nowDateTime.hour >= 09) {
-                          if (true) {
+                          if (nowDateTime.hour >= 9) {
                             await makeStartPhoto();
                             showAlertDialogMy(context);
 
@@ -570,7 +569,8 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                       width: double.infinity,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white),
+                          primary: Colors.white,
+                        ),
                         onPressed: () async {
                           if (nowDateTime.hour >= 07 &&
                               nowDateTime.hour < 23 &&
@@ -633,8 +633,8 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                         child: AnimatedTextKit(
                           animatedTexts: [
                             TypewriterAnimatedText(
-                              textAlign: TextAlign.center,
                               'Пожалуйста начните работу...',
+                              textAlign: TextAlign.center,
                               speed: Duration(milliseconds: 200),
                               textStyle: TextStyle(
                                 fontSize: 20,
@@ -686,7 +686,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
           break;
         case 1:
           child = UserInformationScreen(
-              uid: FirebaseAuth.instance.currentUser!.uid);
+              uid: FirebaseAuth.instance.currentUser?.uid);
           break;
         case 2:
           child = NotificationScreen();

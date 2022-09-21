@@ -24,7 +24,7 @@ class _MoneyInformationScreen extends State<MoneyInformationScreen> {
 
   List<MoneyModel> listUserMoney = [], listUserMoneyFull = [];
   bool isPositionVisible = false, isVisiblyProgress = false, isPosition = true;
-  DateTimeRange? _datePeriod;
+  late DateTimeRange _datePeriod;
 
   String getDataPeriod(DateTime startDate) {
     String formattedDate = DateFormat('yyyy-MM-dd').format(startDate);
@@ -50,8 +50,8 @@ class _MoneyInformationScreen extends State<MoneyInformationScreen> {
           dateTimeStart.day,
         );
 
-        DateTime start = _datePeriod!.start;
-        DateTime end = _datePeriod!.end;
+        DateTime start = _datePeriod.start;
+        DateTime end = _datePeriod.end;
 
         start = start.subtract(Duration(seconds: 1));
         end = end.add(Duration(days: 1));
@@ -288,7 +288,7 @@ class _MoneyInformationScreen extends State<MoneyInformationScreen> {
                 Container(
                   padding: EdgeInsets.only(top: 20),
                   child: Text(
-                    ' С ${getDataPeriod(_datePeriod!.start)} до ${getDataPeriod(_datePeriod!.end)}',
+                    ' С ${getDataPeriod(_datePeriod.start)} до ${getDataPeriod(_datePeriod.end)}',
                     style: TextStyle(
                         fontSize: 19,
                         fontWeight: FontWeight.bold,

@@ -80,7 +80,7 @@ class _SettingsScreen extends State<SettingsScreen> {
                     'name': _name,
                   };
                   dockUsers
-                      .doc(FirebaseAuth.instance.currentUser!.uid)
+                      .doc(FirebaseAuth.instance.currentUser?.uid)
                       .update(json);
                 }
               }
@@ -93,12 +93,13 @@ class _SettingsScreen extends State<SettingsScreen> {
           padding: EdgeInsets.only(bottom: 20, left: 20, right: 20),
           width: double.infinity,
           child: ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
+            style: ElevatedButton.styleFrom(
+              primary: Colors.white,),
             onPressed: () {
               Navigator.pop(context);
             },
             child: Text(
-              'Сохронить',
+              'Сохранить',
               style: TextStyle(color: Colors.black),
             ),
           ),
@@ -118,7 +119,7 @@ class _SettingsScreen extends State<SettingsScreen> {
   void readFirebase() async {
     await FirebaseFirestore.instance
         .collection('User')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .doc(FirebaseAuth.instance.currentUser?.uid)
         .get()
         .then((DocumentSnapshot documentSnapshot) async {
       if (documentSnapshot.exists) {
@@ -364,7 +365,7 @@ class _SettingsScreen extends State<SettingsScreen> {
                             left: _width / 18, right: _width / 18,top: 10),
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white),
+                            primary: Colors.white,),
                           onPressed: () async {
                             await FirebaseAuth.instance.signOut();
                             await Navigator.of(context).pushReplacement(
