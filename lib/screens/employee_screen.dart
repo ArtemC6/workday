@@ -43,9 +43,12 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
       isVisible = false,
       isVisibleTimeEmployee = false,
       isVisibleTimeConcierge = false,
+      isVisibleTimeAdmin = false,
       isVisibleText = false,
       isAdmin = false,
+      isEmployee = false,
       isConcierge = false;
+
   int _page = 0;
   late UploadTask task;
   late File startFilePhoto, endFilePhoto;
@@ -251,6 +254,8 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
             isAdmin = true;
           } else if (documentSnapshot['post'] == 'concierge') {
             isConcierge = true;
+          } else {
+            isEmployee = true;
           }
         });
       }
@@ -433,9 +438,18 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
   @override
   void initState() {
     super.initState();
+
     setState(() {
       if (nowDateTime.hour >= 07 && nowDateTime.hour < 23) {
-        isVisibleText = true;
+        if (isEmployee) {
+          isVisibleText = true;
+        }
+        if (isAdmin) {
+          isVisibleText = true;
+        }
+        if (isConcierge) {
+          isVisibleText = true;
+        }
       }
     });
     Future.delayed(const Duration(milliseconds: 100), () {
@@ -462,10 +476,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
         color: Colors.black,
         onRefresh: () async {
           setState(() {
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (BuildContext context) => EmployeeScreen()));
+            Navigator.push(context, Scale_Transition(EmployeeScreen()));
           });
         },
         child: SingleChildScrollView(
@@ -490,57 +501,16 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                       ),
                       onPressed: () async {
                         // 07:23
-
-                        if (!isConcierge) {
-                          if (nowDateTime.hour >= 07 && nowDateTime.hour < 23) {
-                            await makeStartPhoto();
-                            showAlertDialogMy(context);
-
-                            setState(() {
-                              isVisible = !isVisible;
-                              isVisibleTimeEmployee = false;
-                            });
-
-                            await startWorking();
-
-                            setState(() {
-                              Navigator.pushReplacement(
-                                  context,
-                                  new MaterialPageRoute(
-                                      builder: (context) =>
-                                          new EmployeeScreen()));
-                            });
-                          } else {
-                            setState(() {
-                              isVisibleTimeEmployee = true;
-                            });
-                          }
+                        if (isEmployee) {
+                          await timeEmployee(context);
+                        }
+                        //
+                        if (isConcierge) {
+                          await timeConcierge(context);
                         }
 
-                        if (isConcierge) {
-                          if (nowDateTime.hour >= 9) {
-                            await makeStartPhoto();
-                            showAlertDialogMy(context);
-
-                            setState(() {
-                              isVisible = !isVisible;
-                              isVisibleTimeConcierge = false;
-                            });
-
-                            await startWorking();
-
-                            setState(() {
-                              Navigator.pushReplacement(
-                                  context,
-                                  new MaterialPageRoute(
-                                      builder: (context) =>
-                                          new EmployeeScreen()));
-                            });
-                          } else {
-                            setState(() {
-                              isVisibleTimeConcierge = true;
-                            });
-                          }
+                        if (isAdmin) {
+                          await timeAdmin(context);
                         }
                       },
                       child: AnimatedTextKit(
@@ -572,31 +542,32 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                           primary: Colors.white,
                         ),
                         onPressed: () async {
-                          if (nowDateTime.hour >= 07 &&
-                              nowDateTime.hour < 23 &&
-                              !isConcierge) {
-                            await makeEndPhoto();
-                            showAlertDialogMy(context);
+                          if (isEmployee) {
+                            if (nowDateTime.hour >= 07 &&
+                                nowDateTime.hour < 23) {
+                              await makeEndPhoto();
+                              showAlertDialogMy(context);
 
-                            setState(() {
-                              isVisible = !isVisible;
-                              isVisibleTimeEmployee = false;
-                            });
+                              setState(() {
+                                isVisible = !isVisible;
+                                isVisibleTimeEmployee = false;
+                              });
 
-                            _onStop();
-                            await endWorking();
+                              _onStop();
+                              await endWorking();
 
-                            setState(() {
-                              Navigator.pushReplacement(
-                                  context,
-                                  new MaterialPageRoute(
-                                      builder: (context) =>
-                                          new EmployeeScreen()));
-                            });
-                          } else {
-                            setState(() {
-                              isVisibleTimeEmployee = true;
-                            });
+                              setState(() {
+                                Navigator.pushReplacement(
+                                    context,
+                                    new MaterialPageRoute(
+                                        builder: (context) =>
+                                            new EmployeeScreen()));
+                              });
+                            } else {
+                              setState(() {
+                                isVisibleTimeEmployee = true;
+                              });
+                            }
                           }
 
                           if (isConcierge) {
@@ -637,7 +608,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                               textAlign: TextAlign.center,
                               speed: Duration(milliseconds: 200),
                               textStyle: TextStyle(
-                                fontSize: 20,
+                                fontSize: 18,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
                               ),
@@ -649,28 +620,44 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                           stopPauseOnTap: false,
                         ),
                       ),
-                if (isVisibleTimeEmployee)
-                  Container(
-                    padding: EdgeInsets.only(top: 30, bottom: 20),
-                    child: Text(
-                      'Работу можно начать с 07: до 23:',
-                      style: TextStyle(
-                          fontSize: 19,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white),
+                if (isEmployee)
+                  if (isVisibleTimeEmployee)
+                    Container(
+                      padding: EdgeInsets.only(top: 30, bottom: 20),
+                      child: Text('Сотрудник может начать с 07:00 до 23:00',
+                          style: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
+                          textAlign: TextAlign.center),
                     ),
-                  ),
-                if (isVisibleTimeConcierge)
-                  Container(
-                    padding: EdgeInsets.only(top: 30, bottom: 20),
-                    child: Text(
-                      'Работу можно начать с 09',
-                      style: TextStyle(
-                          fontSize: 19,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white),
+                if (isConcierge)
+                  if (isVisibleTimeConcierge)
+                    Container(
+                      padding: EdgeInsets.only(top: 30, bottom: 20),
+                      child: Text(
+                          'Коньсьерж может начать работу с 09:00 до 17:00 день\n\n'
+                          'Коньсьерж может начать работу с 17:00 до 09:00 ночь',
+                          style: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
+                          textAlign: TextAlign.center),
                     ),
-                  ),
+                if (isAdmin)
+                  if (isVisibleTimeAdmin)
+                    Container(
+                      alignment: Alignment.center,
+                      padding: EdgeInsets.only(top: 30, bottom: 20),
+                      child: Text(
+                        'Администратор может начать работу с 8:00 до 17:00',
+                        style: TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
               ],
             ),
           ),
@@ -729,5 +716,79 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
         body: SizedBox.expand(child: childEmployee()),
       ),
     );
+  }
+
+  Future<void> timeAdmin(BuildContext context) async {
+    if (nowDateTime.hour >= 08 && nowDateTime.hour < 17) {
+      await makeStartPhoto();
+      if (startFilePhoto == null) return;
+
+      showAlertDialogMy(context);
+
+      setState(() {
+        isVisible = !isVisible;
+        isVisibleTimeAdmin = false;
+      });
+
+      await startWorking();
+
+      setState(() {
+        Navigator.pushReplacement(context,
+            new MaterialPageRoute(builder: (context) => new EmployeeScreen()));
+      });
+    } else {
+      setState(() {
+        isVisibleTimeAdmin = true;
+      });
+    }
+  }
+
+  Future<void> timeConcierge(BuildContext context) async {
+    if (nowDateTime.hour >= 09) {
+      await makeStartPhoto();
+      if (startFilePhoto == null) return;
+
+      showAlertDialogMy(context);
+
+      setState(() {
+        isVisible = !isVisible;
+        isVisibleTimeConcierge = false;
+      });
+
+      await startWorking();
+
+      setState(() {
+        Navigator.pushReplacement(context,
+            new MaterialPageRoute(builder: (context) => new EmployeeScreen()));
+      });
+    } else {
+      setState(() {
+        isVisibleTimeConcierge = true;
+      });
+    }
+  }
+
+  Future<void> timeEmployee(BuildContext context) async {
+    if (nowDateTime.hour >= 07 && nowDateTime.hour < 23) {
+      await makeStartPhoto();
+      if (startFilePhoto == null) return;
+      showAlertDialogMy(context);
+
+      setState(() {
+        isVisible = !isVisible;
+        isVisibleTimeEmployee = false;
+      });
+
+      await startWorking();
+
+      setState(() {
+        Navigator.pushReplacement(context,
+            new MaterialPageRoute(builder: (context) => new EmployeeScreen()));
+      });
+    } else {
+      setState(() {
+        isVisibleTimeEmployee = true;
+      });
+    }
   }
 }

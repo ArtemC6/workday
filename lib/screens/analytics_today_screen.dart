@@ -333,7 +333,7 @@ class _AnalyticScreenState extends State<AnalyticScreen> {
                             color: Colors.white),
                       )),
                 Container(
-                  height: MediaQuery.of(context).size.height / 1.5,
+                  height: MediaQuery.of(context).size.height / 1.4,
                   child: ListView.builder(
                       physics: BouncingScrollPhysics(),
                       itemCount: listUser.length,
@@ -352,13 +352,13 @@ class _AnalyticScreenState extends State<AnalyticScreen> {
                               child: ListTile(
                             trailing: Icon(
                               Icons.arrow_forward_ios,
-                              size: 18,
+                              size: 16,
                               color: Colors.white,
                             ),
                             title: Text(
                                 "${listUser[index].name} ${printDurationTime(Duration(minutes: listUser[index].workTime))} минут ",
                                 style: TextStyle(
-                                    fontSize: 17, color: Colors.white)),
+                                    fontSize: 16, color: Colors.white)),
                           )),
                         );
                       }),

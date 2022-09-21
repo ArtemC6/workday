@@ -53,6 +53,11 @@ String getData(Timestamp startDate) {
   return formattedDate;
 }
 
+DateTime getDataTimeDate(Timestamp startDate) {
+  DateTime dateTimeStart = startDate.toDate();
+  return dateTimeStart;
+}
+
 int getDataTime(DateTime startDate, DateTime endDate) {
   return endDate.difference(startDate).inMinutes;
 }
@@ -63,11 +68,6 @@ int getUserWorkTime(Timestamp startDate, Timestamp endDate) {
   return dateTimeEnd.difference(dateTimeStart).inMinutes;
 }
 
-getUserWorkTimeDouble(Timestamp startDate, Timestamp endDate) {
-  final DateTime dateTimeStart = startDate.toDate();
-  final DateTime dateTimeEnd = endDate.toDate();
-  return dateTimeEnd.difference(dateTimeStart).inMinutes;
-}
 
 showAlertDialogMy(BuildContext context) {
   AlertDialog alert = AlertDialog(
@@ -100,8 +100,8 @@ class Scale_Transition extends PageRouteBuilder {
   Scale_Transition(this.page)
       : super(
           pageBuilder: (context, animation, anotherAnimation) => page,
-          transitionDuration: Duration(milliseconds: 1200),
-          reverseTransitionDuration: Duration(milliseconds: 200),
+          transitionDuration: Duration(milliseconds: 1500),
+          reverseTransitionDuration: Duration(milliseconds: 300),
           transitionsBuilder: (context, animation, anotherAnimation, child) {
             animation = CurvedAnimation(
                 curve: Curves.fastLinearToSlowEaseIn,

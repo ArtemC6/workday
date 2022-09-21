@@ -32,7 +32,8 @@ class _ExtraditionScreenScreenState extends State<ExtraditionMoneyScreen> {
   bool isEmpty = false;
   String status = '', statusName = '';
   double money = 0.0;
-  late DateTimeRange _datePeriod;
+  DateTimeRange _datePeriod =
+      DateTimeRange(start: DateTime.now(), end: DateTime.now());
 
   _ExtraditionScreenScreenState(this.status);
 
@@ -395,6 +396,7 @@ class _ExtraditionScreenScreenState extends State<ExtraditionMoneyScreen> {
     }
 
     List<Widget> _getTitleWidget() {
+
       return [
         _getTitleItemWidget('Имя', 120),
         _getTitleItemWidget('Время', 120),
@@ -418,6 +420,7 @@ class _ExtraditionScreenScreenState extends State<ExtraditionMoneyScreen> {
     }
 
     Widget _generateRightHandSideColumnRow(BuildContext context, int index) {
+
       return InkWell(
         onLongPress: () {
           listWorkFull.clear();
@@ -464,9 +467,9 @@ class _ExtraditionScreenScreenState extends State<ExtraditionMoneyScreen> {
             Container(
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  primary: Colors.white,),
+                  primary: Colors.white,
+                ),
                 onPressed: () {
-
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -478,7 +481,7 @@ class _ExtraditionScreenScreenState extends State<ExtraditionMoneyScreen> {
                 },
                 child: Text(
                   'Подробней',
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: Colors.black),
                 ),
               ),
               width: 140,
@@ -520,7 +523,10 @@ class _ExtraditionScreenScreenState extends State<ExtraditionMoneyScreen> {
                   ),
                 ),
               ),
-              if (_datePeriod != null)
+              if (_datePeriod.end.hour !=
+                  DateTimeRange(start: DateTime.now(), end: DateTime.now())
+                      .end
+                      .hour)
                 Container(
                   padding: EdgeInsets.only(top: 20, bottom: 10),
                   child: Text(
@@ -537,7 +543,8 @@ class _ExtraditionScreenScreenState extends State<ExtraditionMoneyScreen> {
                 width: MediaQuery.of(context).size.width,
                 child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      primary: Colors.blueAccent,),
+                      primary: Colors.blueAccent,
+                    ),
                     onPressed: () {
                       _showDataTimeRange();
                     },

@@ -493,7 +493,7 @@ class _UserInformationScreen extends State<UserInformationScreen> {
                       ),
                     if (uid == null)
                       Container(
-                        padding: EdgeInsets.only(),
+                        padding: EdgeInsets.only(bottom: 20),
                         width: MediaQuery.of(context).size.width,
                         child: ElevatedButton(
                             style: ElevatedButton.styleFrom(

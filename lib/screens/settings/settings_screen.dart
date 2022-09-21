@@ -94,7 +94,8 @@ class _SettingsScreen extends State<SettingsScreen> {
           width: double.infinity,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              primary: Colors.white,),
+              primary: Colors.white,
+            ),
             onPressed: () {
               Navigator.pop(context);
             },
@@ -190,30 +191,28 @@ class _SettingsScreen extends State<SettingsScreen> {
         if (timeStart.isAfter(start) && timeStart.isBefore(end)) {
           setState(() {
             if (data['post'] == 'barista') {
-              print(getUserWorkTimeDouble(data["startDate"], data['endDate']));
+              print(getUserWorkTime(data["startDate"], data['endDate']));
               timeBarista +=
-                  getUserWorkTimeDouble(data["startDate"], data['endDate']);
+                  getUserWorkTime(data["startDate"], data['endDate']);
             } else if (data['post'] == 'admin') {
               timeAdministrator +=
-                  getUserWorkTimeDouble(data["startDate"], data['endDate']);
+                  getUserWorkTime(data["startDate"], data['endDate']);
             } else if (data['post'] == 'cook') {
-              timeCook +=
-                  getUserWorkTimeDouble(data["startDate"], data['endDate']);
+              timeCook += getUserWorkTime(data["startDate"], data['endDate']);
             } else if (data['post'] == 'maid') {
-              timeMaid +=
-                  getUserWorkTimeDouble(data["startDate"], data['endDate']);
+              timeMaid += getUserWorkTime(data["startDate"], data['endDate']);
             } else if (data['post'] == 'concierge') {
               timeConcierge +=
-                  getUserWorkTimeDouble(data["startDate"], data['endDate']);
+                  getUserWorkTime(data["startDate"], data['endDate']);
             } else if (data['post'] == 'chef-cook') {
               timeCookWork +=
-                  getUserWorkTimeDouble(data["startDate"], data['endDate']);
+                  getUserWorkTime(data["startDate"], data['endDate']);
             } else if (data['post'] == 'sous-chef') {
               timeCookWork +=
-                  getUserWorkTimeDouble(data["startDate"], data['endDate']);
+                  getUserWorkTime(data["startDate"], data['endDate']);
             } else if (data['post'] == 'confectioner') {
               timeCookWork +=
-                  getUserWorkTimeDouble(data["startDate"], data['endDate']);
+                  getUserWorkTime(data["startDate"], data['endDate']);
             }
           });
         }
@@ -226,10 +225,6 @@ class _SettingsScreen extends State<SettingsScreen> {
     dataUser.add(_SalesData(timeMaid, 'Горничные'));
     dataUser.add(_SalesData(timeConcierge, 'Коньсьерж'));
     dataUser.add(_SalesData(timeCookWork, 'Кух-работники'));
-
-    dataUser.forEach((element) {
-      print(element.time);
-    });
 
     Future.delayed(const Duration(milliseconds: 100), () {
       setState(() {
@@ -294,7 +289,7 @@ class _SettingsScreen extends State<SettingsScreen> {
                         child: Text(
                           _post,
                           style: TextStyle(
-                            fontSize: 24,
+                            fontSize: 20,
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                           ),
@@ -327,7 +322,7 @@ class _SettingsScreen extends State<SettingsScreen> {
                                         (printDurationTime(Duration(
                                                 minutes: sales.time.toInt())))
                                             .toString(),
-                                    radius: '76%',
+                                    radius: '74%',
                                     dataLabelSettings: DataLabelSettings(
                                       isVisible: true,
                                       margin: EdgeInsets.zero,
@@ -362,10 +357,11 @@ class _SettingsScreen extends State<SettingsScreen> {
                       Container(
                         width: double.infinity,
                         padding: EdgeInsets.only(
-                            left: _width / 18, right: _width / 18,top: 10),
+                            left: _width / 14, right: _width / 14, top: 10),
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            primary: Colors.white,),
+                            primary: Colors.white,
+                          ),
                           onPressed: () async {
                             await FirebaseAuth.instance.signOut();
                             await Navigator.of(context).pushReplacement(
