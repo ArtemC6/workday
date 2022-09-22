@@ -17,7 +17,8 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreen extends State<SignInScreen> {
-  String _email = "", _password = "";
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
   bool _isHidden = true, isVisibleSizedBox = false;
 
   @override
@@ -86,6 +87,7 @@ class _SignInScreen extends State<SignInScreen> {
                     borderRadius: BorderRadius.circular(15),
                   ),
                   child: TextField(
+                    controller: _emailController,
                     onSubmitted: (value) {
                       setState(() {
                         isVisibleSizedBox = false;
@@ -93,7 +95,8 @@ class _SignInScreen extends State<SignInScreen> {
                         showAlertDialogMy(context);
                         FirebaseAuth.instance
                             .signInWithEmailAndPassword(
-                                email: _email, password: _password)
+                                email: _emailController.text,
+                                password: _passwordController.text)
                             .then((value) => {
                                   Navigator.of(context).pushReplacement(
                                       MaterialPageRoute(
@@ -121,11 +124,6 @@ class _SignInScreen extends State<SignInScreen> {
                         color: Colors.white.withOpacity(.5),
                       ),
                     ),
-                    onChanged: (value) {
-                      setState(() {
-                        _email = value;
-                      });
-                    },
                   ),
                 ),
                 Container(
@@ -136,14 +134,16 @@ class _SignInScreen extends State<SignInScreen> {
                     borderRadius: BorderRadius.circular(15),
                   ),
                   child: TextField(
-                    onSubmitted: (value) {
+                    controller: _passwordController,
+                    onSubmitted: (value1) {
                       setState(() {
                         isVisibleSizedBox = false;
 
                         showAlertDialogMy(context);
                         FirebaseAuth.instance
                             .signInWithEmailAndPassword(
-                                email: _email, password: _password)
+                                email: _emailController.text,
+                                password: _passwordController.text)
                             .then((value) => {
                                   Navigator.of(context).pushReplacement(
                                       MaterialPageRoute(
@@ -188,11 +188,6 @@ class _SignInScreen extends State<SignInScreen> {
                         color: Colors.white.withOpacity(.5),
                       ),
                     ),
-                    onChanged: (value) {
-                      setState(() {
-                        _password = value;
-                      });
-                    },
                   ),
                 ),
                 Container(
@@ -232,7 +227,8 @@ class _SignInScreen extends State<SignInScreen> {
                     showAlertDialogMy(context);
                     FirebaseAuth.instance
                         .signInWithEmailAndPassword(
-                            email: _email, password: _password)
+                            email: _emailController.text,
+                            password: _passwordController.text)
                         .then((value) => {
                               Navigator.of(context).pushReplacement(
                                   MaterialPageRoute(

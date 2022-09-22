@@ -16,7 +16,10 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreen extends State<SignUpScreen> {
-  String _email = "", _password = "", _name = "", _token = '';
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+  TextEditingController _nameController = TextEditingController();
+  String _token = '';
   bool _isHidden = true, isVisibleSizedBox = false;
   String postUser = '', postUserName = '';
 
@@ -213,6 +216,7 @@ class _SignUpScreen extends State<SignUpScreen> {
                         borderRadius: BorderRadius.circular(15),
                       ),
                       child: TextField(
+                        controller: _nameController,
                         onTap: () {
                           setState(() {
                             isVisibleSizedBox = true;
@@ -232,11 +236,6 @@ class _SignUpScreen extends State<SignUpScreen> {
                             color: Colors.white.withOpacity(.5),
                           ),
                         ),
-                        onChanged: (value) {
-                          setState(() {
-                            _name = value;
-                          });
-                        },
                       ),
                     ),
                     Container(
@@ -246,6 +245,7 @@ class _SignUpScreen extends State<SignUpScreen> {
                         borderRadius: BorderRadius.circular(15),
                       ),
                       child: TextField(
+                        controller: _emailController,
                         onTap: () {
                           setState(() {
                             isVisibleSizedBox = true;
@@ -265,11 +265,6 @@ class _SignUpScreen extends State<SignUpScreen> {
                             color: Colors.white.withOpacity(.5),
                           ),
                         ),
-                        onChanged: (value) {
-                          setState(() {
-                            _email = value;
-                          });
-                        },
                       ),
                     ),
                     Container(
@@ -279,6 +274,7 @@ class _SignUpScreen extends State<SignUpScreen> {
                         borderRadius: BorderRadius.circular(15),
                       ),
                       child: TextField(
+                        controller: _passwordController,
                         onSubmitted: (value) {
                           if (postUser != '') {
                             setState(() {
@@ -286,7 +282,7 @@ class _SignUpScreen extends State<SignUpScreen> {
                               showAlertDialogMy(context);
                               FirebaseAuth.instance
                                   .createUserWithEmailAndPassword(
-                                      email: _email, password: _password)
+                                      email: _emailController.text, password: _passwordController.text)
                                   .then((value) async {
                                 final docUser = await FirebaseFirestore.instance
                                     .collection('User')
@@ -295,9 +291,9 @@ class _SignUpScreen extends State<SignUpScreen> {
 
                                 final json = {
                                   'uid': FirebaseAuth.instance.currentUser?.uid,
-                                  'name': _name,
-                                  'email': _email,
-                                  'password': _password,
+                                  'name': _nameController.text,
+                                  'email': _emailController.text,
+                                  'password': _passwordController.text,
                                   'post': postUser,
                                   'token': _token,
                                 };
@@ -349,11 +345,6 @@ class _SignUpScreen extends State<SignUpScreen> {
                             color: Colors.white.withOpacity(.5),
                           ),
                         ),
-                        onChanged: (value) {
-                          setState(() {
-                            _password = value;
-                          });
-                        },
                       ),
                     ),
                     Row(
@@ -433,7 +424,7 @@ class _SignUpScreen extends State<SignUpScreen> {
                     showAlertDialogMy(context);
                     FirebaseAuth.instance
                         .createUserWithEmailAndPassword(
-                            email: _email, password: _password)
+                            email: _emailController.text, password: _passwordController.text)
                         .then((value) async {
                       final docUser = await FirebaseFirestore.instance
                           .collection('User')
@@ -441,9 +432,9 @@ class _SignUpScreen extends State<SignUpScreen> {
 
                       final json = {
                         'uid': FirebaseAuth.instance.currentUser?.uid,
-                        'name': _name,
-                        'email': _email,
-                        'password': _password,
+                        'name': _nameController.text,
+                        'email': _emailController.text,
+                        'password': _passwordController.text,
                         'post': postUser,
                         'token': _token,
                       };
@@ -483,147 +474,6 @@ class _SignUpScreen extends State<SignUpScreen> {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget componentTextField(IconData icon, String hintText, bool isPassword,
-      bool isEmail, String changed) {
-    if (isPassword) {
-      return Container(
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: color_main_black,
-          borderRadius: BorderRadius.circular(15),
-        ),
-        child: TextField(
-          onSubmitted: (value) {
-            if (postUser != '') {
-              setState(() {
-                isVisibleSizedBox = false;
-                showAlertDialogMy(context);
-                FirebaseAuth.instance
-                    .createUserWithEmailAndPassword(
-                        email: _email, password: _password)
-                    .then((value) async {
-                  final docUser = await FirebaseFirestore.instance
-                      .collection('User')
-                      .doc(FirebaseAuth.instance.currentUser?.uid);
-
-                  final json = {
-                    'uid': FirebaseAuth.instance.currentUser?.uid,
-                    'name': _name,
-                    'email': _email,
-                    'password': _password,
-                    'post': postUser,
-                    'token': _token,
-                  };
-
-                  docUser.set(json);
-
-                  Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (context) => HomeScreen()));
-                }).onError((error, stackTrace) {
-                  Navigator.pop(context);
-                });
-              });
-            }
-          },
-          onTap: () {
-            setState(() {
-              isVisibleSizedBox = true;
-            });
-          },
-          style: TextStyle(color: Colors.white.withOpacity(.7)),
-          obscureText: _isHidden,
-          keyboardType:
-              isEmail ? TextInputType.emailAddress : TextInputType.text,
-          decoration: InputDecoration(
-            suffixIcon: GestureDetector(
-              onTap: () {
-                setState(() {
-                  _isHidden = !_isHidden;
-                });
-              },
-              child: _isHidden
-                  ? Icon(
-                      Icons.remove_red_eye_sharp,
-                      color: Colors.white24,
-                    )
-                  : Icon(
-                      Icons.remove_red_eye,
-                      color: Colors.blueAccent,
-                    ),
-            ),
-            prefixIcon: Icon(
-              icon,
-              color: Colors.white.withOpacity(.7),
-            ),
-            border: InputBorder.none,
-            hintMaxLines: 1,
-            hintText: hintText,
-            hintStyle: TextStyle(
-              fontSize: 14,
-              color: Colors.white.withOpacity(.5),
-            ),
-          ),
-          onChanged: (value) {
-            setState(() {
-              if (changed == 'name') {
-                _name = value;
-              }
-              if (changed == 'email') {
-                _email = value;
-              }
-              if (changed == 'password') {
-                _password = value;
-              }
-            });
-          },
-        ),
-      );
-    }
-    return Container(
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: color_main_black,
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: TextField(
-        onTap: () {
-          setState(() {
-            isVisibleSizedBox = true;
-          });
-        },
-        style: TextStyle(color: Colors.white.withOpacity(.7)),
-        obscureText: isPassword,
-        keyboardType: isEmail ? TextInputType.emailAddress : TextInputType.text,
-        decoration: InputDecoration(
-          prefixIcon: Icon(
-            icon,
-            color: Colors.white.withOpacity(.7),
-          ),
-          border: InputBorder.none,
-          hintMaxLines: 1,
-          hintText: hintText,
-          hintStyle: TextStyle(
-            fontSize: 14,
-            color: Colors.white.withOpacity(.5),
-          ),
-        ),
-        onChanged: (value) {
-          setState(() {
-            if (changed == 'name') {
-              _name = value;
-            }
-            if (changed == 'email') {
-              _email = value;
-            }
-            if (changed == 'password') {
-              _password = value;
-            }
-          });
-        },
       ),
     );
   }

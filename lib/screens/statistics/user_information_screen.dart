@@ -22,7 +22,7 @@ class UserInformationScreen extends StatefulWidget {
 class _UserInformationScreen extends State<UserInformationScreen> {
   var uid, post;
 
- _UserInformationScreen(this.uid, this.post);
+  _UserInformationScreen(this.uid, this.post);
 
   List<UserModel> listUser = [], listUserFull = [];
   bool isPositionVisible = false, isVisiblyProgress = false, isPosition = true;
@@ -308,14 +308,15 @@ class _UserInformationScreen extends State<UserInformationScreen> {
           Container(
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                primary: Colors.white,),
+                primary: Colors.white,
+              ),
               onPressed: () {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
                         builder: (context) => UsersDetailedInformationScreen(
                               id_user: listUser[index].id_user,
-                          timeStart: listUser[index].startDate,
+                              timeStart: listUser[index].startDate,
                             )));
               },
               child: Text(
@@ -463,7 +464,8 @@ class _UserInformationScreen extends State<UserInformationScreen> {
                         width: MediaQuery.of(context).size.width,
                         child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              primary: Colors.white,),
+                              primary: Colors.white,
+                            ),
                             onPressed: () {
                               setState(() async {
                                 _showDataTimeRange();
@@ -480,7 +482,8 @@ class _UserInformationScreen extends State<UserInformationScreen> {
                         width: MediaQuery.of(context).size.width,
                         child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              primary: Colors.white,),
+                              primary: Colors.white,
+                            ),
                             onPressed: () {
                               setState(() async {
                                 _showDataTimeRange();
@@ -497,7 +500,8 @@ class _UserInformationScreen extends State<UserInformationScreen> {
                         width: MediaQuery.of(context).size.width,
                         child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              primary: Colors.white,),
+                              primary: Colors.white,
+                            ),
                             onPressed: () {
                               Navigator.pop(context);
                             },

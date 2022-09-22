@@ -324,11 +324,11 @@ class _AnalyticScreenState extends State<AnalyticScreen> {
                 if (isPosition)
                   Container(
                       alignment: Alignment.centerLeft,
-                      padding: EdgeInsets.only(top: 40, left: 14),
+                      padding: EdgeInsets.only(top: 40, left: 14, bottom: 10),
                       child: Text(
                         "Сегодня работали ${listUser.length.toString()}",
                         style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 17,
                             fontWeight: FontWeight.bold,
                             color: Colors.white),
                       )),

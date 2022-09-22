@@ -30,32 +30,7 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
       fifthAnimation;
 
   void sigNinFirebase() async {
-    await FirebaseFirestore.instance
-        .collection('User')
-        .doc(FirebaseAuth.instance.currentUser?.uid)
-        .get()
-        .then((DocumentSnapshot documentSnapshot) {
-      if (documentSnapshot.exists) {
-        setState(() {
-          isVisible = false;
-        });
-        if (documentSnapshot['post'] == 'boss') {
-          Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => AdministratorScreen()));
-        } else {
-          Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => EmployeeScreen()));
-        }
-      } else {
-        Navigator.pushReplacement(context, Scale_Transition(SignInScreen()));
-      }
-    });
-
-    if (isVisible) {
-      Navigator.pushReplacement(context, Scale_Transition(SignInScreen()));
-    }
-
-    // FirebaseFirestore.instance
+    // await FirebaseFirestore.instance
     //     .collection('Work')
     //     .get()
     //     .then((QuerySnapshot querySnapshot) {
@@ -217,6 +192,31 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
     //     }
     //   });
     // });
+
+    await FirebaseFirestore.instance
+        .collection('User')
+        .doc(FirebaseAuth.instance.currentUser?.uid)
+        .get()
+        .then((DocumentSnapshot documentSnapshot) {
+      if (documentSnapshot.exists) {
+        setState(() {
+          isVisible = false;
+        });
+        if (documentSnapshot['post'] == 'boss') {
+          Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => AdministratorScreen()));
+        } else {
+          Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => EmployeeScreen()));
+        }
+      } else {
+        Navigator.pushReplacement(context, Scale_Transition(SignInScreen()));
+      }
+    });
+
+    if (isVisible) {
+      Navigator.pushReplacement(context, Scale_Transition(SignInScreen()));
+    }
   }
 
   @override
