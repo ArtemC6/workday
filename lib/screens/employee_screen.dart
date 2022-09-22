@@ -47,6 +47,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
       isVisibleText = false,
       isAdmin = false,
       isEmployee = false,
+      isConciergeTime = true,
       isConcierge = false;
 
   int _page = 0;
@@ -286,7 +287,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
 
         if (data['id_user'] == FirebaseAuth.instance.currentUser?.uid) {
           if (timeStart == currentTime) {
-            if (data['post'] != 'admin' || data['post'] != 'concierge') {
+            if (data['post'] != 'admin' && data['post'] != 'concierge') {
               if (data['endDate'] != '') {
                 setState(() {
                   var isExist = listUser.indexWhere(
@@ -329,9 +330,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
               }
             }
           }
-        }
 
-        if (data['id_user'] == FirebaseAuth.instance.currentUser?.uid) {
           if (data['post'] == 'admin') {
             if (timeStart == currentTime) {
               if (data['endDate'] != '') {
@@ -376,49 +375,99 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
               }
             }
           }
-        }
 
-        if (data['id_user'] == FirebaseAuth.instance.currentUser?.uid) {
           if (data['post'] == 'concierge') {
-            if (data['endDate'] != '') {
-              setState(() {
-                var isExist = listUser.indexWhere(
-                    (element) => element.id_user == (data['id_user']));
+            if (timeStart == currentTime) {
+              if (data['endDate'] != '') {
+                setState(() {
+                  var isExist = listUser.indexWhere(
+                      (element) => element.id_user == (data['id_user']));
 
-                if (isExist < 0) {
-                  listUser.add(UserModel(
-                      name: data["name"],
-                      email: data["email"],
-                      status: data["post"],
-                      startUri: data["startUri"],
-                      endUri: data["endUri"],
-                      startDate: data["startDate"],
-                      endDate: data["endDate"],
-                      id_user: data["id_user"],
-                      id_post: data["id_post"],
-                      money: 0.0,
-                      workTime:
-                          getUserWorkTime(data["startDate"], data["endDate"])));
-                } else {
-                  listUser[isExist].workTime +=
-                      getUserWorkTime(data['startDate'], data['endDate']);
+                  if (isExist < 0) {
+                    listUser.add(UserModel(
+                        name: data["name"],
+                        email: data["email"],
+                        status: data["post"],
+                        startUri: data["startUri"],
+                        endUri: data["endUri"],
+                        startDate: data["startDate"],
+                        endDate: data["endDate"],
+                        id_user: data["id_user"],
+                        id_post: data["id_post"],
+                        money: 0.0,
+                        workTime: getUserWorkTime(
+                            data["startDate"], data["endDate"])));
+                  } else {
+                    // listUser[isExist].workTime +=
+                    //     getUserWorkTime(data['startDate'], data['endDate']);
+                  }
+                });
+              }
+
+              if (data['endDate'] == '') {
+                setState(() {
+                  isVisible = true;
+                  isConciergeTime = false;
+                });
+
+                countdownDuration = Duration(
+                    seconds: int.parse(DateTime.now()
+                        .difference(dateTimeStart)
+                        .inSeconds
+                        .toString()));
+
+                reset();
+                startTimer();
+              }
+            } else {
+              var timeStart_test = new DateTime(
+                dateTimeStart.year,
+                dateTimeStart.month,
+                dateTimeStart.day + 1,
+              );
+              if (timeStart_test == currentTime) {
+                if (data['endDate'] != '') {
+                  setState(() {
+                    var isExist = listUser.indexWhere(
+                        (element) => element.id_user == (data['id_user']));
+
+                    if (isExist < 0) {
+                      listUser.add(UserModel(
+                          name: data["name"],
+                          email: data["email"],
+                          status: data["post"],
+                          startUri: data["startUri"],
+                          endUri: data["endUri"],
+                          startDate: data["startDate"],
+                          endDate: data["endDate"],
+                          id_user: data["id_user"],
+                          id_post: data["id_post"],
+                          money: 0.0,
+                          workTime: getUserWorkTime(
+                              data["startDate"], data["endDate"])));
+                    } else {
+                      // listUser[isExist].workTime +=
+                      //     getUserWorkTime(data['startDate'], data['endDate']);
+                    }
+                  });
                 }
-              });
-            }
 
-            if (data['endDate'] == '') {
-              setState(() {
-                isVisible = true;
-              });
+                if (data['endDate'] == '') {
+                  setState(() {
+                    isVisible = true;
+                    isConciergeTime = false;
+                  });
 
-              countdownDuration = Duration(
-                  seconds: int.parse(DateTime.now()
-                      .difference(dateTimeStart)
-                      .inSeconds
-                      .toString()));
+                  countdownDuration = Duration(
+                      seconds: int.parse(DateTime.now()
+                          .difference(dateTimeStart)
+                          .inSeconds
+                          .toString()));
 
-              reset();
-              startTimer();
+                  reset();
+                  startTimer();
+                }
+              }
             }
           }
         }
@@ -427,10 +476,10 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
 
     if (listUser.length != 0) {
       if (!isVisible) {
-        // if (!isAdmin) {
-        countdownDuration = Duration(minutes: listUser[0].workTime);
-        reset();
-        // }
+        if(isConciergeTime) {
+          countdownDuration = Duration(minutes: listUser[0].workTime);
+          reset();
+        }
       }
     }
   }
@@ -546,6 +595,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                             if (nowDateTime.hour >= 07 &&
                                 nowDateTime.hour < 23) {
                               await makeEndPhoto();
+                              if (endFilePhoto == null) return;
                               showAlertDialogMy(context);
 
                               setState(() {
@@ -572,6 +622,28 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
 
                           if (isConcierge) {
                             await makeEndPhoto();
+                            if (endFilePhoto == null) return;
+                            showAlertDialogMy(context);
+
+                            setState(() {
+                              isVisible = !isVisible;
+                            });
+
+                            _onStop();
+                            await endWorking();
+
+                            setState(() {
+                              Navigator.pushReplacement(
+                                  context,
+                                  new MaterialPageRoute(
+                                      builder: (context) =>
+                                          new EmployeeScreen()));
+                            });
+                          }
+
+                          if (isAdmin) {
+                            await makeEndPhoto();
+                            if (endFilePhoto == null) return;
                             showAlertDialogMy(context);
 
                             setState(() {
@@ -636,8 +708,8 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                     Container(
                       padding: EdgeInsets.only(top: 30, bottom: 20),
                       child: Text(
-                          'Коньсьерж может начать работу с 09:00 до 17:00 день\n\n'
-                          'Коньсьерж может начать работу с 17:00 до 09:00 ночь',
+                          'Консьерж может начать работу с 09:00 до 17:00 день\n\n'
+                          'Консьерж может начать работу с 17:00 до 09:00 ночь',
                           style: TextStyle(
                               fontSize: 17,
                               fontWeight: FontWeight.bold,

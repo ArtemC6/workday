@@ -153,6 +153,7 @@ class _ExtraditionScreenScreenState extends State<ExtraditionMoneyScreen> {
               'id_post': dockMoney.id,
               'workTime': element.workTime,
               'extraditionMoney': element.startDate,
+              'extraditionMoneyCurrent': DateTime.now(),
               'post': element.status,
             };
             dockMoney.set(json);
@@ -396,7 +397,6 @@ class _ExtraditionScreenScreenState extends State<ExtraditionMoneyScreen> {
     }
 
     List<Widget> _getTitleWidget() {
-
       return [
         _getTitleItemWidget('Имя', 120),
         _getTitleItemWidget('Время', 120),
@@ -420,7 +420,6 @@ class _ExtraditionScreenScreenState extends State<ExtraditionMoneyScreen> {
     }
 
     Widget _generateRightHandSideColumnRow(BuildContext context, int index) {
-
       return InkWell(
         onLongPress: () {
           listWorkFull.clear();

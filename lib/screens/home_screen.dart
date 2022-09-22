@@ -8,6 +8,8 @@ import 'package:workday/screens/employee_screen.dart';
 import 'package:intl/intl.dart';
 import '../data/const.dart';
 import 'auth/signin_screen.dart';
+import '../../data/const.dart';
+import 'package:flutter/cupertino.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -57,9 +59,6 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
     //
     //     // dockUsers.doc(document.id).update({'money': 0.0});
     //
-    //     DateTime dateOver_09 =
-    //         DateTime.parse("${DateFormat('yyyy-MM-dd').format(timeStart)} 09");
-    //
     //     DateTime dateOver_15 =
     //         DateTime.parse("${DateFormat('yyyy-MM-dd').format(timeStart)} 15");
     //
@@ -71,7 +70,7 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
     //
     //     // 07:23
     //     if (data['endDate'] == '') {
-    //       if (data['post'] != 'admin' || data['post'] != 'concierge') {
+    //       if (data['post'] != 'admin' && data['post'] != 'concierge') {
     //         if (timeStart.hour >= 7 && timeStart.hour < 15) {
     //           if (timeCurrentNOtHour == timeStartNotHour) {
     //             if (timeCurrentHour.hour >= dateOver_15.hour) {
@@ -144,7 +143,7 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
     //       }
     //
     //       if (data['post'] == 'concierge') {
-    //         if (timeStart.hour >= 9 && timeStart.hour < 17) {
+    //         if (timeStart.hour >= 09 && timeStart.hour < 17) {
     //           if (timeCurrentNOtHour == timeStartNotHour) {
     //             if (timeCurrentHour.hour >= dateOver_17.hour) {
     //               final json = {
@@ -167,23 +166,19 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
     //           }
     //         }
     //
-    //         if (timeStart.hour >= 21 && timeStart.hour <= 9) {
-    //           if (timeCurrentNOtHour == timeStartNotHour) {
-    //             if (timeCurrentHour.hour >= dateOver_09.hour) {
-    //               final json = {
-    //                 'endUri':
-    //                     'https://media.baamboozle.com/uploads/images/59634/1591055175_32403',
-    //                 'endDate': DateTime.parse(
-    //                     "${DateFormat('yyyy-MM-dd').format(timeStart)} 09"),
-    //               };
-    //               dockUsers.doc(document.id).update(json);
-    //             }
-    //           } else {
+    //         if (timeStart.hour >= 17) {
+    //           if (timeStartNotHour != timeCurrentNOtHour) {
+    //             var timeStart_plus_day = new DateTime(
+    //               dateTimeStart.year,
+    //               dateTimeStart.month,
+    //               dateTimeStart.day + 1,
+    //             );
+    //
     //             final json = {
     //               'endUri':
     //                   'https://media.baamboozle.com/uploads/images/59634/1591055175_32403',
     //               'endDate': DateTime.parse(
-    //                   "${DateFormat('yyyy-MM-dd').format(timeStart)} 09"),
+    //                   "${DateFormat('yyyy-MM-dd').format(timeStart_plus_day)} 09"),
     //             };
     //             dockUsers.doc(document.id).update(json);
     //           }

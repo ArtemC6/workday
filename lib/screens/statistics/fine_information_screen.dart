@@ -59,14 +59,23 @@ class _FineScreens extends State<FineScreens> {
         DateTime dateOver_7 =
             DateTime.parse("${DateFormat('yyyy-MM-dd').format(timeStart)} 07");
 
+        DateTime dateOver_8 =
+            DateTime.parse("${DateFormat('yyyy-MM-dd').format(timeStart)} 08");
+
+        DateTime dateOver_9 =
+            DateTime.parse("${DateFormat('yyyy-MM-dd').format(timeStart)} 09");
+
         DateTime dateOver_15 =
             DateTime.parse("${DateFormat('yyyy-MM-dd').format(timeStart)} 15");
 
+        DateTime dateOver_17 =
+            DateTime.parse("${DateFormat('yyyy-MM-dd').format(timeStart)} 17");
+
         setState(() {
-          if ('admin' != data['post']) {
+          if ('admin' != data['post'] && 'concierge' != data['post']) {
             if (timeStart.hour >= dateOver_7.hour && timeStart.hour < 15) {
               if (timeStart.minute <= 10) {
-                if (timeStart.minute >= 1) {
+                if (timeStart.minute >= 2) {
                   listFine.add(FineModel(
                       name: data['name'],
                       post: data['post'],
@@ -130,16 +139,6 @@ class _FineScreens extends State<FineScreens> {
                       id_user: data['id_user'],
                       id_post: '',
                       change: 1));
-                } else {
-                  // listFine.add(FineModel(
-                  //     name: data['name'],
-                  //     post: data['post'],
-                  //     lateness: getDataTime(dateOver_7, DateTime.now()),
-                  //     time: data['startDate'],
-                  //     money_fine: 600,
-                  //     id_user: data['id_user'],
-                  //     id_post: '',
-                  //     change: 1));
                 }
               }
             }
@@ -147,7 +146,7 @@ class _FineScreens extends State<FineScreens> {
             // 15
             if (timeStart.hour >= dateOver_15.hour && timeStart.hour < 23) {
               if (timeStart.minute <= 10) {
-                if (timeStart.minute >= 1) {
+                if (timeStart.minute >= 2) {
                   listFine.add(FineModel(
                       name: data['name'],
                       post: data['post'],
@@ -211,6 +210,227 @@ class _FineScreens extends State<FineScreens> {
                       id_user: data['id_user'],
                       id_post: '',
                       change: 2));
+                }
+              }
+            }
+          }
+
+
+
+
+          if ('concierge' == data['post']) {
+            if (timeStart.hour >= dateOver_9.hour && timeStart.hour < 17) {
+              if (timeStart.minute <= 10) {
+                if (timeStart.minute >= 2) {
+                  listFine.add(FineModel(
+                      name: data['name'],
+                      post: data['post'],
+                      lateness: timeStart.minute,
+                      time: data['startDate'],
+                      money_fine: 50,
+                      id_user: data['id_user'],
+                      id_post: '',
+                      change: 1));
+                }
+              } else if (timeStart.minute <= 20) {
+                listFine.add(FineModel(
+                    name: data['name'],
+                    post: data['post'],
+                    lateness: timeStart.minute,
+                    time: data['startDate'],
+                    money_fine: 150,
+                    id_user: data['id_user'],
+                    id_post: '',
+                    change: 1));
+              } else if (timeStart.minute <= 30) {
+                listFine.add(FineModel(
+                    name: data['name'],
+                    post: data['post'],
+                    lateness: timeStart.minute,
+                    time: data['startDate'],
+                    money_fine: 250,
+                    id_user: data['id_user'],
+                    id_post: '',
+                    change: 1));
+              } else if (timeStart.minute <= 45) {
+                listFine.add(FineModel(
+                    name: data['name'],
+                    post: data['post'],
+                    lateness: timeStart.minute,
+                    time: data['startDate'],
+                    money_fine: 400,
+                    id_user: data['id_user'],
+                    id_post: '',
+                    change: 1));
+              } else if (timeStart.minute <= 60) {
+                listFine.add(FineModel(
+                    name: data['name'],
+                    post: data['post'],
+                    lateness: timeStart.minute,
+                    time: data['startDate'],
+                    money_fine: 500,
+                    id_user: data['id_user'],
+                    id_post: '',
+                    change: 1));
+              }
+
+              if (getDataTime(dateOver_9, timeStart) > 60) {
+                if (data['endDate'] != "") {
+                  listFine.add(FineModel(
+                      name: data['name'],
+                      post: data['post'],
+                      lateness: getDataTime(dateOver_7, timeStart),
+                      time: data['startDate'],
+                      money_fine: 600,
+                      id_user: data['id_user'],
+                      id_post: '',
+                      change: 1));
+                }
+              }
+            }
+
+            // 15
+            // if (timeStart.hour >= dateOver_17.hour && timeStart.hour < 9) {
+            //   if (timeStart.minute <= 10) {
+            //     if (timeStart.minute >= 1) {
+            //       listFine.add(FineModel(
+            //           name: data['name'],
+            //           post: data['post'],
+            //           lateness: timeStart.minute,
+            //           time: data['startDate'],
+            //           money_fine: 50,
+            //           id_user: data['id_user'],
+            //           id_post: '',
+            //           change: 2));
+            //     }
+            //   } else if (timeStart.minute <= 20) {
+            //     listFine.add(FineModel(
+            //         name: data['name'],
+            //         post: data['post'],
+            //         lateness: timeStart.minute,
+            //         time: data['startDate'],
+            //         money_fine: 150,
+            //         id_user: data['id_user'],
+            //         id_post: '',
+            //         change: 2));
+            //   } else if (timeStart.minute <= 30) {
+            //     listFine.add(FineModel(
+            //         name: data['name'],
+            //         post: data['post'],
+            //         lateness: timeStart.minute,
+            //         time: data['startDate'],
+            //         money_fine: 250,
+            //         id_user: data['id_user'],
+            //         id_post: '',
+            //         change: 2));
+            //   } else if (timeStart.minute <= 45) {
+            //     listFine.add(FineModel(
+            //         name: data['name'],
+            //         post: data['post'],
+            //         lateness: timeStart.minute,
+            //         time: data['startDate'],
+            //         money_fine: 400,
+            //         id_user: data['id_user'],
+            //         id_post: '',
+            //         change: 2));
+            //   } else if (timeStart.minute <= 60) {
+            //     listFine.add(FineModel(
+            //         name: data['name'],
+            //         post: data['post'],
+            //         lateness: timeStart.minute,
+            //         time: data['startDate'],
+            //         money_fine: 500,
+            //         id_user: data['id_user'],
+            //         id_post: '',
+            //         change: 2));
+            //   }
+            //
+            //   if (getDataTime(dateOver_15, timeStart) > 60) {
+            //     if (data['endDate'] != "") {
+            //       listFine.add(FineModel(
+            //           name: data['name'],
+            //           post: data['post'],
+            //           lateness: getDataTime(dateOver_15, timeStart),
+            //           time: data['startDate'],
+            //           money_fine: 600,
+            //           id_user: data['id_user'],
+            //           id_post: '',
+            //           change: 2));
+            //     }
+            //   }
+            // }
+          }
+
+
+
+
+          if ('admin' == data['post']) {
+            if (timeStart.hour >= dateOver_8.hour && timeStart.hour < 17) {
+              if (timeStart.minute <= 10) {
+                if (timeStart.minute >= 2) {
+                  listFine.add(FineModel(
+                      name: data['name'],
+                      post: data['post'],
+                      lateness: timeStart.minute,
+                      time: data['startDate'],
+                      money_fine: 50,
+                      id_user: data['id_user'],
+                      id_post: '',
+                      change: 1));
+                }
+              } else if (timeStart.minute <= 20) {
+                listFine.add(FineModel(
+                    name: data['name'],
+                    post: data['post'],
+                    lateness: timeStart.minute,
+                    time: data['startDate'],
+                    money_fine: 150,
+                    id_user: data['id_user'],
+                    id_post: '',
+                    change: 1));
+              } else if (timeStart.minute <= 30) {
+                listFine.add(FineModel(
+                    name: data['name'],
+                    post: data['post'],
+                    lateness: timeStart.minute,
+                    time: data['startDate'],
+                    money_fine: 250,
+                    id_user: data['id_user'],
+                    id_post: '',
+                    change: 1));
+              } else if (timeStart.minute <= 45) {
+                listFine.add(FineModel(
+                    name: data['name'],
+                    post: data['post'],
+                    lateness: timeStart.minute,
+                    time: data['startDate'],
+                    money_fine: 400,
+                    id_user: data['id_user'],
+                    id_post: '',
+                    change: 1));
+              } else if (timeStart.minute <= 60) {
+                listFine.add(FineModel(
+                    name: data['name'],
+                    post: data['post'],
+                    lateness: timeStart.minute,
+                    time: data['startDate'],
+                    money_fine: 500,
+                    id_user: data['id_user'],
+                    id_post: '',
+                    change: 1));
+              }
+
+              if (getDataTime(dateOver_8, timeStart) > 60) {
+                if (data['endDate'] != "") {
+                  listFine.add(FineModel(
+                      name: data['name'],
+                      post: data['post'],
+                      lateness: getDataTime(dateOver_7, timeStart),
+                      time: data['startDate'],
+                      money_fine: 600,
+                      id_user: data['id_user'],
+                      id_post: '',
+                      change: 1));
                 }
               }
             }
@@ -524,7 +744,7 @@ class _FineScreens extends State<FineScreens> {
                     MaterialPageRoute(
                         builder: (context) => UsersDetailedInformationScreen(
                               id_user: listFineFull[index].id_user,
-                          timeStart: listFineFull[index].time,
+                              timeStart: listFineFull[index].time,
                             )));
               },
               child: Text('Подробней'),
@@ -589,7 +809,7 @@ class _FineScreens extends State<FineScreens> {
                     MaterialPageRoute(
                         builder: (context) => UsersDetailedInformationScreen(
                               id_user: listFineComplete[index].id_user,
-                          timeStart: listFineComplete[index].time,
+                              timeStart: listFineComplete[index].time,
                             )));
               },
               child: Text('Подробней'),

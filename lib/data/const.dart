@@ -27,7 +27,7 @@ String getName(String post) {
   } else if ('confectioner' == post) {
     position = 'Кондитер';
   } else if ('concierge' == post) {
-    position = 'Коньсьерж';
+    position = 'Консьерж';
   } else if ('admin' == post) {
     position = 'Администратор';
   } else if ('workers-cook' == post) {

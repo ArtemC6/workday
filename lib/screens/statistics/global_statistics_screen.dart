@@ -70,7 +70,7 @@ class _GlobalStatics extends State<GlobalStatics> {
                                 post: 'concierge',
                               )));
                 },
-                child: Text('Коньсьерж'),
+                child: Text('Консьерж'),
               ),
             ),
             Container(
@@ -230,7 +230,7 @@ class _GlobalStatics extends State<GlobalStatics> {
                                 post: 'concierge',
                               )));
                 },
-                child: Text('Коньсьерж'),
+                child: Text('Консьерж'),
               ),
             ),
             Container(
@@ -390,7 +390,7 @@ class _GlobalStatics extends State<GlobalStatics> {
                                 post: 'concierge',
                               )));
                 },
-                child: Text('Коньсьерж'),
+                child: Text('Консьерж'),
               ),
             ),
             Container(

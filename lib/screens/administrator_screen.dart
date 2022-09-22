@@ -71,6 +71,33 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
           currentDate.day,
         );
 
+        if (data['post'] == 'concierge') {
+          if (data['endDate'] == '') {
+            setState(() {
+              var isExist = listUserWork.indexWhere(
+                  (element) => element.id_user == (data['id_user']));
+
+              if (isExist < 0) {
+                listUserWork.add(UserModel(
+                    name: data["name"],
+                    email: data["email"],
+                    status: data["post"],
+                    startUri: data["startUri"],
+                    endUri: '',
+                    startDate: data["startDate"],
+                    endDate: Timestamp.now(),
+                    id_user: data["id_user"],
+                    id_post: data["id_post"],
+                    money: 0.0,
+                    workTime:
+                        getUserWorkTime(data["startDate"], Timestamp.now())));
+              } else {
+                listUserWork[isExist].workTime +=
+                    getUserWorkTime(Timestamp.now(), Timestamp.now());
+              }
+            });
+          }
+        }
         if (timeStart == currentTime) {
           if (data['endDate'] == '') {
             setState(() {
@@ -207,9 +234,7 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
                       }),
                 ),
                 Container(
-                  margin: EdgeInsets.only(top: 10,
-                    left: 10,
-                  ),
+                  margin: EdgeInsets.only(top: 14, left: 10, bottom: 14),
                   alignment: Alignment.centerLeft,
                   child: Text(
                       'Сегодня работают ${listUserWork.length.toString()}',

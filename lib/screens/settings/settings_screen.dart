@@ -129,7 +129,7 @@ class _SettingsScreen extends State<SettingsScreen> {
           _postMain = documentSnapshot['post'];
 
           if (documentSnapshot['post'] == 'barista') {
-            _post = 'Бириста';
+            _post = 'Бариста';
           } else if (documentSnapshot['post'] == 'admin') {
             _post = 'Администратор';
           } else if (documentSnapshot['post'] == 'boss') {
@@ -148,7 +148,7 @@ class _SettingsScreen extends State<SettingsScreen> {
           } else if (documentSnapshot['post'] == 'sous-chef') {
             _post = 'Су-Шеф';
           } else if (documentSnapshot['post'] == 'concierge') {
-            _post = 'Коньсьерж';
+            _post = 'Консьерж';
           } else if (documentSnapshot['post'] == 'workers-cook') {
             _post = 'Кух-работники';
           } else {
@@ -223,7 +223,7 @@ class _SettingsScreen extends State<SettingsScreen> {
     dataUser.add(_SalesData(timeCook, 'Повора'));
     dataUser.add(_SalesData(timeAdministrator, 'Администраторы'));
     dataUser.add(_SalesData(timeMaid, 'Горничные'));
-    dataUser.add(_SalesData(timeConcierge, 'Коньсьерж'));
+    dataUser.add(_SalesData(timeConcierge, 'Консьерж'));
     dataUser.add(_SalesData(timeCookWork, 'Кух-работники'));
 
     Future.delayed(const Duration(milliseconds: 100), () {

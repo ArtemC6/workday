@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class MoneyModel {
   String name;
   Timestamp extraditionMoney;
+  Timestamp extraditionMoneyCurrent;
   int workTime;
   double money;
   String id_user;
@@ -11,6 +12,7 @@ class MoneyModel {
   MoneyModel(
       {required this.name,
       required this.extraditionMoney,
+      required this.extraditionMoneyCurrent,
       required this.workTime,
       required this.money,
       required this.id_user,

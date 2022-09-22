@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:workday/data/money_model.dart';
 import '../../data/const.dart';
 import '../../data/user_model.dart';
 import '../employee_screen.dart';
@@ -16,18 +17,18 @@ class NotificationScreen extends StatefulWidget {
 }
 
 class _NotificationScreen extends State<NotificationScreen> {
-  List<UserModel> listUser = [], listUserWork = [], listUserMoney = [];
+  List<MoneyModel> listUserWork = [];
   bool isPosition = false, isEmpty = false;
 
   void readFirebase() async {
     await FirebaseFirestore.instance
-        .collection('Work')
+        .collection('Money')
         .get()
         .then((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((document) async {
         Map<String, dynamic> data = document.data() as Map<String, dynamic>;
 
-        final Timestamp timestampStart = data['startDate'] as Timestamp;
+        final Timestamp timestampStart = data['extraditionMoney'] as Timestamp;
         final DateTime dateTimeStart = timestampStart.toDate();
 
         var timeStart = new DateTime(
@@ -54,30 +55,15 @@ class _NotificationScreen extends State<NotificationScreen> {
           if (FirebaseAuth.instance.currentUser?.uid == data['id_user']) {
             if (data['endDate'] != '') {
               if (data['money'] != 0.0) {
-                var isExistMoney = listUserWork.indexWhere(
-                    (element) => element.id_user == (data['id_user']));
-
-                if (isExistMoney < 0) {
-                  listUserWork.add(UserModel(
-                      name: data["name"],
-                      email: data["email"],
-                      status: data["post"],
-                      startUri: data["startUri"],
-                      endUri: data["endUri"],
-                      startDate: data["startDate"],
-                      endDate: data["endDate"],
-                      id_user: data["id_user"],
-                      id_post: data["id_post"],
-                      money: data['money'],
-                      workTime:
-                          getUserWorkTime(data["startDate"], data["endDate"])));
-                  setState(() {});
-                } else {
-                  listUserWork[isExistMoney].money += data['money'];
-
-                  listUserWork[isExistMoney].workTime +=
-                      getUserWorkTime(data['startDate'], data['endDate']);
-                }
+                listUserWork.add(MoneyModel(
+                  extraditionMoneyCurrent: data['extraditionMoneyCurrent'],
+                  name: data["name"],
+                  extraditionMoney: data['extraditionMoney'],
+                  workTime: data['workTime'],
+                  id_user: data["id_user"],
+                  id_post: data["id_post"],
+                  money: data['money'],
+                ));
               }
             }
           }
@@ -153,13 +139,12 @@ class _NotificationScreen extends State<NotificationScreen> {
                                 duration: Duration(milliseconds: 3500),
                                 child: InkWell(
                                   onTap: () {
-
                                     Navigator.pushReplacement(
                                         context,
                                         MaterialPageRoute(
                                             builder: (BuildContext context) =>
                                                 EmployeeScreen(
-                                                positionBottomNavigation: 1,
+                                                  positionBottomNavigation: 1,
                                                 )));
                                   },
                                   child: Container(
@@ -229,7 +214,7 @@ class _NotificationScreen extends State<NotificationScreen> {
                                                     padding: EdgeInsets.only(
                                                         top: 12),
                                                     child: Text(
-                                                      ' ${getData(listUserWork[index].startDate)}',
+                                                      ' ${getData(listUserWork[index].extraditionMoneyCurrent)}',
                                                       style: TextStyle(
                                                           color:
                                                               Colors.white38),

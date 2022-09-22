@@ -7,6 +7,7 @@ import 'package:horizontal_data_table/horizontal_data_table.dart';
 import '../../data/const.dart';
 import '../../data/money_model.dart';
 import 'users_detailed_informaiton_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MoneyInformationScreen extends StatefulWidget {
   var post;
@@ -60,6 +61,7 @@ class _MoneyInformationScreen extends State<MoneyInformationScreen> {
         if (timeStart.isAfter(start) && timeStart.isBefore(end)) {
           if (post == data['post']) {
             listUserMoney.add(MoneyModel(
+                extraditionMoneyCurrent: Timestamp.now(),
                 name: data["name"],
                 extraditionMoney: data["extraditionMoney"],
                 id_user: data["id_user"],
@@ -73,6 +75,7 @@ class _MoneyInformationScreen extends State<MoneyInformationScreen> {
 
             if (isExistMoney < 0) {
               listUserMoneyFull.add(MoneyModel(
+                  extraditionMoneyCurrent: Timestamp.now(),
                   name: data["name"],
                   extraditionMoney: data["extraditionMoney"],
                   id_user: data["id_user"],
@@ -91,6 +94,7 @@ class _MoneyInformationScreen extends State<MoneyInformationScreen> {
         if (timeStart.isAfter(start) && timeStart.isBefore(end)) {
           if (post == null) {
             listUserMoney.add(MoneyModel(
+                extraditionMoneyCurrent: Timestamp.now(),
                 name: data["name"],
                 extraditionMoney: data["extraditionMoney"],
                 id_user: data["id_user"],
@@ -104,6 +108,7 @@ class _MoneyInformationScreen extends State<MoneyInformationScreen> {
 
             if (isExistMoney < 0) {
               listUserMoneyFull.add(MoneyModel(
+                  extraditionMoneyCurrent: Timestamp.now(),
                   name: data["name"],
                   extraditionMoney: data["extraditionMoney"],
                   id_user: data["id_user"],
@@ -230,7 +235,7 @@ class _MoneyInformationScreen extends State<MoneyInformationScreen> {
                     MaterialPageRoute(
                         builder: (context) => UsersDetailedInformationScreen(
                               id_user: listUserMoney[index].id_user,
-                          timeStart: listUserMoney[index].extraditionMoney,
+                              timeStart: listUserMoney[index].extraditionMoney,
                             )));
               },
               child: Text('Подробней'),

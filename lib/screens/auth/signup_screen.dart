@@ -107,7 +107,7 @@ class _SignUpScreen extends State<SignUpScreen> {
                       });
                       Navigator.pop(context);
                     },
-                    child: Text('Коньсьерж'),
+                    child: Text('Консьерж'),
                   )),
               Container(
                   padding: EdgeInsets.all(4),
