@@ -47,7 +47,7 @@ class _AnalyticScreenState extends State<AnalyticScreen> {
 
         if (timeStart == currentTime) {
           if (data['endDate'] != '') {
-            if (data['money'] != '0.0') {
+            if (data['money'] != 0.0) {
               var isExistMoney = listUserMoney.indexWhere(
                   (element) => element.id_user == (data['id_user']));
 

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:horizontal_data_table/horizontal_data_table.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:workday/data/fine_model.dart';
 import 'package:workday/screens/auth/signin_screen.dart';
 import 'package:progress_state_button/iconed_button.dart';
 import 'package:progress_state_button/progress_button.dart';
@@ -26,10 +27,13 @@ class _ExtraditionScreenScreenState extends State<ExtraditionMoneyScreen> {
   List<UserModel> listUser = [],
       listUserWork = [],
       listUserMoney = [],
-      listWorkFull = [];
+      listWorkFull = [],
+      listFineMoney = [];
+  List<FineModel> listFine = [];
+
   ButtonState stateTextWithIcon = ButtonState.idle;
   String _sum = '0.0', _percent = '0', _work_price = '0';
-  bool isEmpty = false;
+  bool isEmpty = false, isFine = false;
   String status = '', statusName = '';
   double money = 0.0;
   DateTimeRange _datePeriod =
@@ -267,6 +271,59 @@ class _ExtraditionScreenScreenState extends State<ExtraditionMoneyScreen> {
         }
       });
     });
+
+    await FirebaseFirestore.instance
+        .collection('Fine')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((document) async {
+        Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+
+        final Timestamp timestampStart = data['time'] as Timestamp;
+        final DateTime dateTimeStart = timestampStart.toDate();
+
+        var timeStart = new DateTime(dateTimeStart.year, dateTimeStart.month,
+            dateTimeStart.day, dateTimeStart.hour, dateTimeStart.minute);
+
+        setState(() {
+          DateTime start = _datePeriod.start;
+          DateTime end = _datePeriod.end;
+
+          start = start.subtract(Duration(seconds: 1));
+          end = end.add(Duration(days: 1));
+          end = end.subtract(Duration(seconds: 1));
+
+          if (data['post'] == status) {
+            if (timeStart.isAfter(start) && timeStart.isBefore(end)) {
+              var isExistMoney = listFine.indexWhere(
+                  (element) => element.id_user == (data['id_user']));
+
+              if (isExistMoney < 0) {
+                listFine.add(FineModel(
+                    post: data['post'],
+                    name: data['name'],
+                    lateness: data['lateness'],
+                    time: data['time'],
+                    money_fine: data['money_fine'],
+                    id_user: data['id_user'],
+                    id_post: 'id_post',
+                    change: data['change']));
+              } else {
+                int valuer = data['lateness'];
+                listFine[isExistMoney].money_fine += data['money_fine'];
+                listFine[isExistMoney].lateness += valuer;
+              }
+            }
+          }
+        });
+      });
+    });
+
+    // setState(() {
+    //   if(isFine) {
+    //
+    //   }
+    // });
   }
 
   @override
@@ -492,6 +549,80 @@ class _ExtraditionScreenScreenState extends State<ExtraditionMoneyScreen> {
       );
     }
 
+
+    Widget _generateRightHandSideColumnRowFine(BuildContext context, int index) {
+      return InkWell(
+        onLongPress: () {
+          listWorkFull.clear();
+          setState(() {
+            listUser.removeAt(index);
+            listUser.forEach((elementMain) {
+              getTotalTime(listUserWork, money).forEach((element) {
+                if (elementMain.id_user == element.id_user) {
+                  listWorkFull.add(element);
+                }
+              });
+            });
+          });
+        },
+        child: Row(
+          children: <Widget>[
+            Container(
+                padding: EdgeInsets.only(left: 10),
+                child: Text(
+                  '${printDurationTime(Duration(minutes: listFineMoney[index].workTime))} минут ',
+                  style: TextStyle(fontSize: 15, color: Colors.white),
+                )),
+            Container(
+              padding: EdgeInsets.only(left: 44),
+              child: Text(
+                "${getTotalTime(listFineMoney, money)[index].money.toStringAsFixed(1)} сом",
+                style: TextStyle(color: Colors.white),
+              ),
+              width: 120,
+              height: 52,
+              alignment: Alignment.centerLeft,
+            ),
+            Container(
+              padding: EdgeInsets.only(left: 40),
+              child: Text(
+                "${getData(listFineMoney[index].startDate)}",
+                style: TextStyle(color: Colors.white),
+              ),
+              width: 150,
+              height: 52,
+              // padding: EdgeInsets.only(left: 10),
+              alignment: Alignment.centerLeft,
+            ),
+            Container(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.white,
+                ),
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => UsersDetailedInformationScreen(
+                            id_user: listFineMoney[index].id_user,
+                            timeStart: _datePeriod.start,
+                            timeEnd: _datePeriod.end,
+                          )));
+                },
+                child: Text(
+                  'Подробней',
+                  style: TextStyle(color: Colors.black),
+                ),
+              ),
+              width: 140,
+              height: 30,
+              padding: EdgeInsets.only(left: 10),
+            ),
+          ],
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: color_main_black,
       resizeToAvoidBottomInset: true,
@@ -522,6 +653,36 @@ class _ExtraditionScreenScreenState extends State<ExtraditionMoneyScreen> {
                   ),
                 ),
               ),
+              if (isFine)
+                ExpansionTile(
+                  initiallyExpanded: true,
+                  title: Text(
+                    'С вычетом штрафов',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  collapsedIconColor: Colors.white,
+                  children: [
+                    Container(
+                      height: MediaQuery.of(context).size.height / 1.9,
+                      child: HorizontalDataTable(
+                        rightHandSideColBackgroundColor: color_main_black,
+                        leftHandSideColBackgroundColor: color_main_black,
+                        leftHandSideColumnWidth: 100,
+                        rightHandSideColumnWidth: 600,
+                        isFixedHeader: true,
+                        headerWidgets: _getTitleWidget(),
+                        leftSideItemBuilder: _generateFirstColumnRow,
+                        rightSideItemBuilder: _generateRightHandSideColumnRowFine,
+                        itemCount: listFineMoney.length,
+                        rowSeparatorWidget: const Divider(
+                          // color: Colors.black54,
+                          height: 1.0,
+                          thickness: 0.0,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               if (_datePeriod.end.hour !=
                   DateTimeRange(start: DateTime.now(), end: DateTime.now())
                       .end
@@ -540,15 +701,56 @@ class _ExtraditionScreenScreenState extends State<ExtraditionMoneyScreen> {
                 padding: EdgeInsets.only(
                     top: 10, left: _width / 20, right: _width / 20, bottom: 10),
                 width: MediaQuery.of(context).size.width,
-                child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.blueAccent,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width / 1.4,
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.blueAccent,
+                          ),
+                          onPressed: () {
+                            _showDataTimeRange();
+                          },
+                          child: Text('Выбрать дни оплаты',
+                              style: TextStyle(color: Colors.white))),
                     ),
-                    onPressed: () {
-                      _showDataTimeRange();
-                    },
-                    child: Text('Выбрать дни оплаты',
-                        style: TextStyle(color: Colors.white))),
+                    Container(
+                      width: MediaQuery.of(context).size.width / 6,
+                      child: Theme(
+                        data: Theme.of(context).copyWith(
+                          unselectedWidgetColor: Colors.white,
+                        ),
+                        child: Checkbox(
+                          focusColor: Colors.blueAccent,
+                          checkColor: Colors.white,
+                          value: false,
+                          onChanged: (value) {
+                              isFine = !isFine;
+
+                              listUser.forEach((elementMain) {
+                                listFine.forEach((element) {
+                                  if (elementMain.id_user == element.id_user) {
+                                    // print('${elementMain.name}  ${elementMain.money.toStringAsFixed(1)}');
+                                    elementMain.money -= element.money_fine;
+                                    // print('${elementMain.name}  ${elementMain.money.toStringAsFixed(1)}');
+                                  }
+                                });
+                              });
+
+                            //   setState(() {
+                            //     listFineMoney.addAll(listUser);
+                            //     listFineMoney.forEach((element) {
+                            //       print(element.money);
+                            //     });
+                            // });
+                          },
+                        ),
+                      ),
+                    )
+                  ],
+                ),
               ),
               if (status == 'barista' || status == 'trainee')
                 Row(

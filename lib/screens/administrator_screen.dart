@@ -240,8 +240,6 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
                                     builder: (context) =>
                                         UsersDetailedInformationScreen(
                                           id_user: listUser[index].id_user,
-                                          timeStart:
-                                          listUserWork[index].startDate,
                                         )));
                           },
                           child: ListTile(

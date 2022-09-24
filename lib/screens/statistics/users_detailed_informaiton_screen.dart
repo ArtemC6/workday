@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +7,11 @@ import 'package:horizontal_data_table/horizontal_data_table.dart';
 import '../../data/const.dart';
 import '../../data/user_model.dart';
 import '../employee_screen.dart';
+
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 
 class UsersDetailedInformationScreen extends StatefulWidget {
   var id_user, timeStart, timeEnd, screens;
@@ -86,12 +92,11 @@ class _UsersDetailedInformationScreen
                   id_user: data["id_user"],
                   id_post: data["id_post"],
                   money: 0.0,
-                  workTime: 0));
+                  workTime:
+                      getUserWorkTime(data["startDate"], Timestamp.now())));
               setState(() {});
             }
-          }
 
-          if (timeStart == currentTime) {
             if (data['endDate'] != '') {
               if (_timeStart == null) {
                 setState(() {
@@ -131,7 +136,6 @@ class _UsersDetailedInformationScreen
             // print(timeStart);
 
             if (timeStart == timeStartCame) {
-
               listUser.add(UserModel(
                   name: data["name"],
                   email: data["email"],
@@ -353,20 +357,18 @@ class _UsersDetailedInformationScreen
 
     Widget _generateRightHandSideColumnRowAnalytics(
         BuildContext context, int index) {
-
       print('Yea');
       if (listUser[0].status == 'concierge') {
-
-
-        bool isConciergeDay = getDataTimeDate(listUser[index].startDate).hour >= 9 &&
+        bool isConciergeDay =
+            getDataTimeDate(listUser[index].startDate).hour >= 9 &&
                 getDataTimeDate(listUser[index].endDate).hour < 17;
 
         print(getDataTimeDate(listUser[index].startDate).hour);
         print(getDataTimeDate(listUser[index].endDate).hour);
 
-        bool isConciergeNight = getDataTimeDate(listUser[index].startDate).hour >= 17 &&
-            getDataTimeDate(listUser[index].endDate).hour < 9;
-
+        bool isConciergeNight =
+            getDataTimeDate(listUser[index].startDate).hour >= 17 &&
+                getDataTimeDate(listUser[index].endDate).hour < 9;
 
         print(isConciergeDay);
         print(isConciergeNight);
@@ -454,7 +456,8 @@ class _UsersDetailedInformationScreen
                                   image: NetworkImage(listUser[index].startUri),
                                   fit: BoxFit.fitWidth,
                                 ),
-                                height: MediaQuery.of(context).size.height / 2.8,
+                                height:
+                                    MediaQuery.of(context).size.height / 2.8,
                                 width: MediaQuery.of(context).size.width / 1,
                                 padding: EdgeInsets.all(10),
                               ),
@@ -468,7 +471,8 @@ class _UsersDetailedInformationScreen
                                   image: NetworkImage(listUser[index].endUri),
                                   fit: BoxFit.fitWidth,
                                 ),
-                                height: MediaQuery.of(context).size.height / 2.8,
+                                height:
+                                    MediaQuery.of(context).size.height / 2.8,
                                 width: MediaQuery.of(context).size.width / 1,
                                 padding: EdgeInsets.all(10),
                               ),
@@ -493,12 +497,11 @@ class _UsersDetailedInformationScreen
               height: 30,
               padding: EdgeInsets.only(right: 10),
             ),
-
           ],
         );
       }
 
-        return Row(
+      return Row(
         children: <Widget>[
           Container(
             child: Text(
