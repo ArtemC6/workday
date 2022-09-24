@@ -319,14 +319,18 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                   isVisible = true;
                 });
 
-                countdownDuration = Duration(
-                    seconds: int.parse(DateTime.now()
-                        .difference(dateTimeStart)
-                        .inSeconds
-                        .toString()));
+                Future.delayed(const Duration(milliseconds: 300), () {
+                  countdownDuration = Duration(
+                      seconds: int.parse(DateTime.now()
+                          .difference(dateTimeStart)
+                          .inSeconds
+                          .toString()) + Duration(minutes: listUser[0].workTime).inSeconds);
 
-                reset();
-                startTimer();
+                  reset();
+                  startTimer();
+                });
+
+
               }
             }
           }
@@ -364,14 +368,17 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                   isVisible = true;
                 });
 
-                countdownDuration = Duration(
-                    seconds: int.parse(DateTime.now()
-                        .difference(dateTimeStart)
-                        .inSeconds
-                        .toString()));
+                Future.delayed(const Duration(milliseconds: 300), () {
 
-                reset();
-                startTimer();
+                  countdownDuration = Duration(
+                      seconds: int.parse(DateTime.now()
+                          .difference(dateTimeStart)
+                          .inSeconds
+                          .toString()) + Duration(minutes: listUser[0].workTime).inSeconds);
+
+                  reset();
+                  startTimer();
+                });
               }
             }
           }
@@ -398,8 +405,8 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                         workTime: getUserWorkTime(
                             data["startDate"], data["endDate"])));
                   } else {
-                    // listUser[isExist].workTime +=
-                    //     getUserWorkTime(data['startDate'], data['endDate']);
+                    listUser[isExist].workTime +=
+                        getUserWorkTime(data['startDate'], data['endDate']);
                   }
                 });
               }
@@ -410,14 +417,17 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                   isConciergeTime = false;
                 });
 
-                countdownDuration = Duration(
-                    seconds: int.parse(DateTime.now()
-                        .difference(dateTimeStart)
-                        .inSeconds
-                        .toString()));
+                Future.delayed(const Duration(milliseconds: 300), () {
+                  countdownDuration = Duration(
+                      seconds: int.parse(DateTime.now()
+                              .difference(dateTimeStart)
+                              .inSeconds
+                              .toString()) +
+                          Duration(minutes: listUser[0].workTime).inSeconds);
 
-                reset();
-                startTimer();
+                  reset();
+                  startTimer();
+                });
               }
             } else {
               var timeStart_test = new DateTime(
@@ -476,7 +486,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
 
     if (listUser.length != 0) {
       if (!isVisible) {
-        if(isConciergeTime) {
+        if (isConciergeTime) {
           countdownDuration = Duration(minutes: listUser[0].workTime);
           reset();
         }
@@ -491,6 +501,8 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
     setState(() {
       if (nowDateTime.hour >= 07 && nowDateTime.hour < 23) {
         if (isEmployee) {
+          isVisibleText = true;
+        } else {
           isVisibleText = true;
         }
         if (isAdmin) {
@@ -667,8 +679,6 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                           style: TextStyle(color: Colors.black),
                         ),
                       )),
-                if (!isVisibleTimeEmployee)
-                  if (!isVisible)
                     if (isVisibleText)
                       Container(
                         padding: EdgeInsets.only(top: 30),

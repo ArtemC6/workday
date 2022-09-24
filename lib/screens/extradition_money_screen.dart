@@ -550,7 +550,7 @@ class _ExtraditionScreenScreenState extends State<ExtraditionMoneyScreen> {
                     child: Text('Выбрать дни оплаты',
                         style: TextStyle(color: Colors.white))),
               ),
-              if (status == 'barista')
+              if (status == 'barista' || status == 'trainee')
                 Row(
                   children: [
                     Container(
@@ -674,7 +674,7 @@ class _ExtraditionScreenScreenState extends State<ExtraditionMoneyScreen> {
                     ),
                   ],
                 ),
-              if (status != 'barista')
+              if (status != 'barista' && status != 'trainee')
                 Container(
                   width: MediaQuery.of(context).size.width / 1,
                   padding:

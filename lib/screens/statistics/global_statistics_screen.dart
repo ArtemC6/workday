@@ -40,6 +40,21 @@ class _GlobalStatics extends State<GlobalStatics> {
                 },
                 child: Text('Бармены'),
               ),
+            ),  Container(
+              padding: EdgeInsets.only(left: 20, right: 20, top: 10),
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () async {
+                  Navigator.pop(context);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => MoneyInformationScreen(
+                                post: 'trainee',
+                              )));
+                },
+                child: Text('Стажеры'),
+              ),
             ),
             Container(
               padding: EdgeInsets.only(left: 20, right: 20, top: 10),
@@ -200,6 +215,21 @@ class _GlobalStatics extends State<GlobalStatics> {
                 },
                 child: Text('Бармены'),
               ),
+            ), Container(
+              padding: EdgeInsets.only(left: 20, right: 20, top: 10),
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () async {
+                  Navigator.pop(context);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => UserInformationScreen(
+                                post: 'trainee',
+                              )));
+                },
+                child: Text('Стажеры'),
+              ),
             ),
             Container(
               padding: EdgeInsets.only(left: 20, right: 20, top: 10),
@@ -359,6 +389,21 @@ class _GlobalStatics extends State<GlobalStatics> {
                               )));
                 },
                 child: Text('Бармены'),
+              ),
+            ),  Container(
+              padding: EdgeInsets.only(left: 20, right: 20, top: 10),
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () async {
+                  Navigator.pop(context);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => FineScreens(
+                                post: 'trainee',
+                              )));
+                },
+                child: Text('Стажеры'),
               ),
             ),
             Container(

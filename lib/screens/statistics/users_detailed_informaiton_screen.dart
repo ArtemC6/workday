@@ -127,7 +127,11 @@ class _UsersDetailedInformationScreen
               dateTimeStartCame.day,
             );
 
+            // print(timeStartCame);
+            // print(timeStart);
+
             if (timeStart == timeStartCame) {
+
               listUser.add(UserModel(
                   name: data["name"],
                   email: data["email"],
@@ -350,9 +354,22 @@ class _UsersDetailedInformationScreen
     Widget _generateRightHandSideColumnRowAnalytics(
         BuildContext context, int index) {
 
+      print('Yea');
       if (listUser[0].status == 'concierge') {
-        bool isConcierge = getDataTimeDate(listUser[index].startDate).hour >= 07 &&
-                getDataTimeDate(listUser[index].endDate).hour <= 17;
+
+
+        bool isConciergeDay = getDataTimeDate(listUser[index].startDate).hour >= 9 &&
+                getDataTimeDate(listUser[index].endDate).hour < 17;
+
+        print(getDataTimeDate(listUser[index].startDate).hour);
+        print(getDataTimeDate(listUser[index].endDate).hour);
+
+        bool isConciergeNight = getDataTimeDate(listUser[index].startDate).hour >= 17 &&
+            getDataTimeDate(listUser[index].endDate).hour < 9;
+
+
+        print(isConciergeDay);
+        print(isConciergeNight);
 
         return Row(
           children: <Widget>[
@@ -385,7 +402,7 @@ class _UsersDetailedInformationScreen
                 )),
             Container(
               child: Text(
-                '${listUser[index].money} сом ${getDataTimeDate(listUser[index].startDate).hour} ${getDataTimeDate(listUser[index].endDate).hour}',
+                '${listUser[index].money} сом',
                 style: TextStyle(fontSize: 16, color: Colors.white),
               ),
               width: 124,
@@ -393,7 +410,7 @@ class _UsersDetailedInformationScreen
               padding: EdgeInsets.only(left: 30),
               alignment: Alignment.centerLeft,
             ),
-            if (isConcierge)
+            if (isConciergeDay && !isConciergeNight)
               Container(
                 padding: EdgeInsets.only(left: 30),
                 child: Text(
@@ -405,7 +422,7 @@ class _UsersDetailedInformationScreen
                 // padding: EdgeInsets.only(left: 10),
                 alignment: Alignment.centerLeft,
               ),
-            if (!isConcierge)
+            if (!isConciergeDay && isConciergeNight)
               Container(
                 padding: EdgeInsets.only(left: 30),
                 child: Text(

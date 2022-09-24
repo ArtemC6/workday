@@ -91,6 +91,18 @@ class _SignUpScreen extends State<SignUpScreen> {
                   child: ElevatedButton(
                     onPressed: () {
                       setState(() {
+                        postUser = 'trainee';
+                      });
+                      Navigator.pop(context);
+                    },
+                    child: Text('Стажер'),
+                  )),
+              Container(
+                  padding: EdgeInsets.all(4),
+                  width: MediaQuery.of(context).size.width / 2.0,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      setState(() {
                         postUser = 'maid';
                       });
                       Navigator.pop(context);

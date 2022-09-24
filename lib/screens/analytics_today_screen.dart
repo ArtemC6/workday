@@ -150,6 +150,24 @@ class _AnalyticScreenState extends State<AnalyticScreen> {
               child: ElevatedButton(
                 onPressed: () async {
                   Navigator.pop(context);
+
+                  await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              ExtraditionMoneyScreen(
+                                status: 'trainee',
+                              )));
+                },
+                child: Text('Выдать стажерам'),
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.only(left: 20, right: 20, top: 10),
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () async {
+                  Navigator.pop(context);
                   Navigator.push(
                       context,
                       MaterialPageRoute(

@@ -342,16 +342,32 @@ class _SettingsScreen extends State<SettingsScreen> {
                         padding: EdgeInsets.only(
                             top: 30, left: _width / 18, right: _width / 18),
                         width: double.infinity,
-                        child: TextButton(
-                          // style: ElevatedButton.styleFrom(
-                          //     backgroundColor: Colors.white),
-                          onPressed: () {
-                            showAlertDialogSettingUser(context);
-                          },
-                          child: Text(
-                            'Настройки',
-                            style: TextStyle(color: Colors.blueAccent),
-                          ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Container(
+                              child: TextButton(
+                                onPressed: () {
+                                  showAlertDialogSettingUser(context);
+                                },
+                                child: Text(
+                                  'Настройки',
+                                  style: TextStyle(color: Colors.blueAccent),
+                                ),
+                              ),
+                            ),
+
+                            Container(
+                              child: TextButton(
+                                onPressed: () {
+                                },
+                                child: Text(
+                                  'Version 1.0.0',
+                                  style: TextStyle(color: Colors.blueAccent),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                       Container(

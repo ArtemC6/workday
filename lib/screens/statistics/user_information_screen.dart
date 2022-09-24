@@ -261,13 +261,21 @@ class _UserInformationScreen extends State<UserInformationScreen> {
         _getTitleItemWidget('Имя', 100),
         _getTitleItemWidget('Время', 100),
         _getTitleItemWidget('Сумма', 130),
-        _getTitleItemWidget('Дата', 100),
       ];
     }
 
     Widget _generateFirstColumnRow(BuildContext context, int index) {
       return Container(
         child: Text(listUser[index].name,
+            style: TextStyle(fontSize: 16, color: Colors.white)),
+        width: 100,
+        height: 52,
+        padding: EdgeInsets.only(left: 10),
+        alignment: Alignment.centerLeft,
+      );
+    } Widget _generateFirstColumnRowFull(BuildContext context, int index) {
+      return Container(
+        child: Text(listUserFull[index].name,
             style: TextStyle(fontSize: 16, color: Colors.white)),
         width: 100,
         height: 52,
@@ -345,16 +353,6 @@ class _UserInformationScreen extends State<UserInformationScreen> {
           Container(
             child: Text(
               '${double.parse((listUserFull[index].money).toStringAsFixed(1).toString())} сом ',
-              style: TextStyle(fontSize: 16, color: Colors.white),
-            ),
-            width: 130,
-            height: 52,
-            padding: EdgeInsets.only(left: 40),
-            alignment: Alignment.centerLeft,
-          ),
-          Container(
-            child: Text(
-              '${getData(listUserFull[index].startDate)}',
               style: TextStyle(fontSize: 16, color: Colors.white),
             ),
             width: 130,
@@ -441,7 +439,7 @@ class _UserInformationScreen extends State<UserInformationScreen> {
                         rightHandSideColumnWidth: 600,
                         isFixedHeader: true,
                         headerWidgets: _getTitleWidgetFull(),
-                        leftSideItemBuilder: _generateFirstColumnRow,
+                        leftSideItemBuilder: _generateFirstColumnRowFull,
                         rightSideItemBuilder:
                             _generateRightHandSideColumnRowFull,
                         itemCount: listUserFull.length,

@@ -71,88 +71,111 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
           currentDate.day,
         );
 
-        if (data['post'] == 'concierge') {
-          if (data['endDate'] == '') {
-            setState(() {
-              var isExist = listUserWork.indexWhere(
-                  (element) => element.id_user == (data['id_user']));
+        // if (data['post'] == 'concierge') {
+        //   if (data['endDate'] == '') {
+        //     setState(() {
+        //       var isExist = listUserWork.indexWhere(
+        //           (element) => element.id_user == (data['id_user']));
+        //
+        //       if (isExist < 0) {
+        //         listUserWork.add(UserModel(
+        //             name: data["name"],
+        //             email: data["email"],
+        //             status: data["post"],
+        //             startUri: data["startUri"],
+        //             endUri: '',
+        //             startDate: data["startDate"],
+        //             endDate: Timestamp.now(),
+        //             id_user: data["id_user"],
+        //             id_post: data["id_post"],
+        //             money: 0.0,
+        //             workTime:
+        //                 getUserWorkTime(data["startDate"], Timestamp.now())));
+        //       } else {
+        //         listUserWork[isExist].workTime +=
+        //             getUserWorkTime(Timestamp.now(), Timestamp.now());
+        //       }
+        //     });
+        //   }
+        // }
 
-              if (isExist < 0) {
-                listUserWork.add(UserModel(
-                    name: data["name"],
-                    email: data["email"],
-                    status: data["post"],
-                    startUri: data["startUri"],
-                    endUri: '',
-                    startDate: data["startDate"],
-                    endDate: Timestamp.now(),
-                    id_user: data["id_user"],
-                    id_post: data["id_post"],
-                    money: 0.0,
-                    workTime:
-                        getUserWorkTime(data["startDate"], Timestamp.now())));
-              } else {
-                listUserWork[isExist].workTime +=
-                    getUserWorkTime(Timestamp.now(), Timestamp.now());
-              }
-            });
-          }
-        }
-        if (timeStart == currentTime) {
-          if (data['endDate'] == '') {
-            setState(() {
-              var isExist = listUserWork.indexWhere(
-                  (element) => element.id_user == (data['id_user']));
+        // if (data['post'] == 'concierge') {
+        //   if (data['endDate'] != '') {
+        //     setState(() {
+        //       var isExist = listUser.indexWhere(
+        //           (element) => element.id_user == (data['id_user']));
+        //
+        //       if (isExist < 0) {
+        //         listUser.add(UserModel(
+        //             name: data["name"],
+        //             email: data["email"],
+        //             status: data["post"],
+        //             startUri: data["startUri"],
+        //             endUri: data["endUri"],
+        //             startDate: data["startDate"],
+        //             endDate: data["endDate"],
+        //             id_user: data["id_user"],
+        //             id_post: data["id_post"],
+        //             money: 0.0,
+        //             workTime:
+        //                 getUserWorkTime(data["startDate"], data["endDate"])));
+        //       } else {
+        //         listUser[isExist].workTime += getUserWorkTime(
+        //             listUser[isExist].startDate, listUser[isExist].endDate);
+        //       }
+        //     });
+        //   }
+        // }
 
-              if (isExist < 0) {
-                listUserWork.add(UserModel(
-                    name: data["name"],
-                    email: data["email"],
-                    status: data["post"],
-                    startUri: data["startUri"],
-                    endUri: '',
-                    startDate: data["startDate"],
-                    endDate: Timestamp.now(),
-                    id_user: data["id_user"],
-                    id_post: data["id_post"],
-                    money: 0.0,
-                    workTime:
-                        getUserWorkTime(data["startDate"], Timestamp.now())));
-              } else {
-                listUserWork[isExist].workTime +=
-                    getUserWorkTime(Timestamp.now(), Timestamp.now());
-              }
-            });
-          }
-        }
+          if (timeStart == currentTime) {
+            if (data['endDate'] == '') {
+              setState(() {
+                var isExist = listUserWork.indexWhere(
+                    (element) => element.id_user == (data['id_user']));
 
-        if (timeStart == currentTime) {
-          if (data['endDate'] != '') {
-            print(data['name']);
-            setState(() {
-              var isExist = listUser.indexWhere(
-                  (element) => element.id_user == (data['id_user']));
+                if (isExist < 0) {
+                  listUserWork.add(UserModel(
+                      name: data["name"],
+                      email: data["email"],
+                      status: data["post"],
+                      startUri: data["startUri"],
+                      endUri: '',
+                      startDate: data["startDate"],
+                      endDate: Timestamp.now(),
+                      id_user: data["id_user"],
+                      id_post: data["id_post"],
+                      money: 0.0,
+                      workTime:
+                          getUserWorkTime(data["startDate"], Timestamp.now())));
+                }
+              });
+            }
 
-              if (isExist < 0) {
-                listUser.add(UserModel(
-                    name: data["name"],
-                    email: data["email"],
-                    status: data["post"],
-                    startUri: data["startUri"],
-                    endUri: data["endUri"],
-                    startDate: data["startDate"],
-                    endDate: data["endDate"],
-                    id_user: data["id_user"],
-                    id_post: data["id_post"],
-                    money: 0.0,
-                    workTime:
-                        getUserWorkTime(data["startDate"], data["endDate"])));
-              } else {
-                listUser[isExist].workTime += getUserWorkTime(
-                    listUser[isExist].startDate, listUser[isExist].endDate);
-              }
-            });
-          }
+            if (data['endDate'] != '') {
+              setState(() {
+                var isExist = listUser.indexWhere(
+                    (element) => element.id_user == (data['id_user']));
+
+                if (isExist < 0) {
+                  listUser.add(UserModel(
+                      name: data["name"],
+                      email: data["email"],
+                      status: data["post"],
+                      startUri: data["startUri"],
+                      endUri: data["endUri"],
+                      startDate: data["startDate"],
+                      endDate: data["endDate"],
+                      id_user: data["id_user"],
+                      id_post: data["id_post"],
+                      money: 0.0,
+                      workTime:
+                          getUserWorkTime(data["startDate"], data["endDate"])));
+                } else {
+                  listUser[isExist].workTime += getUserWorkTime(
+                      listUser[isExist].startDate, listUser[isExist].endDate);
+                }
+              });
+            }
         }
       });
     });
@@ -194,7 +217,7 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
             child: Column(
               children: [
                 Container(
-                  padding: EdgeInsets.only(left: 10, top: 50),
+                  padding: EdgeInsets.only(left: 10, top: 40, bottom: 14),
                   alignment: Alignment.centerLeft,
                   child: Text('Сегодня работали ${listUser.length.toString()}',
                       style: TextStyle(
@@ -217,6 +240,8 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
                                     builder: (context) =>
                                         UsersDetailedInformationScreen(
                                           id_user: listUser[index].id_user,
+                                          timeStart:
+                                          listUserWork[index].startDate,
                                         )));
                           },
                           child: ListTile(
@@ -244,6 +269,7 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
                           color: Colors.white)),
                 ),
                 Container(
+                  padding: EdgeInsets.only(bottom: 14),
                   color: color_main_black,
                   height: MediaQuery.of(context).size.height / 2.6,
                   child: ListView.builder(
